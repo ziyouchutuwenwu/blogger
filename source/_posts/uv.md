@@ -4,21 +4,17 @@ date: 2025-10-01 09:43:55
 tags:
 ---
 
-## 说明
-
 uv 为项目创建隔离的虚拟环境
 
 uvx 用于在临时环境中运行
 
-## 用法
-
-### 镜像配置
+镜像配置
 
 ```sh
 export UV_INDEX="https://mirrors.aliyun.com/pypi/simple"
 ```
 
-### 创建项目
+创建项目
 
 ```sh
 uv init demo
@@ -30,21 +26,17 @@ uv init demo
 uv init demo --python 3.10
 ```
 
-### 虚拟环境
-
 在当前目录创建虚拟环境
 
 ```sh
 uv venv
 ```
 
-指定版本
+指定 python的 版本
 
 ```sh
 uv venv --python 3.10
 ```
-
-### 依赖相关
 
 增加依赖
 
