@@ -3,21 +3,32 @@
 <head>
   <meta charset="utf-8">
   
-  <title>独钓寒江雪</title>
+  <title>ssh 的一些用法 | 独钓寒江雪</title>
 
   
   <meta name="author" content="John Doe">
   
 
   
+  <meta name="description" content="配置密钥生成公钥
+最好指定密钥文件名，默认是在 ~&amp;#x2F;.ssh 下面
+1ssh-keygen -t rsa -b 4096 -C &amp;quot;xxx@xxx.com&amp;quot; -f ~/downloads/key
 
+私钥权限必须是 600
+1chmod 600 ~/downloads/*
+">
+  
+
+  
+  
+  <meta name="keywords" content="">
   
 
   <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
 
-  
+  <meta property="og:title" content="ssh 的一些用法"/>
 
   <meta property="og:site_name" content="独钓寒江雪"/>
 
@@ -56,12 +67,11 @@
 </header>
 
     <main class="site-main posts-loop">
-    
-  <article>
+    <article>
 
   
     
-    <h3 class="article-title"><a href="/blogger/2025/10/02/ssh/"><span>ssh 的一些用法</span></a></h3>
+    <h3 class="article-title"><span>ssh 的一些用法</span></h3>
     
   
 
@@ -144,95 +154,16 @@
   </div>
 </article>
 
-
-
-  <article>
-
-  
-    
-    <h3 class="article-title"><a href="/blogger/2025/10/01/uv/"><span>uv</span></a></h3>
-    
   
 
-  <div class="article-top-meta">
-    <span class="posted-on">
-      <a href="/blogger/2025/10/01/uv/" rel="bookmark">
-        <time class="entry-date published" datetime="2025-10-01T01:43:55.000Z">
-          2025-10-01
-        </time>
-      </a>
-    </span>
-  </div>
-
-
-  
-
-  <div class="article-content">
-    <div class="entry">
-      
-        <p>uv 为项目创建隔离的虚拟环境</p>
-<p>uvx 用于在临时环境中运行</p>
-<p>镜像配置</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> UV_INDEX=<span class="string">&quot;https://mirrors.aliyun.com/pypi/simple&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p>创建项目</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">uv init demo</span><br></pre></td></tr></table></figure>
-
-<p>指定版本</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">uv init demo --python 3.10</span><br></pre></td></tr></table></figure>
-
-<p>在当前目录创建虚拟环境</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">uv venv</span><br></pre></td></tr></table></figure>
-
-<p>指定 python的 版本</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">uv venv --python 3.10</span><br></pre></td></tr></table></figure>
-
-<p>增加依赖</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 这个会更新 pyproject.toml，推荐</span></span><br><span class="line">uv add requests</span><br><span class="line"></span><br><span class="line"><span class="comment"># 这个 pip 是 uv 模拟的</span></span><br><span class="line">uv pip install requests</span><br></pre></td></tr></table></figure>
-
-<p>生成依赖文件</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">uv pip freeze &gt; requirements.txt</span><br><span class="line">uv pip compile pyproject.toml -o requirements.txt</span><br></pre></td></tr></table></figure>
-
-<p>同步依赖</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">uv <span class="built_in">sync</span></span><br><span class="line"></span><br><span class="line">uv pip <span class="built_in">sync</span> ./pyproject.toml</span><br><span class="line">uv pip <span class="built_in">sync</span> ./requirements.txt</span><br></pre></td></tr></table></figure>
-
-<h3 id="运行"><a href="#运行" class="headerlink" title="运行"></a>运行</h3><p>基于当前 venv 运行</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">uv run xxx</span><br><span class="line">uv run main.py</span><br></pre></td></tr></table></figure>
-
-<h2 id="指定版本"><a href="#指定版本" class="headerlink" title="指定版本"></a>指定版本</h2><p>查看</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">uv python list</span><br></pre></td></tr></table></figure>
-
-<p>用法</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">uv python install 3.10</span><br><span class="line">uv python uninstall 3.10</span><br></pre></td></tr></table></figure>
-
-<p>版本缓存目录，如果有问题，删除即可</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">rm</span> -rf <span class="variable">$HOME</span>/.local/share/uv/</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-
-  </div>
-
-  <div class="article-footer">
-    <div class="article-meta pull-left">
-
-    
-
-    
-
-    </div>
-
-    
-  </div>
-</article>
 
 
 
 
-<nav class="pagination">
-  
-  
-</nav>
+
+
+
+
     </main>
 
     <footer class="site-footer">
