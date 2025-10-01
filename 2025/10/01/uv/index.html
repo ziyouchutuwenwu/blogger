@@ -10,14 +10,16 @@
   
 
   
-  <meta name="description" content="说明uv 为项目创建隔离的虚拟环境
+  <meta name="description" content="uv 为项目创建隔离的虚拟环境
 uvx 用于在临时环境中运行
-用法镜像配置1export UV_INDEX=&amp;quot;https://mirrors.aliyun.com/pypi/simple&amp;quot;
+镜像配置
+1export UV_INDEX=&amp;quot;https://mirrors.aliyun.com/pypi/simple&amp;quot;
 
-创建项目1uv init demo
+创建项目
+1uv init demo
 
 指定版本
-1uv init demo --py">
+1uv init demo --pyth">
   
 
   
@@ -92,22 +94,24 @@ uvx 用于在临时环境中运行
   <div class="article-content">
     <div class="entry">
       
-        <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>uv 为项目创建隔离的虚拟环境</p>
+        <p>uv 为项目创建隔离的虚拟环境</p>
 <p>uvx 用于在临时环境中运行</p>
-<h2 id="用法"><a href="#用法" class="headerlink" title="用法"></a>用法</h2><h3 id="镜像配置"><a href="#镜像配置" class="headerlink" title="镜像配置"></a>镜像配置</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> UV_INDEX=<span class="string">&quot;https://mirrors.aliyun.com/pypi/simple&quot;</span></span><br></pre></td></tr></table></figure>
+<p>镜像配置</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> UV_INDEX=<span class="string">&quot;https://mirrors.aliyun.com/pypi/simple&quot;</span></span><br></pre></td></tr></table></figure>
 
-<h3 id="创建项目"><a href="#创建项目" class="headerlink" title="创建项目"></a>创建项目</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">uv init demo</span><br></pre></td></tr></table></figure>
+<p>创建项目</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">uv init demo</span><br></pre></td></tr></table></figure>
 
 <p>指定版本</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">uv init demo --python 3.10</span><br></pre></td></tr></table></figure>
 
-<h3 id="虚拟环境"><a href="#虚拟环境" class="headerlink" title="虚拟环境"></a>虚拟环境</h3><p>在当前目录创建虚拟环境</p>
+<p>在当前目录创建虚拟环境</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">uv venv</span><br></pre></td></tr></table></figure>
 
-<p>指定版本</p>
+<p>指定 python的 版本</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">uv venv --python 3.10</span><br></pre></td></tr></table></figure>
 
-<h3 id="依赖相关"><a href="#依赖相关" class="headerlink" title="依赖相关"></a>依赖相关</h3><p>增加依赖</p>
+<p>增加依赖</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 这个会更新 pyproject.toml，推荐</span></span><br><span class="line">uv add requests</span><br><span class="line"></span><br><span class="line"><span class="comment"># 这个 pip 是 uv 模拟的</span></span><br><span class="line">uv pip install requests</span><br></pre></td></tr></table></figure>
 
 <p>生成依赖文件</p>
