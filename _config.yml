@@ -100,8 +100,11 @@ theme: Hacker
 # Deployment
 ## Docs: https://hexo.io/docs/one-command-deployment
 #
-url: https://ziyouchutuwenwu.github.io/blogger
-root: /blogger/
+#url: https://ziyouchutuwenwu.github.io/blogger
+#root: /blogger/
+
+url: https://hanjiangxue.uk/
+root: /
 
 deploy:
   type: git
