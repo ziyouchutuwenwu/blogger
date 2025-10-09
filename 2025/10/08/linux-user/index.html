@@ -1,0 +1,179 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>linux 的用户相关的东西 | 独钓寒江雪</title>
+
+  
+  <meta name="author" content="John Doe">
+  
+
+  
+  <meta name="description" content="查看信息
+1getent passwd postgres
+
+用户组查看
+1cat /etc/group
+
+添加组
+1groupadd $GROUP
+
+删除组
+1groupdel $GROUP
+
+添加用户到用户组
+1gpasswd -a $USER $GROUP
+
+用户组里面删除用户
+1gpasswd">
+  
+
+  
+  
+  <meta name="keywords" content="">
+  
+
+  <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+  <meta property="og:title" content="linux 的用户相关的东西"/>
+
+  <meta property="og:site_name" content="独钓寒江雪"/>
+
+  
+  <meta property="og:image" content="/favicon.ico"/>
+  
+
+  <link href="/favicon.ico" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="独钓寒江雪" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+<meta name="generator" content="Hexo 8.0.0"></head>
+
+
+<body>
+<div class="blog">
+  <div class="content">
+
+    <header>
+  <div class="site-branding">
+    <h1 class="site-title">
+      <a href="/">独钓寒江雪</a>
+    </h1>
+    <p class="site-description"></p>
+  </div>
+  <nav class="site-navigation">
+    <ul>
+      
+        <li><a href="/">首页</a></li>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/about">关于</a></li>
+      
+    </ul>
+  </nav>
+</header>
+
+    <main class="site-main posts-loop">
+    <article>
+
+  
+    
+    <h3 class="article-title"><span>linux 的用户相关的东西</span></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/10/08/linux-user/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-10-08T06:13:35.000Z">
+          2025-10-08
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <p>查看信息</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">getent passwd postgres</span><br></pre></td></tr></table></figure>
+
+<h3 id="用户组"><a href="#用户组" class="headerlink" title="用户组"></a>用户组</h3><p>查看</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> /etc/group</span><br></pre></td></tr></table></figure>
+
+<p>添加组</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">groupadd <span class="variable">$GROUP</span></span><br></pre></td></tr></table></figure>
+
+<p>删除组</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">groupdel <span class="variable">$GROUP</span></span><br></pre></td></tr></table></figure>
+
+<p>添加用户到用户组</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gpasswd -a <span class="variable">$USER</span> <span class="variable">$GROUP</span></span><br></pre></td></tr></table></figure>
+
+<p>用户组里面删除用户</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gpasswd -d <span class="variable">$USER</span> <span class="variable">$GROUP</span></span><br></pre></td></tr></table></figure>
+
+<p>目录权限</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">chown</span> -R <span class="variable">$USER</span> <span class="variable">$DIR</span></span><br><span class="line"><span class="built_in">chgrp</span> -R <span class="variable">$GROUP</span> <span class="variable">$DIR</span></span><br></pre></td></tr></table></figure>
+
+<p>用户组赋予读写执行权限</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">chmod</span> -R ug+w <span class="variable">$DIR</span></span><br><span class="line"><span class="built_in">chmod</span> -R g=rwx <span class="variable">$DIR</span></span><br><span class="line"><span class="built_in">chmod</span> -R ugo=rwx <span class="variable">$DIR</span></span><br></pre></td></tr></table></figure>
+
+<p>修改 id</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">usermod -u <span class="variable">$UID</span> <span class="variable">$USER</span></span><br><span class="line">groupmod -g <span class="variable">$GID</span> <span class="variable">$GROUP</span></span><br></pre></td></tr></table></figure>
+
+<p>修改完以后, 尤其是改完 uid</p>
+<p><strong>一定要</strong> 修改 <strong>被修改 id 的用户</strong> 目录下的文件权限，否则无法登录</p>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+  
+
+
+
+
+
+
+
+
+
+    </main>
+
+    <footer class="site-footer">
+  <p class="site-info">
+    Proudly powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and
+    Theme by <a href="https://github.com/CodeDaraW/Hacker" target="_blank">Hacker</a>
+    </br>
+    
+    &copy; 2025 John Doe
+    
+  </p>
+</footer>
+    
+    
+  </div>
+</div>
+</body>
+</html>

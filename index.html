@@ -1,0 +1,998 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>独钓寒江雪</title>
+
+  
+  <meta name="author" content="John Doe">
+  
+
+  
+
+  
+
+  <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+  
+
+  <meta property="og:site_name" content="独钓寒江雪"/>
+
+  
+  <meta property="og:image" content="/favicon.ico"/>
+  
+
+  <link href="/favicon.ico" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="独钓寒江雪" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+<meta name="generator" content="Hexo 8.0.0"></head>
+
+
+<body>
+<div class="blog">
+  <div class="content">
+
+    <header>
+  <div class="site-branding">
+    <h1 class="site-title">
+      <a href="/">独钓寒江雪</a>
+    </h1>
+    <p class="site-description"></p>
+  </div>
+  <nav class="site-navigation">
+    <ul>
+      
+        <li><a href="/">首页</a></li>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/about">关于</a></li>
+      
+    </ul>
+  </nav>
+</header>
+
+    <main class="site-main posts-loop">
+    
+  <article>
+
+  
+    
+    <h3 class="article-title"><a href="/2025/10/09/docker/"><span>docker</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/10/09/docker/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-10-09T01:11:41.000Z">
+          2025-10-09
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <p>基本用法</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">docker run -it xxx /bin/bash</span><br><span class="line">docker run --<span class="built_in">rm</span> xxx</span><br><span class="line">docker rmi xxx --force</span><br></pre></td></tr></table></figure>
+
+<p>自动重启</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run --restart=always xxxx</span><br></pre></td></tr></table></figure>
+
+<p>环境变量</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run xxxx -e TZ=Asia/Shanghai</span><br></pre></td></tr></table></figure>
+
+<p>以某个用户名启动</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -u root</span><br></pre></td></tr></table></figure>
+
+<p>指定用户进入 shell</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it -u root xxx bash</span><br></pre></td></tr></table></figure>
+
+<p>默认是 root, 有时候希望不是</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -it --user $(<span class="built_in">id</span> -u <span class="variable">$&#123;USER&#125;</span>):$(<span class="built_in">id</span> -g <span class="variable">$&#123;USER&#125;</span>) xxx</span><br></pre></td></tr></table></figure>
+
+<p>默认 root 有些权限用不了</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -it --privileged xxx</span><br></pre></td></tr></table></figure>
+
+<p>清理</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">truncate</span> -s 0 /var/lib/docker/containers/*/*.<span class="built_in">log</span></span><br></pre></td></tr></table></figure>
+
+<p>查看资源</p>
+<p>查看 cpu，内存等等</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker stats</span><br></pre></td></tr></table></figure>
+
+<p>构建</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker build -t xxx ./ --no-cache</span><br></pre></td></tr></table></figure>
+
+<p>构建时使用变量</p>
+<p>多阶段构建,需要在每个阶段都写一遍</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ARG MIX_ENV</span><br><span class="line">ENV MIX_ENV=<span class="variable">$&#123;MIX_ENV&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>例子</p>
+<p>Dockerfile</p>
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 构建阶段</span></span><br><span class="line"><span class="keyword">FROM</span> debian:<span class="number">12.5</span> as builder</span><br><span class="line"></span><br><span class="line"><span class="keyword">ARG</span> MIX_ENV</span><br><span class="line"><span class="keyword">ENV</span> MIX_ENV=$&#123;MIX_ENV&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">WORKDIR</span><span class="language-bash"> /build</span></span><br><span class="line"><span class="keyword">COPY</span><span class="language-bash"> . .</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">ADD</span><span class="language-bash"> ./deploy/ustc.list /etc/apt/sources.list</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 运行阶段</span></span><br><span class="line"><span class="keyword">FROM</span> debian:<span class="number">12.5</span> as runner</span><br><span class="line"></span><br><span class="line"><span class="keyword">WORKDIR</span><span class="language-bash"> /app</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">ARG</span> MIX_ENV</span><br><span class="line"><span class="keyword">ENV</span> MIX_ENV=$&#123;MIX_ENV&#125;</span><br></pre></td></tr></table></figure>
+
+<p>构建</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker build --build-arg MIX_ENV=<span class="built_in">test</span> -t demo ../ --no-cache</span><br></pre></td></tr></table></figure>
+
+<p>同步时区</p>
+<p>构建时</p>
+<p>DockerFile</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">RUN <span class="built_in">rm</span> -f /etc/localtime \</span><br><span class="line">&amp;&amp; <span class="built_in">ln</span> -sv /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \</span><br><span class="line">&amp;&amp; <span class="built_in">echo</span> <span class="string">&quot;Asia/Shanghai&quot;</span> &gt; /etc/timezone</span><br></pre></td></tr></table></figure>
+
+<p>运行时</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run xxx -v /etc/localtime:/etc/localtime -e TZ=Asia/Shanghai</span><br></pre></td></tr></table></figure>
+
+<p>或者</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run xxx -v /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime -e TZ=Asia/Shanghai</span><br></pre></td></tr></table></figure>
+
+<p>自定义存储路径</p>
+<p>ntfs 分区不支持</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/etc/docker/daemon.json</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;data-root&quot;</span><span class="punctuation">:</span> <span class="string">&quot;/mnt/vdb/docker&quot;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>容器保存为 tar，比 save 保存的文件小很多</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker <span class="built_in">export</span> <span class="variable">$&#123;CONTAINER_ID&#125;</span> &gt; xxx.tar</span><br></pre></td></tr></table></figure>
+
+<p>从容器 tar 还原为 image</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker import xxx.tar image_name:tag</span><br></pre></td></tr></table></figure>
+
+<p>当前容器直接保存为 image</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker commit <span class="variable">$&#123;CONTAINER_ID&#125;</span> image_name:tag</span><br></pre></td></tr></table></figure>
+
+<p>保存 image 为 tar 包，使用 tag 保存，不然 load 的时候，会显示 <code>&lt;none&gt;</code></p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker save -o xxx.tar redis:5.0.0</span><br></pre></td></tr></table></figure>
+
+<p>tar 包还原为 image，不可以重命名，这里的 tar 是指<code>docker images</code>保存出的 tar</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker load -i xxx.tar</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
+    <h3 class="article-title"><a href="/2025/10/08/linux-user/"><span>linux 的用户相关的东西</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/10/08/linux-user/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-10-08T06:13:35.000Z">
+          2025-10-08
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <p>查看信息</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">getent passwd postgres</span><br></pre></td></tr></table></figure>
+
+<h3 id="用户组"><a href="#用户组" class="headerlink" title="用户组"></a>用户组</h3><p>查看</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> /etc/group</span><br></pre></td></tr></table></figure>
+
+<p>添加组</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">groupadd <span class="variable">$GROUP</span></span><br></pre></td></tr></table></figure>
+
+<p>删除组</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">groupdel <span class="variable">$GROUP</span></span><br></pre></td></tr></table></figure>
+
+<p>添加用户到用户组</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gpasswd -a <span class="variable">$USER</span> <span class="variable">$GROUP</span></span><br></pre></td></tr></table></figure>
+
+<p>用户组里面删除用户</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gpasswd -d <span class="variable">$USER</span> <span class="variable">$GROUP</span></span><br></pre></td></tr></table></figure>
+
+<p>目录权限</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">chown</span> -R <span class="variable">$USER</span> <span class="variable">$DIR</span></span><br><span class="line"><span class="built_in">chgrp</span> -R <span class="variable">$GROUP</span> <span class="variable">$DIR</span></span><br></pre></td></tr></table></figure>
+
+<p>用户组赋予读写执行权限</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">chmod</span> -R ug+w <span class="variable">$DIR</span></span><br><span class="line"><span class="built_in">chmod</span> -R g=rwx <span class="variable">$DIR</span></span><br><span class="line"><span class="built_in">chmod</span> -R ugo=rwx <span class="variable">$DIR</span></span><br></pre></td></tr></table></figure>
+
+<p>修改 id</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">usermod -u <span class="variable">$UID</span> <span class="variable">$USER</span></span><br><span class="line">groupmod -g <span class="variable">$GID</span> <span class="variable">$GROUP</span></span><br></pre></td></tr></table></figure>
+
+<p>修改完以后, 尤其是改完 uid</p>
+<p><strong>一定要</strong> 修改 <strong>被修改 id 的用户</strong> 目录下的文件权限，否则无法登录</p>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
+    <h3 class="article-title"><a href="/2025/10/07/zig-wasm/"><span>zig 编译 wasm</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/10/07/zig-wasm/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-10-06T23:00:27.000Z">
+          2025-10-07
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <p>zig 编译为 wasm 给 js 调用</p>
+<p>demo.zig</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">const std = @import(&quot;std&quot;);</span><br><span class="line"></span><br><span class="line">export fn add(a: i32, b: i32) i32 &#123;</span><br><span class="line">    return a + b;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>编译</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">zig build-exe src/demo.zig -target wasm32-freestanding -fno-entry --<span class="built_in">export</span>=add</span><br><span class="line"></span><br><span class="line"><span class="comment"># 验证</span></span><br><span class="line">wasm-dis xxx.wasm | grep <span class="built_in">export</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="angular"><a href="#angular" class="headerlink" title="angular"></a>angular</h3><p>ts</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> axios <span class="keyword">from</span> <span class="string">&quot;axios&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> <span class="title class_">AppComponent</span> &#123;</span><br><span class="line">  <span class="attr">result</span>: <span class="built_in">number</span> | <span class="literal">null</span> = <span class="literal">null</span>;</span><br><span class="line">  <span class="attr">wasm</span>: <span class="title class_">WebAssembly</span>.<span class="property">Instance</span> | <span class="literal">null</span> = <span class="literal">null</span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">async</span> <span class="title function_">ngOnInit</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">await</span> <span class="variable language_">this</span>.<span class="title function_">loadWasm</span>();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">async</span> <span class="title function_">loadWasm</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      <span class="keyword">const</span> response = <span class="keyword">await</span> axios.<span class="title function_">get</span>(<span class="string">&quot;/xxx/demo.wasm&quot;</span>, &#123;</span><br><span class="line">        <span class="attr">responseType</span>: <span class="string">&quot;arraybuffer&quot;</span>,</span><br><span class="line">      &#125;);</span><br><span class="line">      <span class="keyword">const</span> bytes = <span class="keyword">new</span> <span class="title class_">Uint8Array</span>(response.<span class="property">data</span>);</span><br><span class="line">      <span class="keyword">const</span> <span class="variable language_">module</span> = <span class="keyword">await</span> <span class="title class_">WebAssembly</span>.<span class="title function_">instantiate</span>(bytes);</span><br><span class="line">      <span class="variable language_">this</span>.<span class="property">wasm</span> = <span class="variable language_">module</span>.<span class="property">instance</span>;</span><br><span class="line">    &#125; <span class="keyword">catch</span> (error) &#123;</span><br><span class="line">      <span class="variable language_">console</span>.<span class="title function_">error</span>(<span class="string">&quot;err loading wasm:&quot;</span>, error);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="title function_">doAdd</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="variable language_">this</span>.<span class="property">wasm</span>) &#123;</span><br><span class="line">      <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="variable language_">this</span>.<span class="property">wasm</span>.<span class="property">exports</span>);</span><br><span class="line">      <span class="keyword">const</span> add = <span class="variable language_">this</span>.<span class="property">wasm</span>.<span class="property">exports</span>[<span class="string">&quot;add&quot;</span>] <span class="title function_">as</span> (<span class="attr">a</span>: <span class="built_in">number</span>, <span class="attr">b</span>: <span class="built_in">number</span>) =&gt; <span class="built_in">number</span>;</span><br><span class="line">      <span class="keyword">const</span> result = <span class="title function_">add</span>(<span class="number">5</span>, <span class="number">3</span>);</span><br><span class="line">      <span class="variable language_">this</span>.<span class="property">result</span> = result;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="variable language_">console</span>.<span class="title function_">warn</span>(<span class="string">&quot;wasm instance is not initialized.&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">h1</span>&gt;</span>wasm with angular<span class="tag">&lt;/<span class="name">h1</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">button</span> (<span class="attr">click</span>)=<span class="string">&quot;doAdd()&quot;</span>&gt;</span>call wasm<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">p</span>&gt;</span>result: &#123;&#123; result &#125;&#125;<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
+    <h3 class="article-title"><a href="/2025/10/06/zig-build/"><span>zig 构建相关</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/10/06/zig-build/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-10-06T09:40:58.000Z">
+          2025-10-06
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h2 id="交叉编译"><a href="#交叉编译" class="headerlink" title="交叉编译"></a>交叉编译</h2><p>同时可以支持静态编译</p>
+<p>查看</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">zig targets | grep musl</span><br></pre></td></tr></table></figure>
+
+<p>命令行交叉编译</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">zig build -Dtarget=x86_64-linux-musl --summary all --release=small</span><br></pre></td></tr></table></figure>
+
+<p>作为其它语言的交叉编译器</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CC=<span class="string">&quot;zig cc -target x86_64-linux-musl&quot;</span> CXX=<span class="string">&quot;zig c++ -target x86_64-linux-musl&quot;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CC=<span class="string">&quot;zig cc -target x86_64-linux-gnu.2.31&quot;</span> CXX=<span class="string">&quot;zig c++ -target x86_64-linux-gnu.2.31&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="自定义构建"><a href="#自定义构建" class="headerlink" title="自定义构建"></a>自定义构建</h2><p>使用 musl, 无依赖</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">const default_target = std.Target.Query&#123;</span><br><span class="line">    // .cpu_arch = std.Target.Cpu.Arch.x86_64,</span><br><span class="line">    // .os_tag = std.Target.Os.Tag.linux,</span><br><span class="line">    .abi = std.Target.Abi.musl,</span><br><span class="line">&#125;;</span><br><span class="line">const target = b.standardTargetOptions(.&#123;</span><br><span class="line">    .default_target = default_target,</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>指定 release 使用方式</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">const optimize = b.standardOptimizeOption(.&#123;</span><br><span class="line">    .preferred_optimize_mode = std.builtin.OptimizeMode.ReleaseSmall,</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<h2 id="编译为动态库"><a href="#编译为动态库" class="headerlink" title="编译为动态库"></a>编译为动态库</h2><p>build.zig</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">const lib = b.addSharedLibrary(.&#123;</span><br><span class="line">    .name = &quot;demo&quot;,</span><br><span class="line">    .root_source_file = b.path(&quot;src/root.zig&quot;),</span><br><span class="line">    .target = target,</span><br><span class="line">    .optimize = optimize,</span><br><span class="line">  &#125;);</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
+    <h3 class="article-title"><a href="/2025/10/06/zig/"><span>zig基础用法</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/10/06/zig/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-10-06T00:07:48.000Z">
+          2025-10-06
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <p>遍历</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">const std = @import(&quot;std&quot;);</span><br><span class="line"></span><br><span class="line">pub fn main() !void &#123;</span><br><span class="line">    const data_list = [_]u8&#123; &#x27;a&#x27;, &#x27;b&#x27;, &#x27;c&#x27; &#125;;</span><br><span class="line">    for (data_list, 0..data_list.len) |item, index| &#123;</span><br><span class="line">        std.log.debug(&quot;index: &#123;d&#125;, item: &#123;c&#125;&quot;, .&#123; index, item &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>错误处理</p>
+<p>普通用法</p>
+<p>向上抛出错误</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">const std = @import(&quot;std&quot;);</span><br><span class="line"></span><br><span class="line">pub fn main() !void &#123;</span><br><span class="line">    const file = try std.fs.cwd().openFile(&quot;does_not_exist/foo.txt&quot;, .&#123;&#125;);</span><br><span class="line">    defer file.close();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>捕获错误</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">const std = @import(&quot;std&quot;);</span><br><span class="line"></span><br><span class="line">pub fn main() void &#123;</span><br><span class="line">    const file = std.fs.cwd().openFile(&quot;does_not_exist/foo.txt&quot;, .&#123;&#125;) catch |err| &#123;</span><br><span class="line">        std.log.debug(&quot;无法打开文件: &#123;&#125;&quot;, .&#123;err&#125;);</span><br><span class="line">        return;</span><br><span class="line">    &#125;;</span><br><span class="line">    defer &#123;</span><br><span class="line">        std.log.debug(&quot;错误的时候不会到这里&quot;, .&#123;&#125;);</span><br><span class="line">        file.close();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>自定义错误</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">const std = @import(&quot;std&quot;);</span><br><span class="line"></span><br><span class="line">const MyError = error&#123;</span><br><span class="line">    AAA,</span><br><span class="line">    BBB,</span><br><span class="line">    CCC,</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">fn demo_func(num: i32) !i32 &#123;</span><br><span class="line">    if (num &lt; 0) &#123;</span><br><span class="line">        return MyError.AAA;</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        return num * num;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">pub fn main() void &#123;</span><br><span class="line">    const result = demo_func(-111) catch |err| &#123;</span><br><span class="line">        std.log.debug(&quot;custom error reason &#123;&#125;&quot;, .&#123;err&#125;);</span><br><span class="line">        return;</span><br><span class="line">    &#125;;</span><br><span class="line">    std.log.debug(&quot;result &#123;d&#125;&quot;, .&#123;result&#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>errdefer</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">const std = @import(&quot;std&quot;);</span><br><span class="line"></span><br><span class="line">pub fn aa() !void &#123;</span><br><span class="line">    errdefer &#123;</span><br><span class="line">        std.log.debug(&quot;errdefer 清理垃圾&quot;, .&#123;&#125;);</span><br><span class="line">    &#125;</span><br><span class="line">    return error.aaa;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">pub fn main() !void &#123;</span><br><span class="line">    // try aa();</span><br><span class="line"></span><br><span class="line">    aa() catch |err| &#123;</span><br><span class="line">        std.log.debug(&quot;捕获错误 &#123;&#125;&quot;, .&#123;err&#125;);</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    std.log.debug(&quot;正常运行&quot;, .&#123;&#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>泛型</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">const std = @import(&quot;std&quot;);</span><br><span class="line"></span><br><span class="line">const MyType = u64;</span><br><span class="line"></span><br><span class="line">fn max(comptime T: type, a: T, b: T) T &#123;</span><br><span class="line">    return if (a &gt; b) a else b;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">pub fn main() void &#123;</span><br><span class="line">    const result = max(MyType, 11, 22);</span><br><span class="line">    std.log.debug(&quot;result &#123;d&#125;&quot;, .&#123;result&#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>回调函数</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">const std = @import(&quot;std&quot;);</span><br><span class="line"></span><br><span class="line">const CallBackProc = fn (arg: u64) void;</span><br><span class="line"></span><br><span class="line">fn demo(comptime callback_proc: CallBackProc, ms: u64) void &#123;</span><br><span class="line">    callback_proc(ms);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">fn on_callback(argument: u64) void &#123;</span><br><span class="line">    std.log.debug(&quot;proc args &#123;d&#125;&quot;, .&#123;argument&#125;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">pub fn main() void &#123;</span><br><span class="line">    demo(on_callback, 10000);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>类型转换</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">const std = @import(&quot;std&quot;);</span><br><span class="line"></span><br><span class="line">pub fn main() !void &#123;</span><br><span class="line">    const a: u64 = 111;</span><br><span class="line">    const b: u32 = @truncate(a);</span><br><span class="line">    std.log.debug(&quot;a &#123;d&#125; b &#123;d&#125;&quot;, .&#123; a, b &#125;);</span><br><span class="line"></span><br><span class="line">    const isok = false;</span><br><span class="line">    const val: u8 = @intCast(@intFromBool(isok));</span><br><span class="line">    std.log.debug(&quot;isok &#123;d&#125;&quot;, .&#123;val&#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>内存分配器</p>
+<p>建议把 allocator 当作为参数，类型是 std.mem.Allocator</p>
+<p>page_allocator</p>
+<p>通常用于处理大块内存的分配, 很慢, 不需要 deinit</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">const std = @import(&quot;std&quot;);</span><br><span class="line">const expect = std.testing.expect;</span><br><span class="line"></span><br><span class="line">test &quot;page allocator&quot; &#123;</span><br><span class="line">    const allocator = std.heap.page_allocator;</span><br><span class="line"></span><br><span class="line">    const memory = demo(allocator) catch |err| &#123;</span><br><span class="line">        std.debug.print(&quot;error occurred: &#123;&#125;\n&quot;, .&#123;err&#125;);</span><br><span class="line">        return;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    try expect(memory.len == 100);</span><br><span class="line">    try expect(@TypeOf(memory) == []u8);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">pub fn demo(allocator: std.mem.Allocator) ![]u8 &#123;</span><br><span class="line">    const memory = try allocator.alloc(u8, 100);</span><br><span class="line"></span><br><span class="line">    defer &#123;</span><br><span class="line">        std.debug.print(&quot;准备 free allocator\n&quot;, .&#123;&#125;);</span><br><span class="line">        allocator.free(memory);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    return memory;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>fba</p>
+<p>不能使用堆内存的时候用，比如写内核的时候, 如果字节用完，会报 OutOfMemory 错误</p>
+<p>不需要 deinit, alloc 出来的内存可以多次 free</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">const std = @import(&quot;std&quot;);</span><br><span class="line">const expect = std.testing.expect;</span><br><span class="line"></span><br><span class="line">test &quot;fba&quot; &#123;</span><br><span class="line">    var buffer: [1000]u8 = undefined;</span><br><span class="line">    var fba = std.heap.FixedBufferAllocator.init(&amp;buffer);</span><br><span class="line">    const allocator = fba.allocator();</span><br><span class="line"></span><br><span class="line">    const memory = demo(allocator) catch |err| &#123;</span><br><span class="line">        std.log.debug(&quot;error occurred: &#123;&#125;&quot;, .&#123;err&#125;);</span><br><span class="line">        return;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    try expect(memory.len == 100);</span><br><span class="line">    try expect(@TypeOf(memory) == []u8);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">pub fn demo(allocator: std.mem.Allocator) ![]u8 &#123;</span><br><span class="line">    const memory = try allocator.alloc(u8, 100);</span><br><span class="line"></span><br><span class="line">    defer &#123;</span><br><span class="line">        std.debug.print(&quot;准备 free allocator\n&quot;, .&#123;&#125;);</span><br><span class="line">        allocator.free(memory);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    return memory;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>gpa</p>
+<p>为安全设计的内存分配器</p>
+<p>deinit 返回状态值，用来检测内存泄漏</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">const std = @import(&quot;std&quot;);</span><br><span class="line">const expect = std.testing.expect;</span><br><span class="line"></span><br><span class="line">test &quot;gpa&quot; &#123;</span><br><span class="line">    const config = .&#123;&#125;;</span><br><span class="line">    var gpa = std.heap.GeneralPurposeAllocator(config)&#123;&#125;;</span><br><span class="line">    defer &#123;</span><br><span class="line">        if (gpa.deinit() != .ok) &#123;</span><br><span class="line">            @panic(&quot;发现内存泄漏&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    const allocator = gpa.allocator();</span><br><span class="line"></span><br><span class="line">    const memory = demo(allocator) catch |err| &#123;</span><br><span class="line">        std.log.debug(&quot;error occurred: &#123;&#125;&quot;, .&#123;err&#125;);</span><br><span class="line">        return;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    try expect(memory.len == 100);</span><br><span class="line">    try expect(@TypeOf(memory) == []u8);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">pub fn demo(allocator: std.mem.Allocator) ![]u8 &#123;</span><br><span class="line">    const memory = try allocator.alloc(u8, 100);</span><br><span class="line"></span><br><span class="line">    defer &#123;</span><br><span class="line">        std.debug.print(&quot;准备 free allocator\n&quot;, .&#123;&#125;);</span><br><span class="line">        allocator.free(memory);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    return memory;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>testing_allocator</p>
+<p>用于测试用例里面检测 leak</p>
+<p>运行 <code>zig test xxx.zig</code> 的时候才能用</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">const allocator = std.testing.allocator;</span><br></pre></td></tr></table></figure>
+
+<p>ArenaAllocator</p>
+<p>用于短期内需要临时创建和销毁多个小对象</p>
+<p>alloc 出来的内存会自动 free</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">const std = @import(&quot;std&quot;);</span><br><span class="line"></span><br><span class="line">test &quot;arena&quot; &#123;</span><br><span class="line">    var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);</span><br><span class="line">    defer &#123;</span><br><span class="line">        std.debug.print(&quot;准备 arena Allocator.deinit\n&quot;, .&#123;&#125;);</span><br><span class="line">        arena.deinit();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    const allocator = arena.allocator();</span><br><span class="line"></span><br><span class="line">    const m1 = try allocator.alloc(u8, 1);</span><br><span class="line">    const m2 = try allocator.alloc(u8, 10);</span><br><span class="line">    _ = try allocator.alloc(u8, 100);</span><br><span class="line"></span><br><span class="line">    defer &#123;</span><br><span class="line">        std.debug.print(&quot;准备 free arena Allocator\n&quot;, .&#123;&#125;);</span><br><span class="line">        allocator.free(m1);</span><br><span class="line">        allocator.free(m2);</span><br><span class="line">        // allocator.free(m3);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>封装</p>
+<p>safe_gpa.zig</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">const std = @import(&quot;std&quot;);</span><br><span class="line"></span><br><span class="line">pub const Gpa = struct &#123;</span><br><span class="line">    gpa: std.heap.GeneralPurposeAllocator(.&#123;&#125;) = std.heap.GeneralPurposeAllocator(.&#123;&#125;)&#123;&#125;,</span><br><span class="line"></span><br><span class="line">    pub fn allocator(self: *Gpa) std.mem.Allocator &#123;</span><br><span class="line">        return self.gpa.allocator();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    pub fn deinit(self: *Gpa) void &#123;</span><br><span class="line">        if (self.gpa.deinit() != .ok) &#123;</span><br><span class="line">            @panic(&quot;发现内存泄漏&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">pub fn init() Gpa &#123;</span><br><span class="line">    return Gpa&#123;&#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>main.zig</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">const std = @import(&quot;std&quot;);</span><br><span class="line">const safe_gpa = @import(&quot;safe_gpa.zig&quot;);</span><br><span class="line"></span><br><span class="line">pub fn main() !void &#123;</span><br><span class="line">    var gpa = safe_gpa.init();</span><br><span class="line">    defer gpa.deinit();</span><br><span class="line"></span><br><span class="line">    const gpa_allocator = gpa.allocator();</span><br><span class="line"></span><br><span class="line">    // 外面包一层线程安全的 allocator</span><br><span class="line">    var thread_safe_fba = std.heap.ThreadSafeAllocator&#123; .child_allocator = gpa_allocator &#125;;</span><br><span class="line">    const thread_safe_allocator = thread_safe_fba.allocator();</span><br><span class="line"></span><br><span class="line">    // 外面包一层 arena 分配器</span><br><span class="line">    var arena = std.heap.ArenaAllocator.init(thread_safe_allocator);</span><br><span class="line">    defer arena.deinit();</span><br><span class="line">    const allocator = arena.allocator();</span><br><span class="line"></span><br><span class="line">    const formatted_str = try std.fmt.allocPrint(allocator, &quot;测试 &#123;&#125;&quot;, .&#123;42&#125;);</span><br><span class="line">    // defer allocator.free(formatted_str);</span><br><span class="line"></span><br><span class="line">    std.log.debug(&quot;&#123;s&#125;&quot;, .&#123;formatted_str&#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>指针</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">const std = @import(&quot;std&quot;);</span><br><span class="line"></span><br><span class="line">pub fn main() !void &#123;</span><br><span class="line">    var value: i32 = 42;</span><br><span class="line">    const ptr: *const i32 = &amp;value;</span><br><span class="line"></span><br><span class="line">    std.log.debug(&quot;value: &#123;&#125;&quot;, .&#123;ptr.*&#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>array_list</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">const std = @import(&quot;std&quot;);</span><br><span class="line">const equal = std.mem.eql;</span><br><span class="line">const ArrayList = std.ArrayList;</span><br><span class="line">const allocator = std.heap.page_allocator;</span><br><span class="line"></span><br><span class="line">pub fn main() !void &#123;</span><br><span class="line">    var array_list = ArrayList(u8).init(allocator);</span><br><span class="line">    defer array_list.deinit();</span><br><span class="line"></span><br><span class="line">    try array_list.append(&#x27;H&#x27;);</span><br><span class="line">    try array_list.append(&#x27;e&#x27;);</span><br><span class="line">    try array_list.append(&#x27;l&#x27;);</span><br><span class="line">    try array_list.append(&#x27;l&#x27;);</span><br><span class="line">    try array_list.append(&#x27;o&#x27;);</span><br><span class="line">    try array_list.appendSlice(&quot; World!&quot;);</span><br><span class="line"></span><br><span class="line">    std.log.debug(&quot;&#123;s&#125;&quot;, .&#123;array_list.items&#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>array</p>
+<p>array 固定大小</p>
+<p>slice 动态大小</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">const std = @import(&quot;std&quot;);</span><br><span class="line"></span><br><span class="line">pub fn abc(list: []u8) void &#123;</span><br><span class="line">    std.log.debug(&quot;in abc &#123;any&#125;&quot;, .&#123;list&#125;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">pub fn main() !void &#123;</span><br><span class="line">    var list = [_]u8&#123; 11, 22, 33, 44 &#125;;</span><br><span class="line">    abc(list[0..]);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>例子</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">const std = @import(&quot;std&quot;);</span><br><span class="line"></span><br><span class="line">const allocator = std.heap.page_allocator;</span><br><span class="line"></span><br><span class="line">pub fn demo(list: []u8, data_list: []u8) []u8 &#123;</span><br><span class="line">    for (list, 0..list.len) |_, index| &#123;</span><br><span class="line">        data_list[index] = @truncate(index);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    return data_list[0..];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">pub fn main() void &#123;</span><br><span class="line">    var list = [_]u8&#123; 11, 22, 33, 44 &#125;;</span><br><span class="line">    const data_list = allocator.alloc(u8, list.len) catch |err| &#123;</span><br><span class="line">        std.log.debug(&quot;err &#123;any&#125;&quot;, .&#123;err&#125;);</span><br><span class="line">        return;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    defer allocator.free(data_list);</span><br><span class="line">    const aa = demo(list[0..], data_list);</span><br><span class="line">    std.log.debug(&quot;result &#123;any&#125;&quot;, .&#123;aa&#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>enum</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">const std = @import(&quot;std&quot;);</span><br><span class="line">const expect = std.testing.expect;</span><br><span class="line"></span><br><span class="line">const Result = enum(u32) &#123;</span><br><span class="line">    aa,</span><br><span class="line">    bb = 1000,</span><br><span class="line">    cc = 1000000,</span><br><span class="line">    dd,</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">test &quot;set enum ordinal value&quot; &#123;</span><br><span class="line">    try expect(@intFromEnum(Result.aa) == 0);</span><br><span class="line">    try expect(@intFromEnum(Result.bb) == 1000);</span><br><span class="line">    try expect(@intFromEnum(Result.cc) == 1000000);</span><br><span class="line">    try expect(@intFromEnum(Result.dd) == 1000001);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>hash_map</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">const std = @import(&quot;std&quot;);</span><br><span class="line">const expect = std.testing.expect;</span><br><span class="line"></span><br><span class="line">const allocator = std.testing.allocator;</span><br><span class="line"></span><br><span class="line">test &quot;hash_map&quot; &#123;</span><br><span class="line">    const Point = struct &#123; x: i32, y: i32 &#125;;</span><br><span class="line"></span><br><span class="line">    var hash_map = std.AutoHashMap(u32, Point).init(</span><br><span class="line">        allocator,</span><br><span class="line">    );</span><br><span class="line">    defer hash_map.deinit();</span><br><span class="line"></span><br><span class="line">    try hash_map.put(1525, .&#123; .x = 1, .y = -4 &#125;);</span><br><span class="line">    try hash_map.put(1550, .&#123; .x = 2, .y = -3 &#125;);</span><br><span class="line">    try hash_map.put(1575, .&#123; .x = 3, .y = -2 &#125;);</span><br><span class="line">    try hash_map.put(1600, .&#123; .x = 4, .y = -1 &#125;);</span><br><span class="line"></span><br><span class="line">    try expect(hash_map.count() == 4);</span><br><span class="line"></span><br><span class="line">    var sum = Point&#123; .x = 0, .y = 0 &#125;;</span><br><span class="line">    var iterator = hash_map.iterator();</span><br><span class="line"></span><br><span class="line">    while (iterator.next()) |item| &#123;</span><br><span class="line">        std.log.debug(&quot;key &#123;d&#125;, x &#123;d&#125;, y &#123;d&#125;&quot;, .&#123; item.key_ptr.*, item.value_ptr.x, item.value_ptr.y &#125;);</span><br><span class="line">        sum.x += item.value_ptr.x;</span><br><span class="line">        sum.y += item.value_ptr.y;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    try expect(sum.x == 10);</span><br><span class="line">    try expect(sum.y == -10);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>json</p>
+<p>标准库里面, 需要先定义 struct, 比较挫</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">const std = @import(&quot;std&quot;);</span><br><span class="line"></span><br><span class="line">const Place = struct &#123; lat: f32, long: f32 &#125;;</span><br><span class="line"></span><br><span class="line">fn str_to_json(allocator: std.mem.Allocator, json_str: []u8) !Place &#123;</span><br><span class="line">    const parsed = try std.json.parseFromSlice(</span><br><span class="line">        Place,</span><br><span class="line">        allocator,</span><br><span class="line">        json_str,</span><br><span class="line">        .&#123;&#125;,</span><br><span class="line">    );</span><br><span class="line">    defer parsed.deinit();</span><br><span class="line"></span><br><span class="line">    const place = parsed.value;</span><br><span class="line">    return place;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">fn json_to_str(allocator: std.mem.Allocator, json_obj: Place) ![]u8 &#123;</span><br><span class="line">    var json_str = std.ArrayList(u8).init(allocator);</span><br><span class="line">    try std.json.stringify(json_obj, .&#123;&#125;, json_str.writer());</span><br><span class="line"></span><br><span class="line">    std.log.debug(&quot;&#123;s&#125;&quot;, .&#123;json_str.items&#125;);</span><br><span class="line"></span><br><span class="line">    return json_str.items;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">pub fn main() !void &#123;</span><br><span class="line">    const allocator = std.heap.page_allocator;</span><br><span class="line"></span><br><span class="line">    const obj = Place&#123;</span><br><span class="line">        .lat = 51.997664,</span><br><span class="line">        .long = -0.740687,</span><br><span class="line">    &#125;;</span><br><span class="line">    const json_str = try json_to_str(allocator, obj);</span><br><span class="line">    const json_obj = try str_to_json(allocator, json_str);</span><br><span class="line">    std.log.debug(&quot;&#123;any&#125;&quot;, .&#123;json_obj.long&#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="log"><a href="#log" class="headerlink" title="log"></a>log</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">const std = @import(&quot;std&quot;);</span><br><span class="line"></span><br><span class="line">pub fn main() void &#123;</span><br><span class="line">    const info = &quot;hi&quot;;</span><br><span class="line">    const data_list = [_]u8&#123; 11, 22, 33, 44, 55 &#125;;</span><br><span class="line">    std.log.debug(&quot;info &#123;s&#125; data_list &#123;any&#125;&quot;, .&#123; info, data_list &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>test 不支持 log</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">const std = @import(&quot;std&quot;);</span><br><span class="line"></span><br><span class="line">test &quot;debug log&quot; &#123;</span><br><span class="line">    // std.log.debug(&quot;log.debug&quot;, .&#123;&#125;);</span><br><span class="line">    std.debug.print(&quot;debug.print\n&quot;, .&#123;&#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>optional</p>
+<p>用于表示一个值可能存在或者为 null</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">const std = @import(&quot;std&quot;);</span><br><span class="line"></span><br><span class="line">pub fn main() !void &#123;</span><br><span class="line">    // 创建 option</span><br><span class="line">    var demo_option: ?u8 = null;</span><br><span class="line">    demo_option = 111;</span><br><span class="line"></span><br><span class="line">    // 修改 option</span><br><span class="line">    if (demo_option) |*value| &#123;</span><br><span class="line">        std.log.debug(&quot;set data to option&quot;, .&#123;&#125;);</span><br><span class="line">        value.* += 1;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    if (demo_option == null) &#123;</span><br><span class="line">        std.log.debug(&quot;null\n&quot;, .&#123;&#125;);</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        const val = demo_option.?;</span><br><span class="line">        std.log.debug(&quot;not null, is &#123;d&#125;&quot;, .&#123;val&#125;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">const std = @import(&quot;std&quot;);</span><br><span class="line"></span><br><span class="line">var _gpa: ?std.heap.GeneralPurposeAllocator(.&#123;&#125;) = null;</span><br><span class="line"></span><br><span class="line">pub fn get_allocator() std.mem.Allocator &#123;</span><br><span class="line">    if (_gpa == null) &#123;</span><br><span class="line">        _gpa = std.heap.GeneralPurposeAllocator(.&#123;&#125;)&#123;&#125;;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    return _gpa.?.allocator();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">pub fn deinit() void &#123;</span><br><span class="line">    if (_gpa != null) &#123;</span><br><span class="line">        _ = _gpa.?.deinit();</span><br><span class="line">        _gpa = null;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">const std = @import(&quot;std&quot;);</span><br><span class="line">const gpa = @import(&quot;gpa.zig&quot;);</span><br><span class="line"></span><br><span class="line">pub fn main() !void &#123;</span><br><span class="line">    const allocator = gpa.get_allocator();</span><br><span class="line">    defer gpa.deinit();</span><br><span class="line"></span><br><span class="line">    const formatted_str = try std.fmt.allocPrint(allocator, &quot;测试 &#123;&#125;&quot;, .&#123;42&#125;);</span><br><span class="line">    defer allocator.free(formatted_str);</span><br><span class="line"></span><br><span class="line">    std.debug.print(&quot;&#123;s&#125;\n&quot;, .&#123;formatted_str&#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>string</p>
+<p>zig 没有内置的 string 类型</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">const std = @import(&quot;std&quot;);</span><br><span class="line"></span><br><span class="line">const String = []const u8;</span><br><span class="line"></span><br><span class="line">pub fn demo() String &#123;</span><br><span class="line">    return &quot;aaa&quot;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">pub fn main() !void &#123;</span><br><span class="line">    const aa = demo();</span><br><span class="line">    const bb = &quot;bbb&quot;;</span><br><span class="line">    std.log.debug(&quot;result &#123;s&#125; &#123;s&#125;&quot;, .&#123; aa, bb &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>struct</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">const std = @import(&quot;std&quot;);</span><br><span class="line"></span><br><span class="line">const MyStruct = struct &#123;</span><br><span class="line">    x: f32,</span><br><span class="line">    y: f32,</span><br><span class="line">    z: f32 = 222.0,</span><br><span class="line"></span><br><span class="line">    fn demo(self: *MyStruct) void &#123;</span><br><span class="line">        const tmp = self.x;</span><br><span class="line">        self.x = self.y;</span><br><span class="line">        self.y = tmp;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">pub fn main() !void &#123;</span><br><span class="line">    var aa = MyStruct&#123;</span><br><span class="line">        .x = 10,</span><br><span class="line">        .y = 20,</span><br><span class="line">    &#125;;</span><br><span class="line">    aa.demo();</span><br><span class="line">    std.log.debug(&quot;aa = &#123;&#125;&quot;, .&#123;aa&#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>thread</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">const std = @import(&quot;std&quot;);</span><br><span class="line">const expect = std.testing.expect;</span><br><span class="line"></span><br><span class="line">fn threadProc(thread_arg: u32) void &#123;</span><br><span class="line">    std.log.debug(&quot;&#123;d&#125; in thread&quot;, .&#123;thread_arg&#125;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">pub fn main() !void &#123;</span><br><span class="line">    const thread = try std.Thread.spawn(.&#123;&#125;, threadProc, .&#123;11111&#125;);</span><br><span class="line">    _ = thread;</span><br><span class="line">    // thread.join();</span><br><span class="line">    std.time.sleep(1 * std.time.ns_per_s);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>union</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">const std = @import(&quot;std&quot;);</span><br><span class="line"></span><br><span class="line">const Result = union(enum) &#123;</span><br><span class="line">    a: u8,</span><br><span class="line">    b: f32,</span><br><span class="line">    c: bool,</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">pub fn main() !void &#123;</span><br><span class="line">    var value = Result&#123;</span><br><span class="line">        .b = 1.5,</span><br><span class="line">    &#125;;</span><br><span class="line">    value.b = 3.156;</span><br><span class="line">    std.log.debug(&quot;&#123;d:.2&#125;&quot;, .&#123;value.b&#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
+    <h3 class="article-title"><a href="/2025/10/05/mise/"><span>mise</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/10/05/mise/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-10-05T06:55:49.000Z">
+          2025-10-05
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <p>多版本管理工具，支持多种后端，自动选择，更好用</p>
+<p>安装命令</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl https://mise.run | sh</span><br></pre></td></tr></table></figure>
+
+<p>~&#x2F;.profile</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">eval</span> <span class="string">&quot;<span class="subst">$(mise activate zsh)</span>&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>所在路径</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$HOME</span>/.local/bin/mise</span><br><span class="line"><span class="variable">$HOME</span>/.config/mise/</span><br><span class="line"><span class="variable">$HOME</span>/.local/share/mise/</span><br><span class="line"><span class="variable">$HOME</span>/.local/state/mise/</span><br></pre></td></tr></table></figure>
+
+<p>搜索</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">mise search xxx</span><br><span class="line">mise <span class="built_in">ls</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 可以看 tag</span></span><br><span class="line">mise ls-remote node</span><br></pre></td></tr></table></figure>
+
+<p>安装并且写入 toml</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">mise use node@22</span><br><span class="line">mise use -g node@lts</span><br><span class="line"></span><br><span class="line"><span class="comment"># 从 toml 里面删除</span></span><br><span class="line">mise unuse node@22</span><br></pre></td></tr></table></figure>
+
+<p>安装卸载</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mise install node@22</span><br><span class="line">mise uninstall node@22</span><br></pre></td></tr></table></figure>
+
+<p>更新</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mise self-update</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
+    <h3 class="article-title"><a href="/2025/10/04/vm/"><span>virt-manager</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/10/04/vm/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-10-04T00:01:20.000Z">
+          2025-10-04
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h2 id="权限问题"><a href="#权限问题" class="headerlink" title="权限问题"></a>权限问题</h2><p>说明</p>
+<table>
+<thead>
+<tr>
+<th>Group</th>
+<th>用途说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>libvirt</td>
+<td><code>virt-manager</code> 管理虚拟机<br><code>virsh</code> CLI 管理虚拟机</td>
+</tr>
+<tr>
+<td>libvirt-qemu</td>
+<td><code>libvirt</code> 启动 vm <code>qemu-system-*</code></td>
+</tr>
+<tr>
+<td>kvm</td>
+<td>手动运行 <code>qemu-system-xxx</code> 用</td>
+</tr>
+</tbody></table>
+<p>查看 group 有没有</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">getent group kvm</span><br><span class="line">getent group libvirt</span><br><span class="line">getent group libvirt-qemu</span><br></pre></td></tr></table></figure>
+
+<p>如果你的 vm 目录不是标准目录，建议</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/etc/libvirt/qemu.conf</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">user = &quot;xxx&quot;</span><br></pre></td></tr></table></figure>
+
+<h2 id="网络配置"><a href="#网络配置" class="headerlink" title="网络配置"></a>网络配置</h2><p>NAT</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">10.0.2.0/24</span><br></pre></td></tr></table></figure>
+
+<p>隔离网络</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">192.168.56.0/24</span><br></pre></td></tr></table></figure>
+
+<p>虚拟机 nic 里面添加两个网卡</p>
+<p>nat 网卡</p>
+<p>&#x2F;etc&#x2F;network&#x2F;interfaces.d&#x2F;nat</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">auto enp1s0</span><br><span class="line">iface enp1s0 inet dhcp</span><br></pre></td></tr></table></figure>
+
+<p>或者</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">auto enp1s0</span><br><span class="line">iface enp1s0 inet static</span><br><span class="line">   address 10.0.2.15/24</span><br><span class="line">   gateway 10.0.2.1</span><br></pre></td></tr></table></figure>
+
+<p>或者</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">auto enp1s0</span><br><span class="line">iface enp1s0 inet static</span><br><span class="line">   address 10.0.2.15</span><br><span class="line">   netmask 255.255.255.0</span><br><span class="line">   gateway 10.0.2.1</span><br></pre></td></tr></table></figure>
+
+<p>host-only 网卡</p>
+<p>&#x2F;etc&#x2F;network&#x2F;interfaces.d&#x2F;host_only</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">auto enp2s0</span><br><span class="line">iface enp2s0 inet static</span><br><span class="line">   address 192.168.56.11/24</span><br></pre></td></tr></table></figure>
+
+<p>指定网关</p>
+<p>如果双网卡都配置了网关，则需指定默认网关</p>
+<p>否则由于加载顺序的原因，默认网关可能为 host-only，无法访问外网</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/etc/network/interfaces</span><br></pre></td></tr></table></figure>
+
+<p>最后一行添加</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ip route add 10.0.2.0/24 via 10.0.2.1 dev enp1s0</span><br></pre></td></tr></table></figure>
+
+<p>dns 配置</p>
+<p>如果需要手动指定 dns</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> systemctl stop NetworkManager</span><br></pre></td></tr></table></figure>
+
+<p>或者</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/etc/NetworkManager/NetworkManager.conf</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">[main]</span></span><br><span class="line"><span class="attr">dns</span>=none</span><br></pre></td></tr></table></figure>
+
+<p>手动设置 dns</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/etc/resolv.conf</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">nameserver 223.5.5.5</span><br><span class="line">nameserver 223.6.6.6</span><br></pre></td></tr></table></figure>
+
+<p>重启网络</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> systemctl restart networking</span><br></pre></td></tr></table></figure>
+
+<p>检查路由</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> route -n</span><br></pre></td></tr></table></figure>
+
+<h2 id="vm-增强"><a href="#vm-增强" class="headerlink" title="vm 增强"></a>vm 增强</h2><p>用于共享剪贴板，分辨率自适应</p>
+<p>物理机</p>
+<p>debian</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt install qemu-guest-agent</span><br></pre></td></tr></table></figure>
+
+<p>manjaro</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yay -S spice-guest-tools-windows</span><br></pre></td></tr></table></figure>
+
+<p>虚拟机</p>
+<p>win</p>
+<p>虚拟机挂载驱动, 对应在物理机上的路径</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/usr/share/spice-guest-tools/spice-guest-tools.iso</span><br></pre></td></tr></table></figure>
+
+<p>vm 最好使用 qxl 作为显卡，不然缩放会出问题</p>
+<p>debian</p>
+<p>虚拟机安装</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt install spice-vdagent</span><br></pre></td></tr></table></figure>
+
+<p>manjaro</p>
+<p>虚拟机安装</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> pacman -S spice-vdagent</span><br></pre></td></tr></table></figure>
+
+<h2 id="win7"><a href="#win7" class="headerlink" title="win7"></a>win7</h2><p>必须在物理机上安装这个，否则无法安装 win7 虚拟机</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pacman -S virtio-win</span><br></pre></td></tr></table></figure>
+
+<p>smb 共享</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">安装 smb 客户端</span><br><span class="line">net use z: \\192.168.56.1\smb</span><br><span class="line">net use * /del /y</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
+    <h3 class="article-title"><a href="/2025/10/03/remote-desktop/"><span>远程桌面</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/10/03/remote-desktop/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-10-03T10:39:38.000Z">
+          2025-10-03
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h2 id="win-远程-linux"><a href="#win-远程-linux" class="headerlink" title="win 远程 linux"></a>win 远程 linux</h2><h3 id="rdp"><a href="#rdp" class="headerlink" title="rdp"></a>rdp</h3><p>linux 上配置，使用微软的远程工具连接</p>
+<p>以 manjaro 为例</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">&quot;Updating system...&quot;</span></span><br><span class="line"><span class="built_in">sudo</span> pacman -Syu</span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;Installing xrdp and xorgxrdp-git...&quot;</span></span><br><span class="line"><span class="built_in">sudo</span> pacman -Sy yay base-devel xorg-xserver-devel</span><br><span class="line">yay -S xrdp xorgxrdp</span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;Configuring Xwrapper...&quot;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;allowed_users=anybody&quot;</span> | <span class="built_in">sudo</span> <span class="built_in">tee</span> -a /etc/X11/Xwrapper.config</span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;Configuring .xinitrc...&quot;</span></span><br><span class="line">sed -i <span class="string">&#x27;s/^\(SESSION=$&#123;1:-xfce-session&#125;\)$/#\1 # original\nSESSION=$&#123;1:-xfce4-session&#125;/&#x27;</span> ~/.xinitrc</span><br><span class="line">sed -i <span class="string">&#x27;s/^\s*\(local dbus_args=(--sh-syntax --exit-with-session)\)$/#\1 # original\nlocal dbus_args=(--sh-syntax)/&#x27;</span> ~/.xinitrc</span><br><span class="line">sed -i <span class="string">&#x27;s/^\(exec $(get_session &quot;$1&quot;)\)$/#\1 # original\nexec $(get_session &quot;$SESSION&quot;)/&#x27;</span> ~/.xinitrc</span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;Enabling xrdp service...&quot;</span></span><br><span class="line"><span class="built_in">sudo</span> systemctl <span class="built_in">enable</span> --now xrdp.service</span><br></pre></td></tr></table></figure>
+
+<h3 id="vnc"><a href="#vnc" class="headerlink" title="vnc"></a>vnc</h3><p>windows 用 vnc 客户端</p>
+<p>安装</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> pacman -S x11vnc</span><br><span class="line"><span class="built_in">sudo</span> apt install x11vnc -y</span><br></pre></td></tr></table></figure>
+
+<p>服务</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/usr/local/lib/systemd/system/vnc.service</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">[Unit]</span></span><br><span class="line"><span class="attr">Description</span>=vnc</span><br><span class="line"><span class="attr">After</span>=multi-user.target</span><br><span class="line"></span><br><span class="line"><span class="section">[Service]</span></span><br><span class="line"><span class="attr">Type</span>=simple</span><br><span class="line"><span class="comment"># ExecStart=x11vnc -auth guess -forever -loop -noxdamage -scale 0.9x0.9 -passwd 90909090 -repeat -shared -o /var/log/x11vnc.log</span></span><br><span class="line"><span class="attr">ExecStart</span>=x11vnc -auth guess -forever -noxdamage -scale <span class="number">0.9</span>x0.<span class="number">9</span> -passwd <span class="number">90909090</span></span><br><span class="line"></span><br><span class="line"><span class="section">[Install]</span></span><br><span class="line"><span class="attr">WantedBy</span>=multi-user.target</span><br></pre></td></tr></table></figure>
+
+<p>开机启动</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl <span class="built_in">enable</span> vnc --now</span><br></pre></td></tr></table></figure>
+
+<h2 id="linux-远程-win"><a href="#linux-远程-win" class="headerlink" title="linux 远程 win"></a>linux 远程 win</h2><p>一句话</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rdesktop xx.xx.xx.xx:3389</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
+    <h3 class="article-title"><a href="/2025/10/02/ssh/"><span>ssh 的一些用法</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/10/02/ssh/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-10-01T23:39:34.000Z">
+          2025-10-02
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h2 id="配置密钥"><a href="#配置密钥" class="headerlink" title="配置密钥"></a>配置密钥</h2><p>生成公钥</p>
+<p>最好指定密钥文件名，默认是在 ~&#x2F;.ssh 下面</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh-keygen -t rsa -b 4096 -C <span class="string">&quot;xxx@xxx.com&quot;</span> -f ~/downloads/key</span><br></pre></td></tr></table></figure>
+
+<p>私钥权限必须是 600</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">chmod</span> 600 ~/downloads/*</span><br></pre></td></tr></table></figure>
+
+<p>上传公钥</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh-copy-id -i ~/downloads/key.pub root@192.168.56.11</span><br></pre></td></tr></table></figure>
+
+<p>服务器上公钥的保存路径</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># /etc/ssh/sshd_config</span></span><br><span class="line">AuthorizedKeysFile ~/.ssh/authorized_keys</span><br></pre></td></tr></table></figure>
+
+<p>用私钥连接</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh -i ~/downloads/key root@192.168.56.11</span><br></pre></td></tr></table></figure>
+
+<h2 id="免密登陆"><a href="#免密登陆" class="headerlink" title="免密登陆"></a>免密登陆</h2><p>启动 agent</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">eval</span> <span class="string">&quot;<span class="subst">$(ssh-agent -s)</span>&quot;</span></span><br><span class="line">ssh-add ~/.ssh/id_rsa</span><br></pre></td></tr></table></figure>
+
+<p>~&#x2F;.profile</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> ! pgrep -u <span class="string">&quot;<span class="variable">$USER</span>&quot;</span> ssh-agent &gt; /dev/null; <span class="keyword">then</span></span><br><span class="line">    <span class="built_in">eval</span> <span class="string">&quot;<span class="subst">$(ssh-agent -s 2&gt; /dev/null | grep -v &#x27;Agent pid&#x27;)</span>&quot;</span> &gt; /dev/null</span><br><span class="line">    <span class="built_in">trap</span> <span class="string">&#x27;ssh-agent -k &gt; /dev/null 2&gt;&amp;1&#x27;</span> EXIT</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line">ssh-add ~/downloads/keys/key &gt; /dev/null 2&gt;&amp;1</span><br></pre></td></tr></table></figure>
+
+<p>连接</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 连接服务器 A</span></span><br><span class="line">ssh -A root@xx.xx.xx.xx</span><br><span class="line"></span><br><span class="line"><span class="comment"># 成功以后，在当前 shell 内，连接服务器 B</span></span><br><span class="line">ssh root@yy.yy.yy.yy</span><br></pre></td></tr></table></figure>
+
+<h2 id="指纹更新"><a href="#指纹更新" class="headerlink" title="指纹更新"></a>指纹更新</h2><p>服务器无法登录，提示 fingerprint 更新</p>
+<p>删除 <code>~/.ssh/known_hosts</code></p>
+<p>或者</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh-keygen -R <span class="variable">$SERVER_IP</span>:<span class="variable">$SERVER_PORT</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="autossh"><a href="#autossh" class="headerlink" title="autossh"></a>autossh</h2><p>本地隧道</p>
+<p>原来需要远程访问的服务，变为本地访问的服务</p>
+<p>TARGET_IP 和 VPS_IP 可以不相同</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">autossh -M 0 -i ./keys/id_rsa \</span><br><span class="line">  -o <span class="string">&quot;StrictHostKeyChecking no&quot;</span> \</span><br><span class="line">  -o <span class="string">&quot;ServerAliveInterval 30&quot;</span> \</span><br><span class="line">  -CfNg -L <span class="variable">$LOCAL_IP</span>:<span class="variable">$LOCAL_PORT</span>:<span class="variable">$TARGET_IP</span>:<span class="variable">$TARGET_PORT</span> \</span><br><span class="line">  root@<span class="variable">$VPS</span></span><br></pre></td></tr></table></figure>
+
+<p>把服务转发给其它机器</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">autossh -M 0 -i ./keys/id_rsa \</span><br><span class="line">  -o <span class="string">&quot;StrictHostKeyChecking no&quot;</span> \</span><br><span class="line">  -o <span class="string">&quot;ServerAliveInterval 30&quot;</span> \</span><br><span class="line">  -CfNg -R <span class="variable">$NEW_SERVER_PORT</span>:<span class="variable">$OLD_SERVER_IP</span>:<span class="variable">$OLD_SERVER_PORT</span> \</span><br><span class="line">  root@<span class="variable">$NEW_SERVER_IP</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="远程-gui"><a href="#远程-gui" class="headerlink" title="远程 gui"></a>远程 gui</h2><p>远程 ssh 执行 gui,在本地显示</p>
+<p>远程机器</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># linux</span></span><br><span class="line">sed -i <span class="string">&#x27;s/^#X11Forwarding no/X11Forwarding yes/&#x27;</span> /etc/ssh/sshd_config</span><br><span class="line"></span><br><span class="line"><span class="comment"># freebsd</span></span><br><span class="line">sed -i <span class="string">&quot;&quot;</span> <span class="string">&#x27;s/^#X11Forwarding no/X11Forwarding yes/&#x27;</span> /etc/ssh/sshd_config</span><br></pre></td></tr></table></figure>
+
+<p>本地</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh -YC xxx@xx.xx.xx.xx</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
+    <h3 class="article-title"><a href="/2025/10/01/uv/"><span>uv</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/10/01/uv/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-10-01T01:43:55.000Z">
+          2025-10-01
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <p>uv 为项目创建隔离的虚拟环境</p>
+<p>uvx 用于在临时环境中运行</p>
+<p>镜像配置</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> UV_INDEX=<span class="string">&quot;https://mirrors.aliyun.com/pypi/simple&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>创建项目</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">uv init demo</span><br></pre></td></tr></table></figure>
+
+<p>指定版本</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">uv init demo --python 3.10</span><br></pre></td></tr></table></figure>
+
+<p>在当前目录创建虚拟环境</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">uv venv</span><br></pre></td></tr></table></figure>
+
+<p>指定 python的 版本</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">uv venv --python 3.10</span><br></pre></td></tr></table></figure>
+
+<p>增加依赖</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 这个会更新 pyproject.toml，推荐</span></span><br><span class="line">uv add requests</span><br><span class="line"></span><br><span class="line"><span class="comment"># 这个 pip 是 uv 模拟的</span></span><br><span class="line">uv pip install requests</span><br></pre></td></tr></table></figure>
+
+<p>生成依赖文件</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">uv pip freeze &gt; requirements.txt</span><br><span class="line">uv pip compile pyproject.toml -o requirements.txt</span><br></pre></td></tr></table></figure>
+
+<p>同步依赖</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">uv <span class="built_in">sync</span></span><br><span class="line"></span><br><span class="line">uv pip <span class="built_in">sync</span> ./pyproject.toml</span><br><span class="line">uv pip <span class="built_in">sync</span> ./requirements.txt</span><br></pre></td></tr></table></figure>
+
+<h3 id="运行"><a href="#运行" class="headerlink" title="运行"></a>运行</h3><p>基于当前 venv 运行</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">uv run xxx</span><br><span class="line">uv run main.py</span><br></pre></td></tr></table></figure>
+
+<h2 id="指定版本"><a href="#指定版本" class="headerlink" title="指定版本"></a>指定版本</h2><p>查看</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">uv python list</span><br></pre></td></tr></table></figure>
+
+<p>用法</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">uv python install 3.10</span><br><span class="line">uv python uninstall 3.10</span><br></pre></td></tr></table></figure>
+
+<p>版本缓存目录，如果有问题，删除即可</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">rm</span> -rf <span class="variable">$HOME</span>/.local/share/uv/</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+
+<nav class="pagination">
+  
+  
+</nav>
+    </main>
+
+    <footer class="site-footer">
+  <p class="site-info">
+    Proudly powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and
+    Theme by <a href="https://github.com/CodeDaraW/Hacker" target="_blank">Hacker</a>
+    </br>
+    
+    &copy; 2025 John Doe
+    
+  </p>
+</footer>
+    
+    
+  </div>
+</div>
+</body>
+</html>
