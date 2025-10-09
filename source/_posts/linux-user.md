@@ -4,7 +4,7 @@ date: 2025-10-08 14:13:35
 tags:
 ---
 
-查看信息
+### 查看信息
 
 ```sh
 getent passwd postgres

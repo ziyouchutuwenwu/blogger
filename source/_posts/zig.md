@@ -4,7 +4,7 @@ date: 2025-10-06 08:07:48
 tags:
 ---
 
-遍历
+### 遍历
 
 ```zig
 const std = @import("std");
@@ -17,7 +17,7 @@ pub fn main() !void {
 }
 ```
 
-错误处理
+### 错误处理
 
 普通用法
 
@@ -100,7 +100,7 @@ pub fn main() !void {
 }
 ```
 
-泛型
+### 泛型
 
 ```zig
 const std = @import("std");
@@ -117,7 +117,7 @@ pub fn main() void {
 }
 ```
 
-回调函数
+### 回调函数
 
 ```zig
 const std = @import("std");
@@ -137,7 +137,7 @@ pub fn main() void {
 }
 ```
 
-类型转换
+### 类型转换
 
 ```zig
 const std = @import("std");
@@ -153,11 +153,11 @@ pub fn main() !void {
 }
 ```
 
-内存分配器
+### 内存分配器
 
 建议把 allocator 当作为参数，类型是 std.mem.Allocator
 
-page_allocator
+- page_allocator
 
 通常用于处理大块内存的分配, 很慢, 不需要 deinit
 
@@ -189,7 +189,7 @@ pub fn demo(allocator: std.mem.Allocator) ![]u8 {
 }
 ```
 
-fba
+- fba
 
 不能使用堆内存的时候用，比如写内核的时候, 如果字节用完，会报 OutOfMemory 错误
 
@@ -225,7 +225,7 @@ pub fn demo(allocator: std.mem.Allocator) ![]u8 {
 }
 ```
 
-gpa
+- gpa
 
 为安全设计的内存分配器
 
@@ -267,7 +267,7 @@ pub fn demo(allocator: std.mem.Allocator) ![]u8 {
 }
 ```
 
-testing_allocator
+- testing_allocator
 
 用于测试用例里面检测 leak
 
@@ -277,7 +277,7 @@ testing_allocator
 const allocator = std.testing.allocator;
 ```
 
-ArenaAllocator
+- ArenaAllocator
 
 用于短期内需要临时创建和销毁多个小对象
 
@@ -308,7 +308,7 @@ test "arena" {
 }
 ```
 
-封装
+### 封装
 
 safe_gpa.zig
 
@@ -362,7 +362,7 @@ pub fn main() !void {
 }
 ```
 
-指针
+### 指针
 
 ```zig
 const std = @import("std");
@@ -398,7 +398,7 @@ pub fn main() !void {
 }
 ```
 
-array
+### array
 
 array 固定大小
 
@@ -445,7 +445,7 @@ pub fn main() void {
 }
 ```
 
-enum
+### enum
 
 ```zig
 const std = @import("std");
@@ -466,7 +466,7 @@ test "set enum ordinal value" {
 }
 ```
 
-hash_map
+### hash_map
 
 ```zig
 const std = @import("std");
@@ -503,7 +503,7 @@ test "hash_map" {
 }
 ```
 
-json
+### json
 
 标准库里面, 需要先定义 struct, 比较挫
 
@@ -547,7 +547,7 @@ pub fn main() !void {
 }
 ```
 
-# log
+### log
 
 ```zig
 const std = @import("std");
@@ -570,7 +570,7 @@ test "debug log" {
 }
 ```
 
-optional
+### optional
 
 用于表示一个值可能存在或者为 null
 
@@ -633,7 +633,7 @@ pub fn main() !void {
 }
 ```
 
-string
+### string
 
 zig 没有内置的 string 类型
 
@@ -653,7 +653,7 @@ pub fn main() !void {
 }
 ```
 
-struct
+### struct
 
 ```zig
 const std = @import("std");
@@ -680,7 +680,7 @@ pub fn main() !void {
 }
 ```
 
-thread
+### thread
 
 ```zig
 const std = @import("std");
@@ -698,7 +698,7 @@ pub fn main() !void {
 }
 ```
 
-union
+### union
 
 ```zig
 const std = @import("std");

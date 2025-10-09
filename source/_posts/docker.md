@@ -4,7 +4,7 @@ date: 2025-10-09 09:11:41
 tags:
 ---
 
-基本用法
+### 基本用法
 
 ```sh
 docker run -it xxx /bin/bash
@@ -62,7 +62,7 @@ truncate -s 0 /var/lib/docker/containers/*/*.log
 docker stats
 ```
 
-构建
+### 构建
 
 ```sh
 docker build -t xxx ./ --no-cache
@@ -109,7 +109,7 @@ ENV MIX_ENV=${MIX_ENV}
 docker build --build-arg MIX_ENV=test -t demo ../ --no-cache
 ```
 
-同步时区
+### 同步时区
 
 构建时
 
@@ -133,7 +133,7 @@ docker run xxx -v /etc/localtime:/etc/localtime -e TZ=Asia/Shanghai
 docker run xxx -v /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime -e TZ=Asia/Shanghai
 ```
 
-自定义存储路径
+### 自定义存储路径
 
 ntfs 分区不支持
 
@@ -146,6 +146,8 @@ ntfs 分区不支持
   "data-root": "/mnt/vdb/docker"
 }
 ```
+
+### 导入导出
 
 容器保存为 tar，比 save 保存的文件小很多
 
