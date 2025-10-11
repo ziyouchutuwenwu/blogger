@@ -61,6 +61,95 @@
 
   
     
+    <h3 class="article-title"><a href="/2025/10/02/ssh/"><span>ssh 的一些用法</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/10/02/ssh/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-10-01T23:39:34.000Z">
+          2025-10-02
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h2 id="配置密钥"><a href="#配置密钥" class="headerlink" title="配置密钥"></a>配置密钥</h2><p>生成公钥</p>
+<p>最好指定密钥文件名，默认是在 ~&#x2F;.ssh 下面</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh-keygen -t rsa -b 4096 -C <span class="string">&quot;xxx@xxx.com&quot;</span> -f ~/downloads/key</span><br></pre></td></tr></table></figure>
+
+<p>私钥权限必须是 600</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">chmod</span> 600 ~/downloads/*</span><br></pre></td></tr></table></figure>
+
+<p>上传公钥</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh-copy-id -i ~/downloads/key.pub root@192.168.56.11</span><br></pre></td></tr></table></figure>
+
+<p>服务器上公钥的保存路径</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># /etc/ssh/sshd_config</span></span><br><span class="line">AuthorizedKeysFile ~/.ssh/authorized_keys</span><br></pre></td></tr></table></figure>
+
+<p>用私钥连接</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh -i ~/downloads/key root@192.168.56.11</span><br></pre></td></tr></table></figure>
+
+<h2 id="免密登陆"><a href="#免密登陆" class="headerlink" title="免密登陆"></a>免密登陆</h2><p>启动 agent</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">eval</span> <span class="string">&quot;<span class="subst">$(ssh-agent -s)</span>&quot;</span></span><br><span class="line">ssh-add ~/.ssh/id_rsa</span><br></pre></td></tr></table></figure>
+
+<p>~&#x2F;.profile</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> ! pgrep -u <span class="string">&quot;<span class="variable">$USER</span>&quot;</span> ssh-agent &gt; /dev/null; <span class="keyword">then</span></span><br><span class="line">    <span class="built_in">eval</span> <span class="string">&quot;<span class="subst">$(ssh-agent -s 2&gt; /dev/null | grep -v &#x27;Agent pid&#x27;)</span>&quot;</span> &gt; /dev/null</span><br><span class="line">    <span class="built_in">trap</span> <span class="string">&#x27;ssh-agent -k &gt; /dev/null 2&gt;&amp;1&#x27;</span> EXIT</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line">ssh-add ~/downloads/keys/key &gt; /dev/null 2&gt;&amp;1</span><br></pre></td></tr></table></figure>
+
+<p>连接</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 连接服务器 A</span></span><br><span class="line">ssh -A root@xx.xx.xx.xx</span><br><span class="line"></span><br><span class="line"><span class="comment"># 成功以后，在当前 shell 内，连接服务器 B</span></span><br><span class="line">ssh root@yy.yy.yy.yy</span><br></pre></td></tr></table></figure>
+
+<h2 id="指纹更新"><a href="#指纹更新" class="headerlink" title="指纹更新"></a>指纹更新</h2><p>服务器无法登录，提示 fingerprint 更新</p>
+<p>删除 <code>~/.ssh/known_hosts</code></p>
+<p>或者</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh-keygen -R <span class="variable">$SERVER_IP</span>:<span class="variable">$SERVER_PORT</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="autossh"><a href="#autossh" class="headerlink" title="autossh"></a>autossh</h2><p>本地隧道</p>
+<p>原来需要远程访问的服务，变为本地访问的服务</p>
+<p>TARGET_IP 和 VPS_IP 可以不相同</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">autossh -M 0 -i ./keys/id_rsa \</span><br><span class="line">  -o <span class="string">&quot;StrictHostKeyChecking no&quot;</span> \</span><br><span class="line">  -o <span class="string">&quot;ServerAliveInterval 30&quot;</span> \</span><br><span class="line">  -CfNg -L <span class="variable">$LOCAL_IP</span>:<span class="variable">$LOCAL_PORT</span>:<span class="variable">$TARGET_IP</span>:<span class="variable">$TARGET_PORT</span> \</span><br><span class="line">  root@<span class="variable">$VPS</span></span><br></pre></td></tr></table></figure>
+
+<p>把服务转发给其它机器</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">autossh -M 0 -i ./keys/id_rsa \</span><br><span class="line">  -o <span class="string">&quot;StrictHostKeyChecking no&quot;</span> \</span><br><span class="line">  -o <span class="string">&quot;ServerAliveInterval 30&quot;</span> \</span><br><span class="line">  -CfNg -R <span class="variable">$NEW_SERVER_PORT</span>:<span class="variable">$OLD_SERVER_IP</span>:<span class="variable">$OLD_SERVER_PORT</span> \</span><br><span class="line">  root@<span class="variable">$NEW_SERVER_IP</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="远程-gui"><a href="#远程-gui" class="headerlink" title="远程 gui"></a>远程 gui</h2><p>远程 ssh 执行 gui,在本地显示</p>
+<p>远程机器</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># linux</span></span><br><span class="line">sed -i <span class="string">&#x27;s/^#X11Forwarding no/X11Forwarding yes/&#x27;</span> /etc/ssh/sshd_config</span><br><span class="line"></span><br><span class="line"><span class="comment"># freebsd</span></span><br><span class="line">sed -i <span class="string">&quot;&quot;</span> <span class="string">&#x27;s/^#X11Forwarding no/X11Forwarding yes/&#x27;</span> /etc/ssh/sshd_config</span><br></pre></td></tr></table></figure>
+
+<p>本地</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh -YC xxx@xx.xx.xx.xx</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
     <h3 class="article-title"><a href="/2025/10/01/uv/"><span>uv</span></a></h3>
     
   
