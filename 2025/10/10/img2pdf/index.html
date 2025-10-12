@@ -1,0 +1,137 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>python 实现图片转换为 pdf | 独钓寒江雪</title>
+
+  
+  <meta name="author" content="John Doe">
+  
+
+  
+  <meta name="description" content="直接贴代码
+1234567891011121314151617181920212223242526272829303132333435import osimport refrom PIL import Imagefrom PyPDF2 import PdfWriter, PdfReaderdef n">
+  
+
+  
+  
+  <meta name="keywords" content="">
+  
+
+  <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+  <meta property="og:title" content="python 实现图片转换为 pdf"/>
+
+  <meta property="og:site_name" content="独钓寒江雪"/>
+
+  
+  <meta property="og:image" content="/favicon.ico"/>
+  
+
+  <link href="/favicon.ico" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="独钓寒江雪" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+<meta name="generator" content="Hexo 8.0.0"></head>
+
+
+<body>
+<div class="blog">
+  <div class="content">
+
+    <header>
+  <div class="site-branding">
+    <h1 class="site-title">
+      <a href="/">独钓寒江雪</a>
+    </h1>
+    <p class="site-description"></p>
+  </div>
+  <nav class="site-navigation">
+    <ul>
+      
+        <li><a href="/">首页</a></li>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/about">关于</a></li>
+      
+    </ul>
+  </nav>
+</header>
+
+    <main class="site-main posts-loop">
+    <article>
+
+  
+    
+    <h3 class="article-title"><span>python 实现图片转换为 pdf</span></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/10/10/img2pdf/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-10-10T00:03:36.000Z">
+          2025-10-10
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <p>直接贴代码</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> re</span><br><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"><span class="keyword">from</span> PyPDF2 <span class="keyword">import</span> PdfWriter, PdfReader</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">natural_sort_key</span>(<span class="params">s</span>):</span><br><span class="line">    <span class="keyword">return</span> [<span class="built_in">int</span>(text) <span class="keyword">if</span> text.isdigit() <span class="keyword">else</span> text.lower() <span class="keyword">for</span> text <span class="keyword">in</span> re.split(<span class="string">r&#x27;(\d+)&#x27;</span>, s)]</span><br><span class="line"></span><br><span class="line">img_folder = <span class="string">&#x27;./xx图/&#x27;</span></span><br><span class="line">pdf_path = <span class="string">&#x27;output.pdf&#x27;</span></span><br><span class="line"></span><br><span class="line">imgs = [f <span class="keyword">for</span> f <span class="keyword">in</span> os.listdir(img_folder) <span class="keyword">if</span> f.lower().endswith(<span class="string">&#x27;.jpg&#x27;</span>)]</span><br><span class="line">imgs.sort(key=natural_sort_key)</span><br><span class="line"></span><br><span class="line">image_list = []</span><br><span class="line"><span class="keyword">for</span> img_name <span class="keyword">in</span> imgs:</span><br><span class="line">    img_path = os.path.join(img_folder, img_name)</span><br><span class="line">    img = Image.<span class="built_in">open</span>(img_path).convert(<span class="string">&#x27;RGB&#x27;</span>)</span><br><span class="line">    image_list.append(img)</span><br><span class="line"></span><br><span class="line">temp_pdf = os.path.join(img_folder, <span class="string">&#x27;temp.pdf&#x27;</span>)</span><br><span class="line">image_list[<span class="number">0</span>].save(temp_pdf, save_all=<span class="literal">True</span>, append_images=image_list[<span class="number">1</span>:])</span><br><span class="line"></span><br><span class="line">reader = PdfReader(temp_pdf)</span><br><span class="line">writer = PdfWriter()</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i, page <span class="keyword">in</span> <span class="built_in">enumerate</span>(reader.pages):</span><br><span class="line">    writer.add_page(page)</span><br><span class="line">    title = os.path.splitext(imgs[i])[<span class="number">0</span>]</span><br><span class="line">    writer.add_outline_item(title=title, page_number=i)</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(pdf_path, <span class="string">&#x27;wb&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    writer.write(f)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;PDF 已生成:&quot;</span>, pdf_path)</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+  
+
+
+
+
+
+
+
+
+
+    </main>
+
+    <footer class="site-footer">
+  <p class="site-info">
+    Proudly powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and
+    Theme by <a href="https://github.com/CodeDaraW/Hacker" target="_blank">Hacker</a>
+    </br>
+    
+    &copy; 2025 John Doe
+    
+  </p>
+</footer>
+    
+    
+  </div>
+</div>
+</body>
+</html>

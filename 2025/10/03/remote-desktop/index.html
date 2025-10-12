@@ -1,0 +1,154 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>远程桌面 | 独钓寒江雪</title>
+
+  
+  <meta name="author" content="John Doe">
+  
+
+  
+  <meta name="description" content="win 远程 linuxrdplinux 上配置，使用微软的远程工具连接
+以 manjaro 为例
+1234567891011121314151617echo &amp;quot;Updating system...&amp;quot;sudo pacman -Syuecho &amp;quot;Installing xr">
+  
+
+  
+  
+  <meta name="keywords" content="">
+  
+
+  <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+  <meta property="og:title" content="远程桌面"/>
+
+  <meta property="og:site_name" content="独钓寒江雪"/>
+
+  
+  <meta property="og:image" content="/favicon.ico"/>
+  
+
+  <link href="/favicon.ico" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="独钓寒江雪" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+<meta name="generator" content="Hexo 8.0.0"></head>
+
+
+<body>
+<div class="blog">
+  <div class="content">
+
+    <header>
+  <div class="site-branding">
+    <h1 class="site-title">
+      <a href="/">独钓寒江雪</a>
+    </h1>
+    <p class="site-description"></p>
+  </div>
+  <nav class="site-navigation">
+    <ul>
+      
+        <li><a href="/">首页</a></li>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/about">关于</a></li>
+      
+    </ul>
+  </nav>
+</header>
+
+    <main class="site-main posts-loop">
+    <article>
+
+  
+    
+    <h3 class="article-title"><span>远程桌面</span></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/10/03/remote-desktop/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-10-03T10:39:38.000Z">
+          2025-10-03
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h2 id="win-远程-linux"><a href="#win-远程-linux" class="headerlink" title="win 远程 linux"></a>win 远程 linux</h2><h3 id="rdp"><a href="#rdp" class="headerlink" title="rdp"></a>rdp</h3><p>linux 上配置，使用微软的远程工具连接</p>
+<p>以 manjaro 为例</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">&quot;Updating system...&quot;</span></span><br><span class="line"><span class="built_in">sudo</span> pacman -Syu</span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;Installing xrdp and xorgxrdp-git...&quot;</span></span><br><span class="line"><span class="built_in">sudo</span> pacman -Sy yay base-devel xorg-xserver-devel</span><br><span class="line">yay -S xrdp xorgxrdp</span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;Configuring Xwrapper...&quot;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;allowed_users=anybody&quot;</span> | <span class="built_in">sudo</span> <span class="built_in">tee</span> -a /etc/X11/Xwrapper.config</span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;Configuring .xinitrc...&quot;</span></span><br><span class="line">sed -i <span class="string">&#x27;s/^\(SESSION=$&#123;1:-xfce-session&#125;\)$/#\1 # original\nSESSION=$&#123;1:-xfce4-session&#125;/&#x27;</span> ~/.xinitrc</span><br><span class="line">sed -i <span class="string">&#x27;s/^\s*\(local dbus_args=(--sh-syntax --exit-with-session)\)$/#\1 # original\nlocal dbus_args=(--sh-syntax)/&#x27;</span> ~/.xinitrc</span><br><span class="line">sed -i <span class="string">&#x27;s/^\(exec $(get_session &quot;$1&quot;)\)$/#\1 # original\nexec $(get_session &quot;$SESSION&quot;)/&#x27;</span> ~/.xinitrc</span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;Enabling xrdp service...&quot;</span></span><br><span class="line"><span class="built_in">sudo</span> systemctl <span class="built_in">enable</span> --now xrdp.service</span><br></pre></td></tr></table></figure>
+
+<h3 id="vnc"><a href="#vnc" class="headerlink" title="vnc"></a>vnc</h3><p>windows 用 vnc 客户端</p>
+<p>安装</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> pacman -S x11vnc</span><br><span class="line"><span class="built_in">sudo</span> apt install x11vnc -y</span><br></pre></td></tr></table></figure>
+
+<p>服务</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/usr/local/lib/systemd/system/vnc.service</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">[Unit]</span></span><br><span class="line"><span class="attr">Description</span>=vnc</span><br><span class="line"><span class="attr">After</span>=multi-user.target</span><br><span class="line"></span><br><span class="line"><span class="section">[Service]</span></span><br><span class="line"><span class="attr">Type</span>=simple</span><br><span class="line"><span class="comment"># ExecStart=x11vnc -auth guess -forever -loop -noxdamage -scale 0.9x0.9 -passwd 90909090 -repeat -shared -o /var/log/x11vnc.log</span></span><br><span class="line"><span class="attr">ExecStart</span>=x11vnc -auth guess -forever -noxdamage -scale <span class="number">0.9</span>x0.<span class="number">9</span> -passwd <span class="number">90909090</span></span><br><span class="line"></span><br><span class="line"><span class="section">[Install]</span></span><br><span class="line"><span class="attr">WantedBy</span>=multi-user.target</span><br></pre></td></tr></table></figure>
+
+<p>开机启动</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl <span class="built_in">enable</span> vnc --now</span><br></pre></td></tr></table></figure>
+
+<h2 id="linux-远程-win"><a href="#linux-远程-win" class="headerlink" title="linux 远程 win"></a>linux 远程 win</h2><p>一句话</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rdesktop xx.xx.xx.xx:3389</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+  
+
+
+
+
+
+
+
+
+
+    </main>
+
+    <footer class="site-footer">
+  <p class="site-info">
+    Proudly powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and
+    Theme by <a href="https://github.com/CodeDaraW/Hacker" target="_blank">Hacker</a>
+    </br>
+    
+    &copy; 2025 John Doe
+    
+  </p>
+</footer>
+    
+    
+  </div>
+</div>
+</body>
+</html>
