@@ -15,7 +15,18 @@ curl https://mise.run | sh
 ~/.profile
 
 ```sh
+# 普通配置
 eval "$(mise activate zsh)"
+
+# cursor 下
+if [[ "$TERM_PROGRAM" == "vscode" && "$CHROME_DESKTOP" == "cursor.desktop" && -z "$CURSOR_INITED" ]]; then
+    # echo "cursor shell"
+    export CURSOR_INITED=1
+    sh -c $SHELL
+else
+    # 系统 shell
+    eval "$(mise activate zsh)"
+fi
 ```
 
 所在路径
