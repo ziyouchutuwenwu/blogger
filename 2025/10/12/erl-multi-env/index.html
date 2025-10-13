@@ -1,0 +1,148 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>erlang 多环境发布 | 独钓寒江雪</title>
+
+  
+  <meta name="author" content="John Doe">
+  
+
+  
+  <meta name="description" content="参考链接
+步骤创建项目1234rebar3 new release democd demo/apps/rebar3 new app demo1rebar3 new app demo2
+
+rebar 配置demo1, demo2 等为自动启动的 application
+1234567891011121">
+  
+
+  
+  
+  <meta name="keywords" content="">
+  
+
+  <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+  <meta property="og:title" content="erlang 多环境发布"/>
+
+  <meta property="og:site_name" content="独钓寒江雪"/>
+
+  
+  <meta property="og:image" content="/favicon.ico"/>
+  
+
+  <link href="/favicon.ico" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="独钓寒江雪" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+<meta name="generator" content="Hexo 8.0.0"></head>
+
+
+<body>
+<div class="blog">
+  <div class="content">
+
+    <header>
+  <div class="site-branding">
+    <h1 class="site-title">
+      <a href="/">独钓寒江雪</a>
+    </h1>
+    <p class="site-description"></p>
+  </div>
+  <nav class="site-navigation">
+    <ul>
+      
+        <li><a href="/">首页</a></li>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/about">关于</a></li>
+      
+    </ul>
+  </nav>
+</header>
+
+    <main class="site-main posts-loop">
+    <article>
+
+  
+    
+    <h3 class="article-title"><span>erlang 多环境发布</span></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/10/12/erl-multi-env/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-10-12T06:51:01.000Z">
+          2025-10-12
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <p><a target="_blank" rel="noopener" href="https://rebar3.org/docs/deployment/releases/">参考链接</a></p>
+<h2 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h2><h3 id="创建项目"><a href="#创建项目" class="headerlink" title="创建项目"></a>创建项目</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">rebar3 new release demo</span><br><span class="line"><span class="built_in">cd</span> demo/apps/</span><br><span class="line">rebar3 new app demo1</span><br><span class="line">rebar3 new app demo2</span><br></pre></td></tr></table></figure>
+
+<h3 id="rebar-配置"><a href="#rebar-配置" class="headerlink" title="rebar 配置"></a>rebar 配置</h3><p>demo1, demo2 等为自动启动的 application</p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">% 编译时配置</span></span><br><span class="line">&#123;erl_opts, [debug_info]&#125;.</span><br><span class="line">&#123;deps, []&#125;.</span><br><span class="line"></span><br><span class="line"><span class="comment">% 发布时配置</span></span><br><span class="line"><span class="comment">% 默认配置</span></span><br><span class="line"><span class="comment">% release 需要在这里统一配置</span></span><br><span class="line">&#123;relx, [</span><br><span class="line">    &#123;release, &#123;demo, <span class="string">&quot;0.1.0&quot;</span>&#125;, [</span><br><span class="line">        sasl,</span><br><span class="line">        demo1,</span><br><span class="line">        demo2</span><br><span class="line">    ]&#125;,</span><br><span class="line"></span><br><span class="line">    &#123;mode, dev&#125;</span><br><span class="line">]&#125;.</span><br><span class="line"></span><br><span class="line"><span class="comment">% 特定模式的配置，缺乏的从默认发布时配置里面拿</span></span><br><span class="line">&#123;profiles, [</span><br><span class="line">  &#123;dev,</span><br><span class="line">    [</span><br><span class="line">      &#123;erl_opts, [native, &#123;hipe, [verbose]&#125;, debug_info]&#125;,</span><br><span class="line">      &#123;relx, [</span><br><span class="line">        &#123;mode, dev&#125;,</span><br><span class="line">        &#123;vm_args_src,    <span class="string">&quot;config/dev/vm.args.src&quot;</span>&#125;,</span><br><span class="line">        &#123;sys_config_src, <span class="string">&quot;config/dev/sys.config.src&quot;</span>&#125;]</span><br><span class="line">      &#125;</span><br><span class="line">    ]</span><br><span class="line">  &#125;,</span><br><span class="line">  &#123;prod,</span><br><span class="line">    [</span><br><span class="line">      <span class="comment">% 编译时就需要 key 文件</span></span><br><span class="line">      <span class="comment">% &#123;erl_opts, [encrypt_debug_info]&#125;,</span></span><br><span class="line">      <span class="comment">% 反编译时才需要 key 文件</span></span><br><span class="line">      <span class="comment">% &#123;erl_opts, [debug_info,&#123;debug_info_key,&#123;des3_cbc,&quot;12345&quot;&#125;&#125;]&#125;,</span></span><br><span class="line">      &#123;erl_opts, [no_debug_info]&#125;,</span><br><span class="line">      &#123;relx, [</span><br><span class="line">        <span class="comment">% 这个参数自动设置 include_erts</span></span><br><span class="line">        &#123;mode, prod&#125;,</span><br><span class="line">        &#123;vm_args_src,    <span class="string">&quot;config/prod/vm.args.src&quot;</span>&#125;,</span><br><span class="line">        &#123;sys_config_src, <span class="string">&quot;config/prod/sys.config.src&quot;</span>&#125;]</span><br><span class="line">      &#125;</span><br><span class="line">    ]</span><br><span class="line">  &#125;,</span><br><span class="line">  &#123;test,</span><br><span class="line">    [</span><br><span class="line">      &#123;erl_opts, [&#123;native, o3&#125;]&#125;,</span><br><span class="line">      &#123;relx, [</span><br><span class="line">        &#123;dev_mode,      false&#125;,</span><br><span class="line">        &#123;include_erts,  false&#125;,</span><br><span class="line">        &#123;include_src,   false&#125;,</span><br><span class="line">        &#123;vm_args_src,    <span class="string">&quot;config/test/vm.args.src&quot;</span>&#125;,</span><br><span class="line">        &#123;sys_config_src, <span class="string">&quot;config/test/sys.config.src&quot;</span>&#125;]</span><br><span class="line">      &#125;</span><br><span class="line">    ]</span><br><span class="line">  &#125;</span><br><span class="line">]&#125;.</span><br></pre></td></tr></table></figure>
+
+<h3 id="发布"><a href="#发布" class="headerlink" title="发布"></a>发布</h3><p>生成 release 目录</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">REBAR_PROFILE=prod rebar3 release -o ~/downloads</span><br><span class="line">rebar3 as prod release -o ~/downloads</span><br></pre></td></tr></table></figure>
+
+<h3 id="打包"><a href="#打包" class="headerlink" title="打包"></a>打包</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">REBAR_PROFILE=prod rebar3 tar -o ~/downloads</span><br><span class="line">rebar3 as prod tar -o ~/downloads</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+  
+
+
+
+
+
+
+
+
+
+    </main>
+
+    <footer class="site-footer">
+  <p class="site-info">
+    Proudly powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and
+    Theme by <a href="https://github.com/CodeDaraW/Hacker" target="_blank">Hacker</a>
+    </br>
+    
+    &copy; 2025 John Doe
+    
+  </p>
+</footer>
+    
+    
+  </div>
+</div>
+</body>
+</html>
