@@ -1,0 +1,167 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>erlang 的 heart 用法 | 独钓寒江雪</title>
+
+  
+  <meta name="author" content="John Doe">
+  
+
+  
+  <meta name="description" content="说明beam 被杀死以后，会重新启动，用于对于稳定性要求很高的场合。
+或者先 kill 掉 heart 进程，在 kill 掉 beam 进程
+激活rebar3 项目vm.args
+1234567# 这个必须设置-heart# 不设置 HEART_COMMAND，使用默认重启命令# 一定要用绝对路径">
+  
+
+  
+  
+  <meta name="keywords" content="">
+  
+
+  <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+  <meta property="og:title" content="erlang 的 heart 用法"/>
+
+  <meta property="og:site_name" content="独钓寒江雪"/>
+
+  
+  <meta property="og:image" content="/favicon.ico"/>
+  
+
+  <link href="/favicon.ico" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="独钓寒江雪" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+<meta name="generator" content="Hexo 8.0.0"></head>
+
+
+<body>
+<div class="blog">
+  <div class="content">
+
+    <header>
+  <div class="site-branding">
+    <h1 class="site-title">
+      <a href="/">独钓寒江雪</a>
+    </h1>
+    <p class="site-description"></p>
+  </div>
+  <nav class="site-navigation">
+    <ul>
+      
+        <li><a href="/">首页</a></li>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/about">关于</a></li>
+      
+    </ul>
+  </nav>
+</header>
+
+    <main class="site-main posts-loop">
+    <article>
+
+  
+    
+    <h3 class="article-title"><span>erlang 的 heart 用法</span></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/10/15/erl-heart/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-10-15T02:47:30.000Z">
+          2025-10-15
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>beam 被杀死以后，会重新启动，用于对于稳定性要求很高的场合。</p>
+<p>或者先 kill 掉 heart 进程，在 kill 掉 beam 进程</p>
+<h2 id="激活"><a href="#激活" class="headerlink" title="激活"></a>激活</h2><h3 id="rebar3-项目"><a href="#rebar3-项目" class="headerlink" title="rebar3 项目"></a>rebar3 项目</h3><p>vm.args</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 这个必须设置</span></span><br><span class="line">-heart</span><br><span class="line"></span><br><span class="line"><span class="comment"># 不设置 HEART_COMMAND，使用默认重启命令</span></span><br><span class="line"><span class="comment"># 一定要用绝对路径，不然找不到</span></span><br><span class="line">-<span class="built_in">env</span> HEART_COMMAND <span class="string">&quot;/xxx/rel/demo_release/bin/demo_release daemon&quot;</span></span><br><span class="line">-<span class="built_in">env</span> HEART_BEAT_TIMEOUT 10</span><br></pre></td></tr></table></figure>
+
+<p>或者设置环境变量</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> HEART_COMMAND=<span class="string">&quot;/xxx/rel/demo_release/bin/demo_release daemon&quot;</span></span><br><span class="line"><span class="built_in">export</span> HEART_BEAT_TIMEOUT=10</span><br></pre></td></tr></table></figure>
+
+<h3 id="原始命令行"><a href="#原始命令行" class="headerlink" title="原始命令行"></a>原始命令行</h3><h4 id="方法-1"><a href="#方法-1" class="headerlink" title="方法 1"></a>方法 1</h4><p>节点 1</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">erl -heart -sname aaa@manjaro -setcookie 123456 \</span><br><span class="line">  -<span class="built_in">env</span> HEART_COMMAND <span class="string">&quot;erl -heart -sname aaa@manjaro -setcookie 123456&quot;</span> \</span><br><span class="line">  -<span class="built_in">env</span> HEART_BEAT_TIMEOUT 10</span><br></pre></td></tr></table></figure>
+
+<p>节点 2</p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">erl -sname bbb@manjaro -setcookie <span class="number">123456</span></span><br><span class="line">net_kernel:connect_node(&#x27;aaa@manjaro&#x27;).</span><br></pre></td></tr></table></figure>
+
+<h4 id="方法-2"><a href="#方法-2" class="headerlink" title="方法 2"></a>方法 2</h4><p>节点 1</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> HEART_COMMAND=<span class="string">&quot;erl -heart -sname aaa@manjaro -setcookie 123456&quot;</span></span><br><span class="line"><span class="built_in">export</span> HEART_BEAT_TIMEOUT=10</span><br><span class="line">erl -heart -sname aaa@manjaro -setcookie 123456</span><br></pre></td></tr></table></figure>
+
+<p>节点 2</p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">erl -sname bbb@manjaro -setcookie <span class="number">123456</span></span><br><span class="line">net_kernel:connect_node(&#x27;aaa@manjaro&#x27;).</span><br></pre></td></tr></table></figure>
+
+<p>切换到远程节点</p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Ctrl + G</span><br><span class="line">User switch command</span><br><span class="line"> --&gt; r &#x27;aaa@manjaro&#x27;</span><br><span class="line"> --&gt; c</span><br></pre></td></tr></table></figure>
+
+<h3 id="动态修改"><a href="#动态修改" class="headerlink" title="动态修改"></a>动态修改</h3><figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">os:getenv(<span class="string">&quot;HEART_COMMAND&quot;</span>).</span><br><span class="line">os:getenv(<span class="string">&quot;HEART_BEAT_TIMEOUT&quot;</span>).</span><br><span class="line"></span><br><span class="line"><span class="comment">% 获取 HEART_COMMAND 命令</span></span><br><span class="line">heart:get_cmd().</span><br><span class="line">&#123;ok,<span class="string">&quot;erl -heart&quot;</span>&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">% 设置临时 HEART_COMMAND 命令</span></span><br><span class="line">heart:set_cmd(<span class="string">&quot;heart -shutdown&quot;</span>).</span><br><span class="line">ok</span><br><span class="line"></span><br><span class="line"><span class="comment">% 获取 HEART_COMMAND 命令，当临时 HEART_COMMAND 命令设置时取了 临时命令的值</span></span><br><span class="line">heart:get_cmd().</span><br><span class="line">&#123;ok,<span class="string">&quot;heart -shutdown&quot;</span>&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">% 清除临时 HEART_COMMAND 命令</span></span><br><span class="line">heart:clear_cmd().</span><br><span class="line">ok</span><br><span class="line"></span><br><span class="line"><span class="comment">% 获取 HEART_COMMAND 命令</span></span><br><span class="line">heart:get_cmd().</span><br><span class="line">&#123;ok,<span class="string">&quot;erl -heart&quot;</span>&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="关闭"><a href="#关闭" class="headerlink" title="关闭"></a>关闭</h2><h3 id="正常关闭"><a href="#正常关闭" class="headerlink" title="正常关闭"></a>正常关闭</h3><p>如果要关闭，则 remsh 到目标节点，执行</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">:init</span>.stop()</span><br></pre></td></tr></table></figure>
+
+<h3 id="杀掉"><a href="#杀掉" class="headerlink" title="杀掉"></a>杀掉</h3><p>不可以用 pkill, 因为 heart 也是 erl 体系内的</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ps aux | grep erl</span><br><span class="line"><span class="built_in">kill</span> -9 xxx</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+  
+
+
+
+
+
+
+
+
+
+    </main>
+
+    <footer class="site-footer">
+  <p class="site-info">
+    Proudly powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and
+    Theme by <a href="https://github.com/CodeDaraW/Hacker" target="_blank">Hacker</a>
+    </br>
+    
+    &copy; 2025 John Doe
+    
+  </p>
+</footer>
+    
+    
+  </div>
+</div>
+</body>
+</html>
