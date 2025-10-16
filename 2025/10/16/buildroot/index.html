@@ -1,0 +1,149 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>buildroot 基础用法 | 独钓寒江雪</title>
+
+  
+  <meta name="author" content="John Doe">
+  
+
+  
+  <meta name="description" content="准备1https://buildroot.org/downloads/buildroot-2025.02.3.tar.gz
+
+配置defconfig1make O=output qemu_arm_vexpress_defconfig
+
+menuconfig1make O=output menucon">
+  
+
+  
+  
+  <meta name="keywords" content="">
+  
+
+  <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+  <meta property="og:title" content="buildroot 基础用法"/>
+
+  <meta property="og:site_name" content="独钓寒江雪"/>
+
+  
+  <meta property="og:image" content="/favicon.ico"/>
+  
+
+  <link href="/favicon.ico" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="独钓寒江雪" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+<meta name="generator" content="Hexo 8.0.0"></head>
+
+
+<body>
+<div class="blog">
+  <div class="content">
+
+    <header>
+  <div class="site-branding">
+    <h1 class="site-title">
+      <a href="/">独钓寒江雪</a>
+    </h1>
+    <p class="site-description"></p>
+  </div>
+  <nav class="site-navigation">
+    <ul>
+      
+        <li><a href="/">首页</a></li>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/about">关于</a></li>
+      
+    </ul>
+  </nav>
+</header>
+
+    <main class="site-main posts-loop">
+    <article>
+
+  
+    
+    <h3 class="article-title"><span>buildroot 基础用法</span></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/10/16/buildroot/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-10-16T08:00:27.000Z">
+          2025-10-16
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h2 id="准备"><a href="#准备" class="headerlink" title="准备"></a>准备</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://buildroot.org/downloads/buildroot-2025.02.3.tar.gz</span><br></pre></td></tr></table></figure>
+
+<h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><h3 id="defconfig"><a href="#defconfig" class="headerlink" title="defconfig"></a>defconfig</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make O=output qemu_arm_vexpress_defconfig</span><br></pre></td></tr></table></figure>
+
+<h3 id="menuconfig"><a href="#menuconfig" class="headerlink" title="menuconfig"></a>menuconfig</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make O=output menuconfig</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">Bootloaders  ---&gt;</span><br><span class="line">  [*] U-Boot</span><br><span class="line">  (vexpress_ca9x4) Board defconfig</span><br><span class="line">  U-Boot binary format  ---&gt;</span><br><span class="line">    [*] u-boot</span><br><span class="line"></span><br><span class="line">Target packages  ---&gt;</span><br><span class="line">  <span class="comment"># 这个要选中，不然 vim 和 bash 都看不到</span></span><br><span class="line">  [*]   Show packages that are also provided by busybox</span><br><span class="line">    Development tools  ---&gt;</span><br><span class="line">    <span class="comment"># gnu sed，自带的不标准，elixir 会报错</span></span><br><span class="line">    [*] sed</span><br><span class="line"></span><br><span class="line">    <span class="comment"># sh 对标准的支持太差</span></span><br><span class="line">    Shell and utilities  ---&gt;</span><br><span class="line">      [*] bash</span><br><span class="line">    Text editors and viewers  ---&gt;</span><br><span class="line">      [*] vim</span><br></pre></td></tr></table></figure>
+
+<h3 id="编译"><a href="#编译" class="headerlink" title="编译"></a>编译</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make O=output -j$(<span class="built_in">nproc</span>)</span><br></pre></td></tr></table></figure>
+
+<p>编译结果在 <code>output/images</code> 下</p>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+  
+
+
+
+
+
+
+
+
+
+    </main>
+
+    <footer class="site-footer">
+  <p class="site-info">
+    Proudly powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and
+    Theme by <a href="https://github.com/CodeDaraW/Hacker" target="_blank">Hacker</a>
+    </br>
+    
+    &copy; 2025 John Doe
+    
+  </p>
+</footer>
+    
+    
+  </div>
+</div>
+</body>
+</html>
