@@ -61,6 +61,64 @@
 
   
     
+    <h3 class="article-title"><a href="/2025/10/17/bsd-init/"><span>bsd 开机启动</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/10/17/bsd-init/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-10-17T06:52:09.000Z">
+          2025-10-17
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>启动顺序</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 自己的启动脚本，需要 chmod a+x</span></span><br><span class="line">/usr/local/etc/rc.d/</span><br><span class="line"></span><br><span class="line"><span class="comment"># 最后加载</span></span><br><span class="line">/etc/rc.local</span><br></pre></td></tr></table></figure>
+
+<h2 id="分类"><a href="#分类" class="headerlink" title="分类"></a>分类</h2><h3 id="rc-格式"><a href="#rc-格式" class="headerlink" title="rc 格式"></a>rc 格式</h3><p>需要符合 rc 格式</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">chmod</span> a+x /usr/local/etc/rc.d/*</span><br></pre></td></tr></table></figure>
+
+<p>格式如下</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/sh</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># PROVIDE: myapp</span></span><br><span class="line"><span class="comment"># REQUIRE: DAEMON</span></span><br><span class="line"><span class="comment"># KEYWORD: shutdown</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 加载预定义变量和函数</span></span><br><span class="line">. /etc/rc.subr</span><br><span class="line"></span><br><span class="line">name=<span class="string">&quot;myapp&quot;</span></span><br><span class="line">rcvar=<span class="string">&quot;myapp_enable&quot;</span></span><br><span class="line"><span class="built_in">command</span>=<span class="string">&quot;/usr/local/bin/myapp&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 用于重启</span></span><br><span class="line">procname=<span class="string">&quot;/usr/local/bin/myapp&quot;</span></span><br><span class="line">desc=<span class="string">&quot;my custom service&quot;</span></span><br><span class="line"></span><br><span class="line">load_rc_config <span class="variable">$name</span></span><br><span class="line"><span class="comment"># 如果变量未定义，则为 NO</span></span><br><span class="line">: <span class="variable">$&#123;myapp_enable:=&quot;NO&quot;&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># $1 为启动参数</span></span><br><span class="line">run_rc_command <span class="string">&quot;<span class="variable">$1</span>&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="自定义脚本"><a href="#自定义脚本" class="headerlink" title="自定义脚本"></a>自定义脚本</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">chmod</span> a+x /etc/rc.local</span><br></pre></td></tr></table></figure>
+
+<p>标准 shell 格式</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/sh -e</span></span><br><span class="line"></span><br><span class="line">. /etc/profile</span><br><span class="line"></span><br><span class="line"><span class="comment"># nohup xxx &gt; /dev/null 2&gt;&amp;1 &amp;</span></span><br><span class="line"><span class="comment"># screen -dm xxx</span></span><br><span class="line"></span><br><span class="line">/opt/demo/_build/prod/rel/demo/bin/demo daemon</span><br><span class="line"></span><br><span class="line"><span class="built_in">exit</span> 0</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
     <h3 class="article-title"><a href="/2025/10/16/buildroot/"><span>buildroot 基础用法</span></a></h3>
     
   
@@ -648,62 +706,6 @@
 
 <p>修改完以后, 尤其是改完 uid</p>
 <p><strong>一定要</strong> 修改 <strong>被修改 id 的用户</strong> 目录下的文件权限，否则无法登录</p>
-
-      
-    </div>
-
-  </div>
-
-  <div class="article-footer">
-    <div class="article-meta pull-left">
-
-    
-
-    
-
-    </div>
-
-    
-  </div>
-</article>
-
-
-
-  <article>
-
-  
-    
-    <h3 class="article-title"><a href="/2025/10/07/zig-wasm/"><span>zig 编译 wasm</span></a></h3>
-    
-  
-
-  <div class="article-top-meta">
-    <span class="posted-on">
-      <a href="/2025/10/07/zig-wasm/" rel="bookmark">
-        <time class="entry-date published" datetime="2025-10-06T23:00:27.000Z">
-          2025-10-07
-        </time>
-      </a>
-    </span>
-  </div>
-
-
-  
-
-  <div class="article-content">
-    <div class="entry">
-      
-        <p>zig 编译为 wasm 给 js 调用</p>
-<p>demo.zig</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">const std = @import(&quot;std&quot;);</span><br><span class="line"></span><br><span class="line">export fn add(a: i32, b: i32) i32 &#123;</span><br><span class="line">    return a + b;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>编译</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">zig build-exe src/demo.zig -target wasm32-freestanding -fno-entry --<span class="built_in">export</span>=add</span><br><span class="line"></span><br><span class="line"><span class="comment"># 验证</span></span><br><span class="line">wasm-dis xxx.wasm | grep <span class="built_in">export</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="angular"><a href="#angular" class="headerlink" title="angular"></a>angular</h3><p>ts</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> axios <span class="keyword">from</span> <span class="string">&quot;axios&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> <span class="title class_">AppComponent</span> &#123;</span><br><span class="line">  <span class="attr">result</span>: <span class="built_in">number</span> | <span class="literal">null</span> = <span class="literal">null</span>;</span><br><span class="line">  <span class="attr">wasm</span>: <span class="title class_">WebAssembly</span>.<span class="property">Instance</span> | <span class="literal">null</span> = <span class="literal">null</span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">async</span> <span class="title function_">ngOnInit</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">await</span> <span class="variable language_">this</span>.<span class="title function_">loadWasm</span>();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">async</span> <span class="title function_">loadWasm</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      <span class="keyword">const</span> response = <span class="keyword">await</span> axios.<span class="title function_">get</span>(<span class="string">&quot;/xxx/demo.wasm&quot;</span>, &#123;</span><br><span class="line">        <span class="attr">responseType</span>: <span class="string">&quot;arraybuffer&quot;</span>,</span><br><span class="line">      &#125;);</span><br><span class="line">      <span class="keyword">const</span> bytes = <span class="keyword">new</span> <span class="title class_">Uint8Array</span>(response.<span class="property">data</span>);</span><br><span class="line">      <span class="keyword">const</span> <span class="variable language_">module</span> = <span class="keyword">await</span> <span class="title class_">WebAssembly</span>.<span class="title function_">instantiate</span>(bytes);</span><br><span class="line">      <span class="variable language_">this</span>.<span class="property">wasm</span> = <span class="variable language_">module</span>.<span class="property">instance</span>;</span><br><span class="line">    &#125; <span class="keyword">catch</span> (error) &#123;</span><br><span class="line">      <span class="variable language_">console</span>.<span class="title function_">error</span>(<span class="string">&quot;err loading wasm:&quot;</span>, error);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="title function_">doAdd</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="variable language_">this</span>.<span class="property">wasm</span>) &#123;</span><br><span class="line">      <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="variable language_">this</span>.<span class="property">wasm</span>.<span class="property">exports</span>);</span><br><span class="line">      <span class="keyword">const</span> add = <span class="variable language_">this</span>.<span class="property">wasm</span>.<span class="property">exports</span>[<span class="string">&quot;add&quot;</span>] <span class="title function_">as</span> (<span class="attr">a</span>: <span class="built_in">number</span>, <span class="attr">b</span>: <span class="built_in">number</span>) =&gt; <span class="built_in">number</span>;</span><br><span class="line">      <span class="keyword">const</span> result = <span class="title function_">add</span>(<span class="number">5</span>, <span class="number">3</span>);</span><br><span class="line">      <span class="variable language_">this</span>.<span class="property">result</span> = result;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="variable language_">console</span>.<span class="title function_">warn</span>(<span class="string">&quot;wasm instance is not initialized.&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">h1</span>&gt;</span>wasm with angular<span class="tag">&lt;/<span class="name">h1</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">button</span> (<span class="attr">click</span>)=<span class="string">&quot;doAdd()&quot;</span>&gt;</span>call wasm<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">p</span>&gt;</span>result: &#123;&#123; result &#125;&#125;<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure>
 
       
     </div>
