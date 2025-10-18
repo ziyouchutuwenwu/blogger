@@ -1,0 +1,146 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>erlang 的进程监控 link | 独钓寒江雪</title>
+
+  
+  <meta name="author" content="John Doe">
+  
+
+  
+  <meta name="description" content="说明link 是双向的, 任何一个进程挂掉, 另外一个都会受影响
+123A 挂掉, B 会检查自己有没有设置 process_flag(trap_exit, true)如果没有设置, 则也挂掉。如果设置了, 则在消息循环里面检测 &amp;#123;&amp;#x27;EXIT&amp;#x27;, _From, Msg&amp;">
+  
+
+  
+  
+  <meta name="keywords" content="">
+  
+
+  <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+  <meta property="og:title" content="erlang 的进程监控 link"/>
+
+  <meta property="og:site_name" content="独钓寒江雪"/>
+
+  
+  <meta property="og:image" content="/favicon.ico"/>
+  
+
+  <link href="/favicon.ico" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="独钓寒江雪" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+<meta name="generator" content="Hexo 8.0.0"></head>
+
+
+<body>
+<div class="blog">
+  <div class="content">
+
+    <header>
+  <div class="site-branding">
+    <h1 class="site-title">
+      <a href="/">独钓寒江雪</a>
+    </h1>
+    <p class="site-description"></p>
+  </div>
+  <nav class="site-navigation">
+    <ul>
+      
+        <li><a href="/">首页</a></li>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/about">关于</a></li>
+      
+    </ul>
+  </nav>
+</header>
+
+    <main class="site-main posts-loop">
+    <article>
+
+  
+    
+    <h3 class="article-title"><span>erlang 的进程监控 link</span></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/10/18/erl-proc-link/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-10-18T00:26:50.000Z">
+          2025-10-18
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>link 是双向的, 任何一个进程挂掉, 另外一个都会受影响</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">A 挂掉, B 会检查自己有没有设置 process_flag(trap_exit, <span class="literal">true</span>)</span><br><span class="line">如果没有设置, 则也挂掉。</span><br><span class="line">如果设置了, 则在消息循环里面检测 &#123;<span class="string">&#x27;EXIT&#x27;</span>, _From, Msg&#125; 消息, 就算 A 是被 <span class="built_in">kill</span> 的, 在 B 这里也是收到消息, 不会直接挂掉</span><br></pre></td></tr></table></figure>
+
+<h2 id="演示代码"><a href="#演示代码" class="headerlink" title="演示代码"></a>演示代码</h2><p>dist_proc.erl</p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">-module</span><span class="params">(dist_proc)</span>.</span><br><span class="line"></span><br><span class="line"><span class="keyword">-export</span><span class="params">([start/<span class="number">0</span>])</span>.</span><br><span class="line"><span class="keyword">-export</span><span class="params">([init/<span class="number">0</span>])</span>.</span><br><span class="line"><span class="keyword">-export</span><span class="params">([loop/<span class="number">0</span>])</span>.</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">start</span><span class="params">()</span> -&gt;</span></span><br><span class="line">  Pid = spawn_link(?MODULE,init,[]),</span><br><span class="line">  register(?MODULE, Pid),</span><br><span class="line">  &#123;ok, Pid&#125;.</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">init</span><span class="params">()</span> -&gt;</span></span><br><span class="line">  io:format(<span class="string">&quot;on ~p init ~n&quot;</span>, [?MODULE]),</span><br><span class="line">  process_flag(trap_exit, true),</span><br><span class="line">  loop().</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">loop</span><span class="params">()</span> -&gt;</span></span><br><span class="line">  <span class="keyword">receive</span></span><br><span class="line">    &#123;&#x27;EXIT&#x27;, From, Reason&#125; -&gt;</span><br><span class="line">      io:format(<span class="string">&quot;~p got exit msg ~p ~p~n&quot;</span>, [?MODULE, From, Reason]),</span><br><span class="line">      loop();</span><br><span class="line">    Msg -&gt;</span><br><span class="line">      io:format(<span class="string">&quot;~p got other msg ~p~n&quot;</span>, [?MODULE, Msg]),</span><br><span class="line">      loop()</span><br><span class="line">  <span class="keyword">end</span>.</span><br></pre></td></tr></table></figure>
+
+<p>mon_proc.erl</p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">-module</span><span class="params">(mon_proc)</span>.</span><br><span class="line"></span><br><span class="line"><span class="keyword">-export</span><span class="params">([start/<span class="number">0</span>])</span>.</span><br><span class="line"><span class="keyword">-export</span><span class="params">([init/<span class="number">0</span>])</span>.</span><br><span class="line"><span class="keyword">-export</span><span class="params">([loop/<span class="number">0</span>])</span>.</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">start</span><span class="params">()</span> -&gt;</span></span><br><span class="line">  Pid = spawn(?MODULE,init,[]),</span><br><span class="line">  register(?MODULE, Pid),</span><br><span class="line">  &#123;ok, Pid&#125;.</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">init</span><span class="params">()</span> -&gt;</span></span><br><span class="line">  io:format(<span class="string">&quot;on ~p init ~n&quot;</span>, [?MODULE]),</span><br><span class="line">  process_flag(trap_exit, true),</span><br><span class="line">  dist_proc:start(),</span><br><span class="line">  loop().</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">loop</span><span class="params">()</span> -&gt;</span></span><br><span class="line">  <span class="keyword">receive</span></span><br><span class="line">    &#123;&#x27;EXIT&#x27;, From, Reason&#125; -&gt;</span><br><span class="line">      io:format(<span class="string">&quot;~p got exit msg ~p ~p~n&quot;</span>, [?MODULE, From, Reason]),</span><br><span class="line">      loop();</span><br><span class="line">    Msg -&gt;</span><br><span class="line">      io:format(<span class="string">&quot;~p got other msg ~p~n&quot;</span>, [?MODULE, Msg]),</span><br><span class="line">      loop()</span><br><span class="line">  <span class="keyword">end</span>.</span><br></pre></td></tr></table></figure>
+
+<p>测试</p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">mon_proc:start().</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">exit</span><span class="params">(whereis(mon_proc), normal)</span>.</span></span><br><span class="line"><span class="function"><span class="title">exit</span><span class="params">(whereis(mon_proc), shutdown)</span>.</span></span><br><span class="line"><span class="function"><span class="title">exit</span><span class="params">(whereis(mon_proc), xxx)</span>.</span></span><br><span class="line"><span class="function"><span class="title">exit</span><span class="params">(whereis(mon_proc), kill)</span>.</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="title">whereis</span><span class="params">(mon_proc)</span>.</span></span><br><span class="line"><span class="function"><span class="title">whereis</span><span class="params">(dist_proc)</span>.</span></span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+  
+
+
+
+
+
+
+
+
+
+    </main>
+
+    <footer class="site-footer">
+  <p class="site-info">
+    Proudly powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and
+    Theme by <a href="https://github.com/CodeDaraW/Hacker" target="_blank">Hacker</a>
+    </br>
+    
+    &copy; 2025 John Doe
+    
+  </p>
+</footer>
+    
+    
+  </div>
+</div>
+</body>
+</html>

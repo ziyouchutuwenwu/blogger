@@ -15,10 +15,7 @@
 1curl https://mise.run | sh
 
 ~&amp;#x2F;.profile
-1eval &amp;quot;$(mise activate zsh)&amp;quot;
-
-所在路径
-1234$HOME/.local/bin/mise$HOME/">
+123456789101112# 普通配置eval &amp;quot;$(mise activate zsh)&amp;quot;# cursor 下if [[ &amp;q">
   
 
   
@@ -98,7 +95,7 @@
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl https://mise.run | sh</span><br></pre></td></tr></table></figure>
 
 <p>~&#x2F;.profile</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">eval</span> <span class="string">&quot;<span class="subst">$(mise activate zsh)</span>&quot;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 普通配置</span></span><br><span class="line"><span class="built_in">eval</span> <span class="string">&quot;<span class="subst">$(mise activate zsh)</span>&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># cursor 下</span></span><br><span class="line"><span class="keyword">if</span> [[ <span class="string">&quot;<span class="variable">$TERM_PROGRAM</span>&quot;</span> == <span class="string">&quot;vscode&quot;</span> &amp;&amp; <span class="string">&quot;<span class="variable">$CHROME_DESKTOP</span>&quot;</span> == <span class="string">&quot;cursor.desktop&quot;</span> &amp;&amp; -z <span class="string">&quot;<span class="variable">$CURSOR_INITED</span>&quot;</span> ]]; <span class="keyword">then</span></span><br><span class="line">    <span class="comment"># echo &quot;cursor shell&quot;</span></span><br><span class="line">    <span class="built_in">export</span> CURSOR_INITED=1</span><br><span class="line">    sh -c <span class="variable">$SHELL</span></span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">    <span class="comment"># 系统 shell</span></span><br><span class="line">    <span class="built_in">eval</span> <span class="string">&quot;<span class="subst">$(mise activate zsh)</span>&quot;</span></span><br><span class="line"><span class="keyword">fi</span></span><br></pre></td></tr></table></figure>
 
 <p>所在路径</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$HOME</span>/.local/bin/mise</span><br><span class="line"><span class="variable">$HOME</span>/.config/mise/</span><br><span class="line"><span class="variable">$HOME</span>/.local/share/mise/</span><br><span class="line"><span class="variable">$HOME</span>/.local/state/mise/</span><br></pre></td></tr></table></figure>
