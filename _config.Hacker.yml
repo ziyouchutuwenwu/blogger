@@ -1,6 +1,7 @@
 menu:
   首页: /
   归档: /archives
+  标签: /tags
   关于: /about
 
 # gitment
