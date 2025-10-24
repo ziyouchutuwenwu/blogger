@@ -61,6 +61,118 @@
 
   
     
+    <h3 class="article-title"><a href="/2025/10/24/freebsd-rc-local/"><span>freebsd 开机启动脚本</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/10/24/freebsd-rc-local/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-10-24T02:49:08.000Z">
+          2025-10-24
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>启动顺序</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 自己的启动脚本，需要 chmod a+x</span></span><br><span class="line">/usr/local/etc/rc.d/</span><br><span class="line"></span><br><span class="line"><span class="comment"># 最后加载</span></span><br><span class="line">/etc/rc.local</span><br></pre></td></tr></table></figure>
+
+<h2 id="分类"><a href="#分类" class="headerlink" title="分类"></a>分类</h2><h3 id="rc-格式"><a href="#rc-格式" class="headerlink" title="rc 格式"></a>rc 格式</h3><p>需要符合 rc 格式</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">chmod</span> a+x /usr/local/etc/rc.d/*</span><br></pre></td></tr></table></figure>
+
+<p>格式如下</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/sh</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># PROVIDE: myapp</span></span><br><span class="line"><span class="comment"># REQUIRE: DAEMON</span></span><br><span class="line"><span class="comment"># KEYWORD: shutdown</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 加载预定义变量和函数</span></span><br><span class="line">. /etc/rc.subr</span><br><span class="line"></span><br><span class="line">name=<span class="string">&quot;myapp&quot;</span></span><br><span class="line">rcvar=<span class="string">&quot;myapp_enable&quot;</span></span><br><span class="line"><span class="built_in">command</span>=<span class="string">&quot;/usr/local/bin/myapp&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 用于重启</span></span><br><span class="line">procname=<span class="string">&quot;/usr/local/bin/myapp&quot;</span></span><br><span class="line">desc=<span class="string">&quot;my custom service&quot;</span></span><br><span class="line"></span><br><span class="line">load_rc_config <span class="variable">$name</span></span><br><span class="line"><span class="comment"># 如果变量未定义，则为 NO</span></span><br><span class="line">: <span class="variable">$&#123;myapp_enable:=&quot;NO&quot;&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># $1 为启动参数</span></span><br><span class="line">run_rc_command <span class="string">&quot;<span class="variable">$1</span>&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="自定义脚本"><a href="#自定义脚本" class="headerlink" title="自定义脚本"></a>自定义脚本</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">chmod</span> a+x /etc/rc.local</span><br></pre></td></tr></table></figure>
+
+<p>标准 shell 格式</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/sh -e</span></span><br><span class="line"></span><br><span class="line">. /etc/profile</span><br><span class="line"></span><br><span class="line"><span class="comment"># nohup xxx &gt; /dev/null 2&gt;&amp;1 &amp;</span></span><br><span class="line"><span class="comment"># screen -dm xxx</span></span><br><span class="line"></span><br><span class="line">/opt/demo/_build/prod/rel/demo/bin/demo daemon</span><br><span class="line"></span><br><span class="line"><span class="built_in">exit</span> 0</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
+    <h3 class="article-title"><a href="/2025/10/24/freebsd-rc-conf/"><span>freebsd 开机启动配置文件</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/10/24/freebsd-rc-conf/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-10-24T02:48:53.000Z">
+          2025-10-24
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>里面有一些 xxx_enable 字段</p>
+<p>都可以用类似如下的方式修改</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sysrc -f /etc/rc.conf kld_list=<span class="string">&quot;i915kms&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>加载顺序如下</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">/etc/rc.conf</span><br><span class="line"></span><br><span class="line"><span class="comment"># 自己的全局配置，覆盖默认</span></span><br><span class="line">/etc/rc.conf.local</span><br><span class="line"><span class="comment"># 拆分出来的配置</span></span><br><span class="line">/usr/local/etc/rc.conf.d/</span><br></pre></td></tr></table></figure>
+
+<p>这些字段在如下两个目录内的脚本内搜索</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">/etc/rc.d/</span><br><span class="line">/usr/local/etc/rc.d/</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
     <h3 class="article-title"><a href="/2025/10/23/zfs/"><span>zfs 用法</span></a></h3>
     
   
@@ -595,140 +707,6 @@
 <h3 id="编译"><a href="#编译" class="headerlink" title="编译"></a>编译</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make O=output -j$(<span class="built_in">nproc</span>)</span><br></pre></td></tr></table></figure>
 
 <p>编译结果在 <code>output/images</code> 下</p>
-
-      
-    </div>
-
-  </div>
-
-  <div class="article-footer">
-    <div class="article-meta pull-left">
-
-    
-
-    
-
-    </div>
-
-    
-  </div>
-</article>
-
-
-
-  <article>
-
-  
-    
-    <h3 class="article-title"><a href="/2025/10/15/erl-heart/"><span>erlang 的 heart 用法</span></a></h3>
-    
-  
-
-  <div class="article-top-meta">
-    <span class="posted-on">
-      <a href="/2025/10/15/erl-heart/" rel="bookmark">
-        <time class="entry-date published" datetime="2025-10-15T02:47:30.000Z">
-          2025-10-15
-        </time>
-      </a>
-    </span>
-  </div>
-
-
-  
-
-  <div class="article-content">
-    <div class="entry">
-      
-        <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>beam 被杀死以后，会重新启动，用于对于稳定性要求很高的场合。</p>
-<p>或者先 kill 掉 heart 进程，在 kill 掉 beam 进程</p>
-<h2 id="激活"><a href="#激活" class="headerlink" title="激活"></a>激活</h2><h3 id="rebar3-项目"><a href="#rebar3-项目" class="headerlink" title="rebar3 项目"></a>rebar3 项目</h3><p>vm.args</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 这个必须设置</span></span><br><span class="line">-heart</span><br><span class="line"></span><br><span class="line"><span class="comment"># 不设置 HEART_COMMAND，使用默认重启命令</span></span><br><span class="line"><span class="comment"># 一定要用绝对路径，不然找不到</span></span><br><span class="line">-<span class="built_in">env</span> HEART_COMMAND <span class="string">&quot;/xxx/rel/demo_release/bin/demo_release daemon&quot;</span></span><br><span class="line">-<span class="built_in">env</span> HEART_BEAT_TIMEOUT 10</span><br></pre></td></tr></table></figure>
-
-<p>或者设置环境变量</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> HEART_COMMAND=<span class="string">&quot;/xxx/rel/demo_release/bin/demo_release daemon&quot;</span></span><br><span class="line"><span class="built_in">export</span> HEART_BEAT_TIMEOUT=10</span><br></pre></td></tr></table></figure>
-
-<h3 id="原始命令行"><a href="#原始命令行" class="headerlink" title="原始命令行"></a>原始命令行</h3><h4 id="方法-1"><a href="#方法-1" class="headerlink" title="方法 1"></a>方法 1</h4><p>节点 1</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">erl -heart -sname aaa@manjaro -setcookie 123456 \</span><br><span class="line">  -<span class="built_in">env</span> HEART_COMMAND <span class="string">&quot;erl -heart -sname aaa@manjaro -setcookie 123456&quot;</span> \</span><br><span class="line">  -<span class="built_in">env</span> HEART_BEAT_TIMEOUT 10</span><br></pre></td></tr></table></figure>
-
-<p>节点 2</p>
-<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">erl -sname bbb@manjaro -setcookie <span class="number">123456</span></span><br><span class="line">net_kernel:connect_node(&#x27;aaa@manjaro&#x27;).</span><br></pre></td></tr></table></figure>
-
-<h4 id="方法-2"><a href="#方法-2" class="headerlink" title="方法 2"></a>方法 2</h4><p>节点 1</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> HEART_COMMAND=<span class="string">&quot;erl -heart -sname aaa@manjaro -setcookie 123456&quot;</span></span><br><span class="line"><span class="built_in">export</span> HEART_BEAT_TIMEOUT=10</span><br><span class="line">erl -heart -sname aaa@manjaro -setcookie 123456</span><br></pre></td></tr></table></figure>
-
-<p>节点 2</p>
-<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">erl -sname bbb@manjaro -setcookie <span class="number">123456</span></span><br><span class="line">net_kernel:connect_node(&#x27;aaa@manjaro&#x27;).</span><br></pre></td></tr></table></figure>
-
-<p>切换到远程节点</p>
-<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Ctrl + G</span><br><span class="line">User switch command</span><br><span class="line"> --&gt; r &#x27;aaa@manjaro&#x27;</span><br><span class="line"> --&gt; c</span><br></pre></td></tr></table></figure>
-
-<h3 id="动态修改"><a href="#动态修改" class="headerlink" title="动态修改"></a>动态修改</h3><figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">os:getenv(<span class="string">&quot;HEART_COMMAND&quot;</span>).</span><br><span class="line">os:getenv(<span class="string">&quot;HEART_BEAT_TIMEOUT&quot;</span>).</span><br><span class="line"></span><br><span class="line"><span class="comment">% 获取 HEART_COMMAND 命令</span></span><br><span class="line">heart:get_cmd().</span><br><span class="line">&#123;ok,<span class="string">&quot;erl -heart&quot;</span>&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">% 设置临时 HEART_COMMAND 命令</span></span><br><span class="line">heart:set_cmd(<span class="string">&quot;heart -shutdown&quot;</span>).</span><br><span class="line">ok</span><br><span class="line"></span><br><span class="line"><span class="comment">% 获取 HEART_COMMAND 命令，当临时 HEART_COMMAND 命令设置时取了 临时命令的值</span></span><br><span class="line">heart:get_cmd().</span><br><span class="line">&#123;ok,<span class="string">&quot;heart -shutdown&quot;</span>&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">% 清除临时 HEART_COMMAND 命令</span></span><br><span class="line">heart:clear_cmd().</span><br><span class="line">ok</span><br><span class="line"></span><br><span class="line"><span class="comment">% 获取 HEART_COMMAND 命令</span></span><br><span class="line">heart:get_cmd().</span><br><span class="line">&#123;ok,<span class="string">&quot;erl -heart&quot;</span>&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="关闭"><a href="#关闭" class="headerlink" title="关闭"></a>关闭</h2><h3 id="正常关闭"><a href="#正常关闭" class="headerlink" title="正常关闭"></a>正常关闭</h3><p>如果要关闭，则 remsh 到目标节点，执行</p>
-<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">:init</span>.stop()</span><br></pre></td></tr></table></figure>
-
-<h3 id="杀掉"><a href="#杀掉" class="headerlink" title="杀掉"></a>杀掉</h3><p>不可以用 pkill, 因为 heart 也是 erl 体系内的</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ps aux | grep erl</span><br><span class="line"><span class="built_in">kill</span> -9 xxx</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-
-  </div>
-
-  <div class="article-footer">
-    <div class="article-meta pull-left">
-
-    
-
-    
-
-    </div>
-
-    
-  </div>
-</article>
-
-
-
-  <article>
-
-  
-    
-    <h3 class="article-title"><a href="/2025/10/14/ng-signal/"><span>angular 下 signal用法</span></a></h3>
-    
-  
-
-  <div class="article-top-meta">
-    <span class="posted-on">
-      <a href="/2025/10/14/ng-signal/" rel="bookmark">
-        <time class="entry-date published" datetime="2025-10-14T02:53:16.000Z">
-          2025-10-14
-        </time>
-      </a>
-    </span>
-  </div>
-
-
-  
-
-  <div class="article-content">
-    <div class="entry">
-      
-        <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">computed() 的值随 signal 变化自动保持最新</span><br><span class="line">effect() 在 signal 被改变时触发</span><br></pre></td></tr></table></figure>
-
-<h2 id="例子"><a href="#例子" class="headerlink" title="例子"></a>例子</h2><h3 id="component-例子"><a href="#component-例子" class="headerlink" title="component 例子"></a>component 例子</h3><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">p</span>&gt;</span>计数值 &#123;&#123; count() &#125;&#125;<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">p</span>&gt;</span>平方值 &#123;&#123; squared() &#125;&#125;<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">button</span> (<span class="attr">click</span>)=<span class="string">&quot;inc()&quot;</span>&gt;</span>inc<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">button</span> (<span class="attr">click</span>)=<span class="string">&quot;dec()&quot;</span>&gt;</span>dev<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">button</span> (<span class="attr">click</span>)=<span class="string">&quot;reset()&quot;</span>&gt;</span>set<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> <span class="title class_">Demo1</span> &#123;</span><br><span class="line">  count = <span class="title function_">signal</span>(<span class="number">0</span>);</span><br><span class="line">  squared = <span class="title function_">computed</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="variable language_">this</span>.<span class="title function_">count</span>() * <span class="variable language_">this</span>.<span class="title function_">count</span>();</span><br><span class="line">  &#125;);</span><br><span class="line"></span><br><span class="line">  <span class="title function_">inc</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">count</span>.<span class="title function_">update</span>(<span class="function">(<span class="params">current</span>) =&gt;</span> &#123;</span><br><span class="line">      <span class="keyword">return</span> current + <span class="number">1</span>;</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="title function_">dec</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">count</span>.<span class="title function_">update</span>(<span class="function">(<span class="params">current</span>) =&gt;</span> &#123;</span><br><span class="line">      <span class="keyword">return</span> current - <span class="number">1</span>;</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="title function_">reset</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">count</span>.<span class="title function_">set</span>(<span class="number">0</span>);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="title function_">constructor</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="title function_">effect</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">      <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`on effect, count = <span class="subst">$&#123;<span class="variable language_">this</span>.count()&#125;</span>`</span>);</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="service-例子"><a href="#service-例子" class="headerlink" title="service 例子"></a>service 例子</h3><p>demo-service.ts</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; computed, effect, <span class="title class_">Injectable</span>, signal &#125; <span class="keyword">from</span> <span class="string">&quot;@angular/core&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Injectable</span>(&#123;</span><br><span class="line">  <span class="attr">providedIn</span>: <span class="string">&quot;root&quot;</span>,</span><br><span class="line">&#125;)</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> <span class="title class_">DemoService</span> &#123;</span><br><span class="line">  count = <span class="title function_">signal</span>(<span class="number">0</span>);</span><br><span class="line">  squared = <span class="title function_">computed</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="variable language_">this</span>.<span class="title function_">count</span>() * <span class="variable language_">this</span>.<span class="title function_">count</span>();</span><br><span class="line">  &#125;);</span><br><span class="line"></span><br><span class="line">  <span class="title function_">constructor</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="title function_">effect</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">      <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`on effect count = <span class="subst">$&#123;<span class="variable language_">this</span>.count()&#125;</span>, squared = <span class="subst">$&#123;<span class="variable language_">this</span>.squared()&#125;</span>`</span>);</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="title function_">set</span>(<span class="params"><span class="attr">value</span>: <span class="built_in">number</span></span>) &#123;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">count</span>.<span class="title function_">set</span>(value);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="title function_">inc</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">count</span>.<span class="title function_">update</span>(<span class="function">(<span class="params">current</span>) =&gt;</span> &#123;</span><br><span class="line">      <span class="keyword">return</span> current + <span class="number">1</span>;</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>demo2.ts</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">Component</span>, <span class="title class_">OnInit</span>, <span class="title class_">Signal</span>, <span class="title class_">WritableSignal</span> &#125; <span class="keyword">from</span> <span class="string">&quot;@angular/core&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">DemoService</span> &#125; <span class="keyword">from</span> <span class="string">&quot;../demo-service&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Component</span>(&#123;</span><br><span class="line">  <span class="attr">selector</span>: <span class="string">&quot;app-demo2&quot;</span>,</span><br><span class="line">  <span class="attr">templateUrl</span>: <span class="string">&quot;./demo2.html&quot;</span>,</span><br><span class="line">  <span class="attr">styleUrls</span>: [<span class="string">&quot;./demo2.css&quot;</span>],</span><br><span class="line">&#125;)</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> <span class="title class_">Demo2</span> <span class="keyword">implements</span> <span class="title class_">OnInit</span> &#123;</span><br><span class="line">  <span class="attr">count</span>: <span class="built_in">any</span>;</span><br><span class="line">  <span class="attr">squared</span>: <span class="built_in">any</span>;</span><br><span class="line"></span><br><span class="line">  <span class="title function_">constructor</span>(<span class="params"><span class="keyword">private</span> <span class="attr">demoService</span>: <span class="title class_">DemoService</span></span>) &#123;&#125;</span><br><span class="line"></span><br><span class="line">  <span class="title function_">ngOnInit</span>(): <span class="built_in">void</span> &#123;</span><br><span class="line">    <span class="comment">// 这里注意写法</span></span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">count</span> = <span class="variable language_">this</span>.<span class="property">demoService</span>.<span class="property">count</span>;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">squared</span> = <span class="variable language_">this</span>.<span class="property">demoService</span>.<span class="property">squared</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="title function_">inc</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">demoService</span>.<span class="title function_">inc</span>();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="title function_">reset</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">demoService</span>.<span class="title function_">set</span>(<span class="number">0</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>demo2.html</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">p</span>&gt;</span>计数值 &#123;&#123; count() &#125;&#125;<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">p</span>&gt;</span>平方值 &#123;&#123; squared() &#125;&#125;<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">button</span> (<span class="attr">click</span>)=<span class="string">&quot;inc()&quot;</span>&gt;</span>inc<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">button</span> (<span class="attr">click</span>)=<span class="string">&quot;reset()&quot;</span>&gt;</span>set<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure>
 
       
     </div>
