@@ -2,6 +2,7 @@
 title: erlang 多环境发布
 date: 2025-10-12 14:51:01
 tags:
+  - erlang
 ---
 
 [参考链接](https://rebar3.org/docs/deployment/releases/)

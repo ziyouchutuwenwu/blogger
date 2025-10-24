@@ -2,6 +2,7 @@
 title: python 实现图片转换为 pdf
 date: 2025-10-10 08:03:36
 tags:
+  - python
 ---
 
 直接贴代码

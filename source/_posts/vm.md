@@ -2,6 +2,7 @@
 title: virt-manager
 date: 2025-10-04 08:01:20
 tags:
+  - vm
 ---
 
 ## 权限问题

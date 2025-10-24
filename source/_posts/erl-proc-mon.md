@@ -2,6 +2,7 @@
 title: erlang 之进程监控 monitor
 date: 2025-10-19 09:57:52
 tags:
+  - erlang
 ---
 
 和 link 的区别，是单向的

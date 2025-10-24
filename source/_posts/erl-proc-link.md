@@ -2,6 +2,7 @@
 title: erlang 的进程监控 link
 date: 2025-10-18 08:26:50
 tags:
+  - erlang
 ---
 
 ## 说明

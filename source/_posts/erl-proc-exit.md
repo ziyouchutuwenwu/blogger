@@ -2,6 +2,7 @@
 title: erlang 的 trap_exit
 date: 2025-10-20 11:19:50
 tags:
+  - erlang
 ---
 
 ## 说明

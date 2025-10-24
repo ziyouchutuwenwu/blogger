@@ -2,6 +2,7 @@
 title: erlang 热更新
 date: 2025-10-13 14:28:19
 tags:
+  - erlang
 ---
 
 ## 说明

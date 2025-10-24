@@ -2,6 +2,7 @@
 title: 远程桌面
 date: 2025-10-03 18:39:38
 tags:
+  - linux
 ---
 
 ## win 远程 linux

@@ -2,6 +2,7 @@
 title: zig 编译 wasm
 date: 2025-10-07 07:00:27
 tags:
+  - zig
 ---
 
 zig 编译为 wasm 给 js 调用

@@ -2,6 +2,8 @@
 title: buildroot 基础用法
 date: 2025-10-16 16:00:27
 tags:
+  - linux
+  - kernel
 ---
 
 ## 准备

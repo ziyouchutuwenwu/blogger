@@ -2,6 +2,7 @@
 title: erlang 下 genserver 的 exit
 date: 2025-10-21 09:12:29
 tags:
+  - erlang
 ---
 
 本质和普通进程一样

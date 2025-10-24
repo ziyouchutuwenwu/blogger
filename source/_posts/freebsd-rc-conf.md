@@ -2,6 +2,7 @@
 title: freebsd 开机启动配置文件
 date: 2025-10-24 10:48:53
 tags:
+  - freebsd
 ---
 
 ## 说明

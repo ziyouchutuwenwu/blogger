@@ -2,6 +2,7 @@
 title: freebsd 下 jail 用法
 date: 2025-10-22 11:17:51
 tags:
+  - freebsd
 ---
 
 目前使用 qjail

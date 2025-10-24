@@ -2,6 +2,7 @@
 title: angular 动态修改 title description
 date: 2025-10-11 12:41:48
 tags:
+  - angular
 ---
 
 根据路由修改 title, description

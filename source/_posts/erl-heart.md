@@ -2,6 +2,7 @@
 title: erlang 的 heart 用法
 date: 2025-10-15 10:47:30
 tags:
+  - erlang
 ---
 
 ## 说明

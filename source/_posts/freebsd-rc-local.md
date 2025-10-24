@@ -2,6 +2,7 @@
 title: freebsd 开机启动脚本
 date: 2025-10-24 10:49:08
 tags:
+  - freebsd
 ---
 
 ## 说明

@@ -2,6 +2,8 @@
 title: ssh 的一些用法
 date: 2025-10-02 07:39:34
 tags:
+  - linux
+  - freebsd
 ---
 
 ## 配置密钥

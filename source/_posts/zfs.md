@@ -2,6 +2,7 @@
 title: zfs 用法
 date: 2025-10-23 09:52:31
 tags:
+  - freebsd
 ---
 
 每 1tb 的储存空间对应 1gb 的 ram

@@ -2,6 +2,7 @@
 title: bsd 开机启动
 date: 2025-10-17 14:52:09
 tags:
+  - freebsd
 ---
 
 ## 说明
