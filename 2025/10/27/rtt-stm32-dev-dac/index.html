@@ -1,0 +1,155 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>rt-thread 下，配置 stm32 的 dac | 独钓寒江雪</title>
+
+  
+  <meta name="author" content="John Doe">
+  
+
+  
+  <meta name="description" content="配置修改 board&amp;#x2F;Kconfig，添加 dac 相关部分，以下为参考
+123456789menuconfig BSP_USING_DAC    bool &amp;quot;Enable DAC&amp;quot;    default n    select RT_USING_DAC    if B">
+  
+
+  
+  
+  <meta name="keywords" content="stm32,rt-thread">
+  
+
+  <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+  <meta property="og:title" content="rt-thread 下，配置 stm32 的 dac"/>
+
+  <meta property="og:site_name" content="独钓寒江雪"/>
+
+  
+  <meta property="og:image" content="/favicon.ico"/>
+  
+
+  <link href="/favicon.ico" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="独钓寒江雪" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+<meta name="generator" content="Hexo 8.0.0"></head>
+
+
+<body>
+<div class="blog">
+  <div class="content">
+
+    <header>
+  <div class="site-branding">
+    <h1 class="site-title">
+      <a href="/">独钓寒江雪</a>
+    </h1>
+    <p class="site-description"></p>
+  </div>
+  <nav class="site-navigation">
+    <ul>
+      
+        <li><a href="/">首页</a></li>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/tags">标签</a></li>
+      
+        <li><a href="/about">关于</a></li>
+      
+    </ul>
+  </nav>
+</header>
+
+    <main class="site-main posts-loop">
+    <article>
+
+  
+    
+    <h3 class="article-title"><span>rt-thread 下，配置 stm32 的 dac</span></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/10/27/rtt-stm32-dev-dac/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-10-27T02:18:16.000Z">
+          2025-10-27
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><p>修改 board&#x2F;Kconfig，添加 dac 相关部分，以下为参考</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">menuconfig BSP_USING_DAC</span><br><span class="line">    bool <span class="string">&quot;Enable DAC&quot;</span></span><br><span class="line">    default n</span><br><span class="line">    <span class="keyword">select</span> RT_USING_DAC</span><br><span class="line">    <span class="keyword">if</span> BSP_USING_DAC</span><br><span class="line">        config BSP_USING_DAC1</span><br><span class="line">            bool <span class="string">&quot;Enable DAC1&quot;</span></span><br><span class="line">            default n</span><br><span class="line">    endif</span><br></pre></td></tr></table></figure>
+
+<h2 id="如果启用的-dac-不自带，需要手工修改，步骤如下"><a href="#如果启用的-dac-不自带，需要手工修改，步骤如下" class="headerlink" title="如果启用的 dac 不自带，需要手工修改，步骤如下"></a>如果启用的 dac 不自带，需要手工修改，步骤如下</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">复制</span><br><span class="line">libraries/HAL_Drivers/config/h7/dac_config.h</span><br><span class="line">到</span><br><span class="line">libraries/HAL_Drivers/config/f4/dac_config.h</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">修改</span><br><span class="line">libraries/HAL_Drivers/drv_config.h</span><br><span class="line">搜索</span><br><span class="line">defined(SOC_SERIES_STM32F4)</span><br><span class="line">添加</span><br><span class="line"><span class="comment">#include &quot;f4/dac_config.h&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>修改 <code>libraries/STM32F4xx_HAL/SConscript</code>, 添加</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> GetDepend([<span class="string">&quot;RT_USING_DAC&quot;</span>]):</span><br><span class="line">    src += [<span class="string">&quot;STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dac.c&quot;</span>]</span><br><span class="line">    src += [<span class="string">&quot;STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dac_ex.c&quot;</span>]</span><br></pre></td></tr></table></figure>
+
+<h2 id="menuconfig"><a href="#menuconfig" class="headerlink" title="menuconfig"></a>menuconfig</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">使用 cubeMX 配置项目, 启用 dac 和对应的 channel</span><br><span class="line">scons --menuconfig 启用 dac</span><br><span class="line">stm32XXxx_hal_conf.h 需要启用 HAL_ADC_MODULE_ENABLED</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/stm32/">stm32</a><a href="/tags/rt-thread/">rt-thread</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+  
+
+
+
+
+
+
+
+
+
+    </main>
+
+    <footer class="site-footer">
+  <p class="site-info">
+    Proudly powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and
+    Theme by <a href="https://github.com/CodeDaraW/Hacker" target="_blank">Hacker</a>
+    </br>
+    
+    &copy; 2025 John Doe
+    
+  </p>
+</footer>
+    
+    
+  </div>
+</div>
+</body>
+</html>

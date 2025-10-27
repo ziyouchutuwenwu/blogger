@@ -49,6 +49,8 @@
       
         <li><a href="/archives">归档</a></li>
       
+        <li><a href="/tags">标签</a></li>
+      
         <li><a href="/about">关于</a></li>
       
     </ul>
@@ -57,6 +59,262 @@
 
     <main class="site-main posts-loop">
     
+  <article>
+
+  
+    
+    <h3 class="article-title"><a href="/2025/10/27/rtt-stm32-dev-dac/"><span>rt-thread 下，配置 stm32 的 dac</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/10/27/rtt-stm32-dev-dac/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-10-27T02:18:16.000Z">
+          2025-10-27
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><p>修改 board&#x2F;Kconfig，添加 dac 相关部分，以下为参考</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">menuconfig BSP_USING_DAC</span><br><span class="line">    bool <span class="string">&quot;Enable DAC&quot;</span></span><br><span class="line">    default n</span><br><span class="line">    <span class="keyword">select</span> RT_USING_DAC</span><br><span class="line">    <span class="keyword">if</span> BSP_USING_DAC</span><br><span class="line">        config BSP_USING_DAC1</span><br><span class="line">            bool <span class="string">&quot;Enable DAC1&quot;</span></span><br><span class="line">            default n</span><br><span class="line">    endif</span><br></pre></td></tr></table></figure>
+
+<h2 id="如果启用的-dac-不自带，需要手工修改，步骤如下"><a href="#如果启用的-dac-不自带，需要手工修改，步骤如下" class="headerlink" title="如果启用的 dac 不自带，需要手工修改，步骤如下"></a>如果启用的 dac 不自带，需要手工修改，步骤如下</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">复制</span><br><span class="line">libraries/HAL_Drivers/config/h7/dac_config.h</span><br><span class="line">到</span><br><span class="line">libraries/HAL_Drivers/config/f4/dac_config.h</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">修改</span><br><span class="line">libraries/HAL_Drivers/drv_config.h</span><br><span class="line">搜索</span><br><span class="line">defined(SOC_SERIES_STM32F4)</span><br><span class="line">添加</span><br><span class="line"><span class="comment">#include &quot;f4/dac_config.h&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>修改 <code>libraries/STM32F4xx_HAL/SConscript</code>, 添加</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> GetDepend([<span class="string">&quot;RT_USING_DAC&quot;</span>]):</span><br><span class="line">    src += [<span class="string">&quot;STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dac.c&quot;</span>]</span><br><span class="line">    src += [<span class="string">&quot;STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dac_ex.c&quot;</span>]</span><br></pre></td></tr></table></figure>
+
+<h2 id="menuconfig"><a href="#menuconfig" class="headerlink" title="menuconfig"></a>menuconfig</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">使用 cubeMX 配置项目, 启用 dac 和对应的 channel</span><br><span class="line">scons --menuconfig 启用 dac</span><br><span class="line">stm32XXxx_hal_conf.h 需要启用 HAL_ADC_MODULE_ENABLED</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/stm32/">stm32</a><a href="/tags/rt-thread/">rt-thread</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
+    <h3 class="article-title"><a href="/2025/10/27/rtt-stm32-dev-can/"><span>rt-thread 下，配置 stm32 的 can</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/10/27/rtt-stm32-dev-can/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-10-27T02:18:11.000Z">
+          2025-10-27
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h2 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h2><p>修改 board&#x2F;Kconfig，添加 can 相关部分，以下为参考</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">menuconfig BSP_USING_CAN</span><br><span class="line">    bool <span class="string">&quot;enable can&quot;</span></span><br><span class="line">    default n</span><br><span class="line">    <span class="keyword">select</span> RT_USING_CAN</span><br><span class="line">    <span class="keyword">if</span> BSP_USING_CAN</span><br><span class="line">     config BSP_USING_CAN1</span><br><span class="line">        bool <span class="string">&quot;enable CAN1&quot;</span></span><br><span class="line">        default n</span><br><span class="line">    endif</span><br></pre></td></tr></table></figure>
+
+<h2 id="menuconfig"><a href="#menuconfig" class="headerlink" title="menuconfig"></a>menuconfig</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">scons --menuconfig 启用 can</span><br><span class="line">stm32XXxx_hal_conf.h 需要启用 HAL_CAN_MODULE_ENABLED</span><br></pre></td></tr></table></figure>
+
+<h2 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h2><p>一定要注意 cubeMX 里面的时钟配置<code>apb1 peripheral clocks</code>，这个和 PSC, BS1, BS2, SJW, 会共同影响波特率错误，导致收不到数据</p>
+<p>波特率计算公式 <code>baud = APB_PERIPHERAL_CLOCK / ( PSC*( BS1 + BS2 + SJW) )</code></p>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/stm32/">stm32</a><a href="/tags/rt-thread/">rt-thread</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
+    <h3 class="article-title"><a href="/2025/10/26/rtt-stm32-dev-adc/"><span>rt-thread 下，配置 stm32 的 adc</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/10/26/rtt-stm32-dev-adc/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-10-26T02:00:50.000Z">
+          2025-10-26
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h2 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h2><p>修改 board&#x2F;Kconfig，添加 adc 相关部分，以下为参考</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">menuconfig BSP_USING_ADC</span><br><span class="line">    bool <span class="string">&quot;enable ADC&quot;</span></span><br><span class="line">    default n</span><br><span class="line">    <span class="keyword">select</span> RT_USING_ADC</span><br><span class="line">    <span class="keyword">if</span> BSP_USING_ADC</span><br><span class="line">     config BSP_USING_ADC1</span><br><span class="line">        bool <span class="string">&quot;enable ADC1&quot;</span></span><br><span class="line">        default n</span><br><span class="line">    endif</span><br></pre></td></tr></table></figure>
+
+<p>如果启用的 adc 不自带，需要手工修改</p>
+<p>修改<code>libraries/HAL_Drivers/config/f4/adc_config.h</code></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">ifdef</span> BSP_USING_ADC1</span></span><br><span class="line"><span class="meta">#<span class="keyword">ifndef</span> ADC1_CONFIG</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> ADC1_CONFIG                                                 \</span></span><br><span class="line"><span class="meta">    &#123;                                                               \</span></span><br><span class="line"><span class="meta">       .Instance                   = ADC1,                          \</span></span><br><span class="line"><span class="meta">       .Init.ClockPrescaler        = ADC_CLOCK_SYNC_PCLK_DIV4,      \</span></span><br><span class="line"><span class="meta">       .Init.Resolution            = ADC_RESOLUTION_12B,            \</span></span><br><span class="line"><span class="meta">       .Init.DataAlign             = ADC_DATAALIGN_RIGHT,           \</span></span><br><span class="line"><span class="meta">       .Init.ScanConvMode          = DISABLE,                       \</span></span><br><span class="line"><span class="meta">       .Init.EOCSelection          = DISABLE,                       \</span></span><br><span class="line"><span class="meta">       .Init.ContinuousConvMode    = DISABLE,                       \</span></span><br><span class="line"><span class="meta">       .Init.NbrOfConversion       = 1,                             \</span></span><br><span class="line"><span class="meta">       .Init.DiscontinuousConvMode = DISABLE,                       \</span></span><br><span class="line"><span class="meta">       .Init.NbrOfDiscConversion   = 0,                             \</span></span><br><span class="line"><span class="meta">       .Init.ExternalTrigConv      = ADC_SOFTWARE_START,            \</span></span><br><span class="line"><span class="meta">       .Init.ExternalTrigConvEdge  = ADC_EXTERNALTRIGCONVEDGE_NONE, \</span></span><br><span class="line"><span class="meta">       .Init.DMAContinuousRequests = DISABLE,                       \</span></span><br><span class="line"><span class="meta">    &#125;</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br></pre></td></tr></table></figure>
+
+<h2 id="menuconfig"><a href="#menuconfig" class="headerlink" title="menuconfig"></a>menuconfig</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">scons --menuconfig 启用 adc</span><br><span class="line">stm32XXxx_hal_conf.h 需要启用 HAL_ADC_MODULE_ENABLED</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/stm32/">stm32</a><a href="/tags/rt-thread/">rt-thread</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
+    <h3 class="article-title"><a href="/2025/10/25/rtt-stm32-bsp/"><span>stm32 对于 rt-thread 的 bsp 移植</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/10/25/rtt-stm32-bsp/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-10-24T23:33:44.000Z">
+          2025-10-25
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><p><a target="_blank" rel="noopener" href="https://github.com/RT-Thread/rt-thread/blob/master/bsp/stm32/docs/STM32%E7%B3%BB%E5%88%97BSP%E5%88%B6%E4%BD%9C%E6%95%99%E7%A8%8B.md">STM32 系列 BSP 制作教程</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/RT-Thread/rt-thread/blob/master/bsp/stm32/docs/STM32%E7%B3%BB%E5%88%97%E5%A4%96%E8%AE%BE%E9%A9%B1%E5%8A%A8%E6%B7%BB%E5%8A%A0%E6%8C%87%E5%8D%97.md">STM32 系列外设驱动添加指南</a></p>
+<h2 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h2><h3 id="bsp-模板"><a href="#bsp-模板" class="headerlink" title="bsp 模板"></a>bsp 模板</h3><p>复制 bsp&#x2F;stm32&#x2F;libraries&#x2F;templates 下面复制你的型号的模板 到 bsp&#x2F;stm32&#x2F;下，改成你喜欢的名字</p>
+<h3 id="配置-gcc"><a href="#配置-gcc" class="headerlink" title="配置 gcc"></a>配置 gcc</h3><p>rtconfig.py, 配置编译器</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> CROSS_TOOL == <span class="string">&quot;gcc&quot;</span>:</span><br><span class="line">    PLATFORM = <span class="string">&quot;gcc&quot;</span></span><br><span class="line">    EXEC_PATH = (</span><br><span class="line">        os.getenv(<span class="string">&quot;HOME&quot;</span>) + <span class="string">&quot;/dev/embedded/rt-thread/gcc-arm-none-eabi-6_2-2016q4/bin/&quot;</span></span><br><span class="line">    )</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">scons -c; scons --dist</span><br></pre></td></tr></table></figure>
+
+<h3 id="生成-cubeMX-项目"><a href="#生成-cubeMX-项目" class="headerlink" title="生成 cubeMX 项目"></a>生成 cubeMX 项目</h3><p>创建跟你 mcu 一样的项目，修改配置，生成代码。</p>
+<p>复制 Inc 和 Src 目录到 board&#x2F;CubeMX_Config 下覆盖</p>
+<p>从 board&#x2F;CubeMX_Config 里面找到 main.c，复制 <code>SystemClock_Config()</code> 到 board&#x2F;board.c 里面，这是唯一需要手工复制的函数，如果不复制，可能会出现烧录以后失去响应的问题</p>
+<h3 id="时钟配置"><a href="#时钟配置" class="headerlink" title="时钟配置"></a>时钟配置</h3><p>强烈建议看一下原理图，里面 mcu 相关的晶振部分的频率，在 cubeMX 的时钟部分的 HSE 和 LSE 的频率，一定要和原理图里面的一致</p>
+<h3 id="串口引脚配置"><a href="#串口引脚配置" class="headerlink" title="串口引脚配置"></a>串口引脚配置</h3><p>注意看原理图里面的串口引脚，是否有重新映射的引脚，不然无法通信</p>
+<h3 id="配置-Kconfig"><a href="#配置-Kconfig" class="headerlink" title="配置 Kconfig"></a>配置 Kconfig</h3><p>修改 board&#x2F;Kconfig，搜索 config SOC_STM32, 改为相应的芯片型号</p>
+<p>如果需要 i2c 等配置，而当前的 Kconfig 里面没有的话，可以从别的 bsp 里面借鉴一下</p>
+<h3 id="flash-和-ram-大小相关"><a href="#flash-和-ram-大小相关" class="headerlink" title="flash 和 ram 大小相关"></a>flash 和 ram 大小相关</h3><p>见 <a href="./bsp_helper.py">bsp_helper.py</a></p>
+<h3 id="注意真实的大小"><a href="#注意真实的大小" class="headerlink" title="注意真实的大小"></a>注意真实的大小</h3><p>mcu 具体的 flash 和 ram 大小，<code>最好看一下芯片手册</code>，比如 f407igt6 里面，有 64k 的内存是保留不能使用的</p>
+<p>可以使用 segger 公司的 <code>JFlashLiteExe</code> 查看具体芯片的 flash 和 ram 大小, <code>v6.86g</code> 这个版本是最后一个能看内存大小的版本，推荐使用</p>
+<h3 id="SConscript"><a href="#SConscript" class="headerlink" title="SConscript"></a>SConscript</h3><p>修改 board&#x2F;SConscript, 看看芯片等信息有没有错误</p>
+<p>搜索 <code>CPPDEFINES</code>, 改成你的芯片对应的型号，具体写法参考 CPPDEFINES 上面的内容里面改</p>
+<p>根据你的芯片型号，修改下面对应的汇编启动文件 <code>xxxxxx.s</code>, 如果不知道用哪个，可以用 cubeMX 生成项目以后找，看用的是哪个文件</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> rtconfig.CROSS_TOOL == <span class="string">&#x27;gcc&#x27;</span>:</span><br><span class="line">    src += [startup_path_prefix + <span class="string">&#x27;/STM32F1xx_HAL/CMSIS/Device/ST/STM32F1xx/Source/Templates/gcc/startup_stm32f103xb.s&#x27;</span>]</span><br><span class="line"><span class="keyword">elif</span> rtconfig.CROSS_TOOL == <span class="string">&#x27;keil&#x27;</span>:</span><br><span class="line">    src += [startup_path_prefix + <span class="string">&#x27;/STM32F1xx_HAL/CMSIS/Device/ST/STM32F1xx/Source/Templates/arm/startup_stm32f103xb.s&#x27;</span>]</span><br><span class="line"><span class="keyword">elif</span> rtconfig.CROSS_TOOL == <span class="string">&#x27;iar&#x27;</span>:</span><br><span class="line">    src += [startup_path_prefix + <span class="string">&#x27;/STM32F1xx_HAL/CMSIS/Device/ST/STM32F1xx/Source/Templates/iar/startup_stm32f103xb.s&#x27;</span>]</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/stm32/">stm32</a><a href="/tags/rt-thread/">rt-thread</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
   <article>
 
   
@@ -535,258 +793,6 @@
     <span class="post-tags">
       <i class="icon-tags"></i>
         <a href="/tags/erlang/">erlang</a>
-    </span>
-    
-
-    </div>
-
-    
-  </div>
-</article>
-
-
-
-  <article>
-
-  
-    
-    <h3 class="article-title"><a href="/2025/10/19/erl-proc-mon/"><span>erlang 之进程监控 monitor</span></a></h3>
-    
-  
-
-  <div class="article-top-meta">
-    <span class="posted-on">
-      <a href="/2025/10/19/erl-proc-mon/" rel="bookmark">
-        <time class="entry-date published" datetime="2025-10-19T01:57:52.000Z">
-          2025-10-19
-        </time>
-      </a>
-    </span>
-  </div>
-
-
-  
-
-  <div class="article-content">
-    <div class="entry">
-      
-        <p>和 link 的区别，是单向的</p>
-<h2 id="演示代码"><a href="#演示代码" class="headerlink" title="演示代码"></a>演示代码</h2><p>dist_proc.erl</p>
-<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">-module</span><span class="params">(dist_proc)</span>.</span><br><span class="line"></span><br><span class="line"><span class="keyword">-export</span><span class="params">([start/<span class="number">0</span>])</span>.</span><br><span class="line"><span class="keyword">-export</span><span class="params">([init/<span class="number">0</span>])</span>.</span><br><span class="line"><span class="keyword">-export</span><span class="params">([loop/<span class="number">0</span>])</span>.</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">start</span><span class="params">()</span> -&gt;</span></span><br><span class="line">  Pid = spawn(?MODULE,init,[]),</span><br><span class="line">  register(?MODULE, Pid),</span><br><span class="line">  &#123;ok, Pid&#125;.</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">init</span><span class="params">()</span> -&gt;</span></span><br><span class="line">  io:format(<span class="string">&quot;on ~p init ~n&quot;</span>, [?MODULE]),</span><br><span class="line">  process_flag(trap_exit, true),</span><br><span class="line">  loop().</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">loop</span><span class="params">()</span> -&gt;</span></span><br><span class="line">  <span class="keyword">receive</span></span><br><span class="line">    &#123;&#x27;EXIT&#x27;, From, Reason&#125; -&gt;</span><br><span class="line">      io:format(<span class="string">&quot;~p got exit msg ~p ~p~n&quot;</span>, [?MODULE, From, Reason]);</span><br><span class="line">    Msg -&gt;</span><br><span class="line">      io:format(<span class="string">&quot;~p got other msg ~p~n&quot;</span>, [?MODULE, Msg]),</span><br><span class="line">      loop()</span><br><span class="line">  <span class="keyword">end</span>.</span><br></pre></td></tr></table></figure>
-
-<p>mon_proc.erl</p>
-<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">-module</span><span class="params">(mon_proc)</span>.</span><br><span class="line"></span><br><span class="line"><span class="keyword">-export</span><span class="params">([start/<span class="number">0</span>])</span>.</span><br><span class="line"><span class="keyword">-export</span><span class="params">([init/<span class="number">0</span>])</span>.</span><br><span class="line"><span class="keyword">-export</span><span class="params">([loop/<span class="number">0</span>])</span>.</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">start</span><span class="params">()</span> -&gt;</span></span><br><span class="line">  Pid = spawn(?MODULE,init,[]),</span><br><span class="line">  register(?MODULE, Pid),</span><br><span class="line">  &#123;ok, Pid&#125;.</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">init</span><span class="params">()</span> -&gt;</span></span><br><span class="line">  io:format(<span class="string">&quot;on ~p init ~n&quot;</span>, [?MODULE]),</span><br><span class="line">  process_flag(trap_exit, true),</span><br><span class="line">  dist_proc:start(),</span><br><span class="line">  _Ref = erlang:monitor(process, dist_proc),</span><br><span class="line">  loop().</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">loop</span><span class="params">()</span> -&gt;</span></span><br><span class="line">  <span class="keyword">receive</span></span><br><span class="line">    &#123;&#x27;DOWN&#x27;, Ref, process, &#123;Pid, Node&#125;, Reason&#125; -&gt;</span><br><span class="line">      erlang:demonitor(Ref),</span><br><span class="line">      io:format(<span class="string">&quot;~p got pid down msg ~p ~p ~p ~n&quot;</span>, [?MODULE, Pid, Node, Reason]),</span><br><span class="line">      loop();</span><br><span class="line">    &#123;&#x27;EXIT&#x27;, From, Reason&#125; -&gt;</span><br><span class="line">      io:format(<span class="string">&quot;~p got exit msg ~p ~p~n&quot;</span>, [?MODULE, From, Reason]);</span><br><span class="line">    Msg -&gt;</span><br><span class="line">      io:format(<span class="string">&quot;~p got other msg ~p~n&quot;</span>, [?MODULE, Msg]),</span><br><span class="line">      loop()</span><br><span class="line">  <span class="keyword">end</span>.</span><br></pre></td></tr></table></figure>
-
-<p>测试</p>
-<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">spawn</span><span class="params">(<span class="keyword">fun</span>() -&gt; mon_proc:start() <span class="keyword">end</span>)</span>.</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="title">exit</span><span class="params">(whereis(dist_proc), normal)</span>.</span></span><br><span class="line"><span class="function"><span class="title">exit</span><span class="params">(whereis(dist_proc), shutdown)</span>.</span></span><br><span class="line"><span class="function"><span class="title">exit</span><span class="params">(whereis(dist_proc), xxx)</span>.</span></span><br><span class="line"><span class="function"><span class="title">exit</span><span class="params">(whereis(dist_proc), kill)</span>.</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="title">exit</span><span class="params">(whereis(mon_proc), shutdown)</span>.</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="title">whereis</span><span class="params">(dist_proc)</span> ! &#123;<span class="title">&#x27;EXIT&#x27;</span>, <span class="title">self</span><span class="params">()</span>, <span class="title">normal</span>&#125;.</span></span><br><span class="line"><span class="function"><span class="title">whereis</span><span class="params">(dist_proc)</span> ! &#123;<span class="title">&#x27;EXIT&#x27;</span>, <span class="title">self</span><span class="params">()</span>, <span class="title">xxx</span>&#125;.</span></span><br><span class="line"><span class="function"><span class="title">whereis</span><span class="params">(dist_proc)</span> ! &#123;<span class="title">&#x27;EXIT&#x27;</span>, <span class="title">self</span><span class="params">()</span>, <span class="title">kill</span>&#125;.</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="title">whereis</span><span class="params">(dist_proc)</span>.</span></span><br><span class="line"><span class="function"><span class="title">whereis</span><span class="params">(mon_proc)</span>.</span></span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-
-  </div>
-
-  <div class="article-footer">
-    <div class="article-meta pull-left">
-
-    
-
-    
-    
-
-    <span class="post-tags">
-      <i class="icon-tags"></i>
-        <a href="/tags/erlang/">erlang</a>
-    </span>
-    
-
-    </div>
-
-    
-  </div>
-</article>
-
-
-
-  <article>
-
-  
-    
-    <h3 class="article-title"><a href="/2025/10/18/erl-proc-link/"><span>erlang 的进程监控 link</span></a></h3>
-    
-  
-
-  <div class="article-top-meta">
-    <span class="posted-on">
-      <a href="/2025/10/18/erl-proc-link/" rel="bookmark">
-        <time class="entry-date published" datetime="2025-10-18T00:26:50.000Z">
-          2025-10-18
-        </time>
-      </a>
-    </span>
-  </div>
-
-
-  
-
-  <div class="article-content">
-    <div class="entry">
-      
-        <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>link 是双向的, 任何一个进程挂掉, 另外一个都会受影响</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">A 挂掉, B 会检查自己有没有设置 process_flag(trap_exit, <span class="literal">true</span>)</span><br><span class="line">如果没有设置, 则也挂掉。</span><br><span class="line">如果设置了, 则在消息循环里面检测 &#123;<span class="string">&#x27;EXIT&#x27;</span>, _From, Msg&#125; 消息, 就算 A 是被 <span class="built_in">kill</span> 的, 在 B 这里也是收到消息, 不会直接挂掉</span><br></pre></td></tr></table></figure>
-
-<h2 id="演示代码"><a href="#演示代码" class="headerlink" title="演示代码"></a>演示代码</h2><p>dist_proc.erl</p>
-<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">-module</span><span class="params">(dist_proc)</span>.</span><br><span class="line"></span><br><span class="line"><span class="keyword">-export</span><span class="params">([start/<span class="number">0</span>])</span>.</span><br><span class="line"><span class="keyword">-export</span><span class="params">([init/<span class="number">0</span>])</span>.</span><br><span class="line"><span class="keyword">-export</span><span class="params">([loop/<span class="number">0</span>])</span>.</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">start</span><span class="params">()</span> -&gt;</span></span><br><span class="line">  Pid = spawn_link(?MODULE,init,[]),</span><br><span class="line">  register(?MODULE, Pid),</span><br><span class="line">  &#123;ok, Pid&#125;.</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">init</span><span class="params">()</span> -&gt;</span></span><br><span class="line">  io:format(<span class="string">&quot;on ~p init ~n&quot;</span>, [?MODULE]),</span><br><span class="line">  process_flag(trap_exit, true),</span><br><span class="line">  loop().</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">loop</span><span class="params">()</span> -&gt;</span></span><br><span class="line">  <span class="keyword">receive</span></span><br><span class="line">    &#123;&#x27;EXIT&#x27;, From, Reason&#125; -&gt;</span><br><span class="line">      io:format(<span class="string">&quot;~p got exit msg ~p ~p~n&quot;</span>, [?MODULE, From, Reason]),</span><br><span class="line">      loop();</span><br><span class="line">    Msg -&gt;</span><br><span class="line">      io:format(<span class="string">&quot;~p got other msg ~p~n&quot;</span>, [?MODULE, Msg]),</span><br><span class="line">      loop()</span><br><span class="line">  <span class="keyword">end</span>.</span><br></pre></td></tr></table></figure>
-
-<p>mon_proc.erl</p>
-<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">-module</span><span class="params">(mon_proc)</span>.</span><br><span class="line"></span><br><span class="line"><span class="keyword">-export</span><span class="params">([start/<span class="number">0</span>])</span>.</span><br><span class="line"><span class="keyword">-export</span><span class="params">([init/<span class="number">0</span>])</span>.</span><br><span class="line"><span class="keyword">-export</span><span class="params">([loop/<span class="number">0</span>])</span>.</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">start</span><span class="params">()</span> -&gt;</span></span><br><span class="line">  Pid = spawn(?MODULE,init,[]),</span><br><span class="line">  register(?MODULE, Pid),</span><br><span class="line">  &#123;ok, Pid&#125;.</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">init</span><span class="params">()</span> -&gt;</span></span><br><span class="line">  io:format(<span class="string">&quot;on ~p init ~n&quot;</span>, [?MODULE]),</span><br><span class="line">  process_flag(trap_exit, true),</span><br><span class="line">  dist_proc:start(),</span><br><span class="line">  loop().</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">loop</span><span class="params">()</span> -&gt;</span></span><br><span class="line">  <span class="keyword">receive</span></span><br><span class="line">    &#123;&#x27;EXIT&#x27;, From, Reason&#125; -&gt;</span><br><span class="line">      io:format(<span class="string">&quot;~p got exit msg ~p ~p~n&quot;</span>, [?MODULE, From, Reason]),</span><br><span class="line">      loop();</span><br><span class="line">    Msg -&gt;</span><br><span class="line">      io:format(<span class="string">&quot;~p got other msg ~p~n&quot;</span>, [?MODULE, Msg]),</span><br><span class="line">      loop()</span><br><span class="line">  <span class="keyword">end</span>.</span><br></pre></td></tr></table></figure>
-
-<p>测试</p>
-<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">mon_proc:start().</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">exit</span><span class="params">(whereis(mon_proc), normal)</span>.</span></span><br><span class="line"><span class="function"><span class="title">exit</span><span class="params">(whereis(mon_proc), shutdown)</span>.</span></span><br><span class="line"><span class="function"><span class="title">exit</span><span class="params">(whereis(mon_proc), xxx)</span>.</span></span><br><span class="line"><span class="function"><span class="title">exit</span><span class="params">(whereis(mon_proc), kill)</span>.</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="title">whereis</span><span class="params">(mon_proc)</span>.</span></span><br><span class="line"><span class="function"><span class="title">whereis</span><span class="params">(dist_proc)</span>.</span></span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-
-  </div>
-
-  <div class="article-footer">
-    <div class="article-meta pull-left">
-
-    
-
-    
-    
-
-    <span class="post-tags">
-      <i class="icon-tags"></i>
-        <a href="/tags/erlang/">erlang</a>
-    </span>
-    
-
-    </div>
-
-    
-  </div>
-</article>
-
-
-
-  <article>
-
-  
-    
-    <h3 class="article-title"><a href="/2025/10/17/bsd-init/"><span>bsd 开机启动</span></a></h3>
-    
-  
-
-  <div class="article-top-meta">
-    <span class="posted-on">
-      <a href="/2025/10/17/bsd-init/" rel="bookmark">
-        <time class="entry-date published" datetime="2025-10-17T06:52:09.000Z">
-          2025-10-17
-        </time>
-      </a>
-    </span>
-  </div>
-
-
-  
-
-  <div class="article-content">
-    <div class="entry">
-      
-        <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>启动顺序</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 自己的启动脚本，需要 chmod a+x</span></span><br><span class="line">/usr/local/etc/rc.d/</span><br><span class="line"></span><br><span class="line"><span class="comment"># 最后加载</span></span><br><span class="line">/etc/rc.local</span><br></pre></td></tr></table></figure>
-
-<h2 id="分类"><a href="#分类" class="headerlink" title="分类"></a>分类</h2><h3 id="rc-格式"><a href="#rc-格式" class="headerlink" title="rc 格式"></a>rc 格式</h3><p>需要符合 rc 格式</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">chmod</span> a+x /usr/local/etc/rc.d/*</span><br></pre></td></tr></table></figure>
-
-<p>格式如下</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/sh</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># PROVIDE: myapp</span></span><br><span class="line"><span class="comment"># REQUIRE: DAEMON</span></span><br><span class="line"><span class="comment"># KEYWORD: shutdown</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 加载预定义变量和函数</span></span><br><span class="line">. /etc/rc.subr</span><br><span class="line"></span><br><span class="line">name=<span class="string">&quot;myapp&quot;</span></span><br><span class="line">rcvar=<span class="string">&quot;myapp_enable&quot;</span></span><br><span class="line"><span class="built_in">command</span>=<span class="string">&quot;/usr/local/bin/myapp&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 用于重启</span></span><br><span class="line">procname=<span class="string">&quot;/usr/local/bin/myapp&quot;</span></span><br><span class="line">desc=<span class="string">&quot;my custom service&quot;</span></span><br><span class="line"></span><br><span class="line">load_rc_config <span class="variable">$name</span></span><br><span class="line"><span class="comment"># 如果变量未定义，则为 NO</span></span><br><span class="line">: <span class="variable">$&#123;myapp_enable:=&quot;NO&quot;&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># $1 为启动参数</span></span><br><span class="line">run_rc_command <span class="string">&quot;<span class="variable">$1</span>&quot;</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="自定义脚本"><a href="#自定义脚本" class="headerlink" title="自定义脚本"></a>自定义脚本</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">chmod</span> a+x /etc/rc.local</span><br></pre></td></tr></table></figure>
-
-<p>标准 shell 格式</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/sh -e</span></span><br><span class="line"></span><br><span class="line">. /etc/profile</span><br><span class="line"></span><br><span class="line"><span class="comment"># nohup xxx &gt; /dev/null 2&gt;&amp;1 &amp;</span></span><br><span class="line"><span class="comment"># screen -dm xxx</span></span><br><span class="line"></span><br><span class="line">/opt/demo/_build/prod/rel/demo/bin/demo daemon</span><br><span class="line"></span><br><span class="line"><span class="built_in">exit</span> 0</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-
-  </div>
-
-  <div class="article-footer">
-    <div class="article-meta pull-left">
-
-    
-
-    
-    
-
-    <span class="post-tags">
-      <i class="icon-tags"></i>
-        <a href="/tags/freebsd/">freebsd</a>
-    </span>
-    
-
-    </div>
-
-    
-  </div>
-</article>
-
-
-
-  <article>
-
-  
-    
-    <h3 class="article-title"><a href="/2025/10/16/buildroot/"><span>buildroot 基础用法</span></a></h3>
-    
-  
-
-  <div class="article-top-meta">
-    <span class="posted-on">
-      <a href="/2025/10/16/buildroot/" rel="bookmark">
-        <time class="entry-date published" datetime="2025-10-16T08:00:27.000Z">
-          2025-10-16
-        </time>
-      </a>
-    </span>
-  </div>
-
-
-  
-
-  <div class="article-content">
-    <div class="entry">
-      
-        <h2 id="准备"><a href="#准备" class="headerlink" title="准备"></a>准备</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://buildroot.org/downloads/buildroot-2025.02.3.tar.gz</span><br></pre></td></tr></table></figure>
-
-<h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><h3 id="defconfig"><a href="#defconfig" class="headerlink" title="defconfig"></a>defconfig</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make O=output qemu_arm_vexpress_defconfig</span><br></pre></td></tr></table></figure>
-
-<h3 id="menuconfig"><a href="#menuconfig" class="headerlink" title="menuconfig"></a>menuconfig</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make O=output menuconfig</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">Bootloaders  ---&gt;</span><br><span class="line">  [*] U-Boot</span><br><span class="line">  (vexpress_ca9x4) Board defconfig</span><br><span class="line">  U-Boot binary format  ---&gt;</span><br><span class="line">    [*] u-boot</span><br><span class="line"></span><br><span class="line">Target packages  ---&gt;</span><br><span class="line">  <span class="comment"># 这个要选中，不然 vim 和 bash 都看不到</span></span><br><span class="line">  [*]   Show packages that are also provided by busybox</span><br><span class="line">    Development tools  ---&gt;</span><br><span class="line">    <span class="comment"># gnu sed，自带的不标准，elixir 会报错</span></span><br><span class="line">    [*] sed</span><br><span class="line"></span><br><span class="line">    <span class="comment"># sh 对标准的支持太差</span></span><br><span class="line">    Shell and utilities  ---&gt;</span><br><span class="line">      [*] bash</span><br><span class="line">    Text editors and viewers  ---&gt;</span><br><span class="line">      [*] vim</span><br></pre></td></tr></table></figure>
-
-<h3 id="编译"><a href="#编译" class="headerlink" title="编译"></a>编译</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make O=output -j$(<span class="built_in">nproc</span>)</span><br></pre></td></tr></table></figure>
-
-<p>编译结果在 <code>output/images</code> 下</p>
-
-      
-    </div>
-
-  </div>
-
-  <div class="article-footer">
-    <div class="article-meta pull-left">
-
-    
-
-    
-    
-
-    <span class="post-tags">
-      <i class="icon-tags"></i>
-        <a href="/tags/linux/">linux</a><a href="/tags/kernel/">kernel</a>
     </span>
     
 

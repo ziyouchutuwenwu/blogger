@@ -1,0 +1,152 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>rt-thread 下，配置 stm32 的 adc | 独钓寒江雪</title>
+
+  
+  <meta name="author" content="John Doe">
+  
+
+  
+  <meta name="description" content="步骤修改 board&amp;#x2F;Kconfig，添加 adc 相关部分，以下为参考
+123456789menuconfig BSP_USING_ADC    bool &amp;quot;enable ADC&amp;quot;    default n    select RT_USING_ADC    if B">
+  
+
+  
+  
+  <meta name="keywords" content="stm32,rt-thread">
+  
+
+  <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+  <meta property="og:title" content="rt-thread 下，配置 stm32 的 adc"/>
+
+  <meta property="og:site_name" content="独钓寒江雪"/>
+
+  
+  <meta property="og:image" content="/favicon.ico"/>
+  
+
+  <link href="/favicon.ico" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="独钓寒江雪" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+<meta name="generator" content="Hexo 8.0.0"></head>
+
+
+<body>
+<div class="blog">
+  <div class="content">
+
+    <header>
+  <div class="site-branding">
+    <h1 class="site-title">
+      <a href="/">独钓寒江雪</a>
+    </h1>
+    <p class="site-description"></p>
+  </div>
+  <nav class="site-navigation">
+    <ul>
+      
+        <li><a href="/">首页</a></li>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/tags">标签</a></li>
+      
+        <li><a href="/about">关于</a></li>
+      
+    </ul>
+  </nav>
+</header>
+
+    <main class="site-main posts-loop">
+    <article>
+
+  
+    
+    <h3 class="article-title"><span>rt-thread 下，配置 stm32 的 adc</span></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/10/26/rtt-stm32-dev-adc/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-10-26T02:00:50.000Z">
+          2025-10-26
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h2 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h2><p>修改 board&#x2F;Kconfig，添加 adc 相关部分，以下为参考</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">menuconfig BSP_USING_ADC</span><br><span class="line">    bool <span class="string">&quot;enable ADC&quot;</span></span><br><span class="line">    default n</span><br><span class="line">    <span class="keyword">select</span> RT_USING_ADC</span><br><span class="line">    <span class="keyword">if</span> BSP_USING_ADC</span><br><span class="line">     config BSP_USING_ADC1</span><br><span class="line">        bool <span class="string">&quot;enable ADC1&quot;</span></span><br><span class="line">        default n</span><br><span class="line">    endif</span><br></pre></td></tr></table></figure>
+
+<p>如果启用的 adc 不自带，需要手工修改</p>
+<p>修改<code>libraries/HAL_Drivers/config/f4/adc_config.h</code></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">ifdef</span> BSP_USING_ADC1</span></span><br><span class="line"><span class="meta">#<span class="keyword">ifndef</span> ADC1_CONFIG</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> ADC1_CONFIG                                                 \</span></span><br><span class="line"><span class="meta">    &#123;                                                               \</span></span><br><span class="line"><span class="meta">       .Instance                   = ADC1,                          \</span></span><br><span class="line"><span class="meta">       .Init.ClockPrescaler        = ADC_CLOCK_SYNC_PCLK_DIV4,      \</span></span><br><span class="line"><span class="meta">       .Init.Resolution            = ADC_RESOLUTION_12B,            \</span></span><br><span class="line"><span class="meta">       .Init.DataAlign             = ADC_DATAALIGN_RIGHT,           \</span></span><br><span class="line"><span class="meta">       .Init.ScanConvMode          = DISABLE,                       \</span></span><br><span class="line"><span class="meta">       .Init.EOCSelection          = DISABLE,                       \</span></span><br><span class="line"><span class="meta">       .Init.ContinuousConvMode    = DISABLE,                       \</span></span><br><span class="line"><span class="meta">       .Init.NbrOfConversion       = 1,                             \</span></span><br><span class="line"><span class="meta">       .Init.DiscontinuousConvMode = DISABLE,                       \</span></span><br><span class="line"><span class="meta">       .Init.NbrOfDiscConversion   = 0,                             \</span></span><br><span class="line"><span class="meta">       .Init.ExternalTrigConv      = ADC_SOFTWARE_START,            \</span></span><br><span class="line"><span class="meta">       .Init.ExternalTrigConvEdge  = ADC_EXTERNALTRIGCONVEDGE_NONE, \</span></span><br><span class="line"><span class="meta">       .Init.DMAContinuousRequests = DISABLE,                       \</span></span><br><span class="line"><span class="meta">    &#125;</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br></pre></td></tr></table></figure>
+
+<h2 id="menuconfig"><a href="#menuconfig" class="headerlink" title="menuconfig"></a>menuconfig</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">scons --menuconfig 启用 adc</span><br><span class="line">stm32XXxx_hal_conf.h 需要启用 HAL_ADC_MODULE_ENABLED</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/stm32/">stm32</a><a href="/tags/rt-thread/">rt-thread</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+  
+
+
+
+
+
+
+
+
+
+    </main>
+
+    <footer class="site-footer">
+  <p class="site-info">
+    Proudly powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and
+    Theme by <a href="https://github.com/CodeDaraW/Hacker" target="_blank">Hacker</a>
+    </br>
+    
+    &copy; 2025 John Doe
+    
+  </p>
+</footer>
+    
+    
+  </div>
+</div>
+</body>
+</html>
