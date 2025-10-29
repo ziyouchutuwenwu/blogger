@@ -1,0 +1,160 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>rt-thread 下，配置 stm32 的脉冲编码器 | 独钓寒江雪</title>
+
+  
+  <meta name="author" content="John Doe">
+  
+
+  
+  <meta name="description" content="cubeMX 里面配置，选某定时器 TIM ,比如 TIM3，Combined Channels 里面，选择 Encoder Mode，记住下面 gpio 部分的两个引脚
+步骤修改 board&amp;#x2F;Kconfig，添加 pulse encoder 相关部分
+以下为参考
+123456789men">
+  
+
+  
+  
+  <meta name="keywords" content="stm32,rt-thread">
+  
+
+  <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+  <meta property="og:title" content="rt-thread 下，配置 stm32 的脉冲编码器"/>
+
+  <meta property="og:site_name" content="独钓寒江雪"/>
+
+  
+  <meta property="og:image" content="/favicon.ico"/>
+  
+
+  <link href="/favicon.ico" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="独钓寒江雪" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+<meta name="generator" content="Hexo 8.0.0"></head>
+
+
+<body>
+<div class="blog">
+  <div class="content">
+
+    <header>
+  <div class="site-branding">
+    <h1 class="site-title">
+      <a href="/">独钓寒江雪</a>
+    </h1>
+    <p class="site-description"></p>
+  </div>
+  <nav class="site-navigation">
+    <ul>
+      
+        <li><a href="/">首页</a></li>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/tags">标签</a></li>
+      
+        <li><a href="/about">关于</a></li>
+      
+    </ul>
+  </nav>
+</header>
+
+    <main class="site-main posts-loop">
+    <article>
+
+  
+    
+    <h3 class="article-title"><span>rt-thread 下，配置 stm32 的脉冲编码器</span></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/10/29/rtt-stm32-dev-pulse-encoder/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-10-29T01:02:51.000Z">
+          2025-10-29
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <p>cubeMX 里面配置，选某定时器 TIM ,比如 TIM3，Combined Channels 里面，选择 Encoder Mode，记住下面 gpio 部分的两个引脚</p>
+<h2 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h2><p>修改 board&#x2F;Kconfig，添加 pulse encoder 相关部分</p>
+<p>以下为参考</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">menuconfig BSP_USING_PULSE_ENCODER</span><br><span class="line">    bool <span class="string">&quot;enable pulse encoder&quot;</span></span><br><span class="line">    default n</span><br><span class="line">    <span class="keyword">select</span> RT_USING_PULSE_ENCODER</span><br><span class="line">    <span class="keyword">if</span> BSP_USING_PULSE_ENCODER</span><br><span class="line">        config BSP_USING_PULSE_ENCODER3</span><br><span class="line">            bool <span class="string">&quot;enable pulse encoder3&quot;</span></span><br><span class="line">            default n</span><br><span class="line">    endif</span><br></pre></td></tr></table></figure>
+
+<p>如果启用的 pulse encoder 不自带，需要手工修改</p>
+<p>修改<code>libraries/HAL_Drivers/config/f4/pulse_encoder_config.h</code></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">ifdef</span> BSP_USING_PULSE_ENCODER3</span></span><br><span class="line"><span class="meta">#<span class="keyword">ifndef</span> PULSE_ENCODER3_CONFIG</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PULSE_ENCODER3_CONFIG                          \</span></span><br><span class="line"><span class="meta">    &#123;                                                  \</span></span><br><span class="line"><span class="meta">       .tim_handler.Instance    = TIM3,                \</span></span><br><span class="line"><span class="meta">       .encoder_irqn            = TIM3_IRQn,           \</span></span><br><span class="line"><span class="meta">       .name                    = <span class="string">&quot;pulse3&quot;</span>             \</span></span><br><span class="line"><span class="meta">    &#125;</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br></pre></td></tr></table></figure>
+
+<h2 id="menuconfig"><a href="#menuconfig" class="headerlink" title="menuconfig"></a>menuconfig</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">scons --menuconfig 启用 pulse encoder</span><br><span class="line">stm32XXxx_hal_conf.h 需要启用 HAL_TIM_MODULE_ENABLED</span><br></pre></td></tr></table></figure>
+
+<h2 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h2><p>如果发现旋转过程中突然产生了很大的数，需要改一下驱动</p>
+<p><code>libraries/HAL_Drivers/drv_pulse_encoder.c</code>, <code>，pulse_encoder_init</code>方法内, <code>sConfig.IC1Filter</code> 和 <code>sConfig.IC2Filter</code> 都改成最大 15</p>
+<p>但是不能根本解决，根本上解决的话，需要滤波电容。</p>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/stm32/">stm32</a><a href="/tags/rt-thread/">rt-thread</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+  
+
+
+
+
+
+
+
+
+
+    </main>
+
+    <footer class="site-footer">
+  <p class="site-info">
+    Proudly powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and
+    Theme by <a href="https://github.com/CodeDaraW/Hacker" target="_blank">Hacker</a>
+    </br>
+    
+    &copy; 2025 John Doe
+    
+  </p>
+</footer>
+    
+    
+  </div>
+</div>
+</body>
+</html>

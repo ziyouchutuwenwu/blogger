@@ -63,6 +63,133 @@
 
   
     
+    <h3 class="article-title"><a href="/2025/10/29/rtt-stm32-dev-pwm/"><span>rt-thread 下，配置 stm32 的 pwm</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/10/29/rtt-stm32-dev-pwm/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-10-29T01:02:55.000Z">
+          2025-10-29
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <p>cubeMX 里面配置的时候，一定要注意，<code>Clock Source 记得选一下</code>，默认是 disable; ChannelX 选 <code>PWM Generation CHX</code></p>
+<p>一个定时器只能产生一个频率的 pwm，可以产生多个通道 pwm 信号，不同信道可以占空比不同但频率必须相同，否则会被后面启用的 pwm 覆盖</p>
+<h2 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h2><p>修改 board&#x2F;Kconfig，添加 pwm 相关部分，以下为参考</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">menuconfig BSP_USING_PWM</span><br><span class="line">    bool <span class="string">&quot;enable pwm&quot;</span></span><br><span class="line">    default n</span><br><span class="line">    <span class="keyword">select</span> RT_USING_PWM</span><br><span class="line">    <span class="keyword">if</span> BSP_USING_PWM</span><br><span class="line">    menuconfig BSP_USING_PWM2</span><br><span class="line">        bool <span class="string">&quot;enable timer2 output pwm&quot;</span></span><br><span class="line">        default n</span><br><span class="line">        <span class="keyword">if</span> BSP_USING_PWM2</span><br><span class="line">            config BSP_USING_PWM2_CH4</span><br><span class="line">                bool <span class="string">&quot;enable pwm2 channel4&quot;</span></span><br><span class="line">                default n</span><br><span class="line">        endif</span><br><span class="line">    endif</span><br></pre></td></tr></table></figure>
+
+<p>如果启用的 pwm 不自带，需要手工修改，修改<code>libraries/HAL_Drivers/config/f4/pwm_config.h</code></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">ifdef</span> BSP_USING_PWM2</span></span><br><span class="line"><span class="meta">#<span class="keyword">ifndef</span> PWM2_CONFIG</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PWM2_CONFIG                             \</span></span><br><span class="line"><span class="meta">    &#123;                                           \</span></span><br><span class="line"><span class="meta">       .tim_handle.Instance     = TIM2,         \</span></span><br><span class="line"><span class="meta">       .name                    = <span class="string">&quot;pwm2&quot;</span>,       \</span></span><br><span class="line"><span class="meta">       .channel                 = 0             \</span></span><br><span class="line"><span class="meta">    &#125;</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br></pre></td></tr></table></figure>
+
+<h2 id="menuconfig"><a href="#menuconfig" class="headerlink" title="menuconfig"></a>menuconfig</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">scons --menuconfig 启用 pwm</span><br><span class="line">stm32XXxx_hal_conf.h 需要启用 HAL_TIM_MODULE_ENABLED</span><br><span class="line">开发板的时钟一定要设置正确，否则会出现正确的周期和占空比，但是电机转的结果错误</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/stm32/">stm32</a><a href="/tags/rt-thread/">rt-thread</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
+    <h3 class="article-title"><a href="/2025/10/29/rtt-stm32-dev-pulse-encoder/"><span>rt-thread 下，配置 stm32 的脉冲编码器</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/10/29/rtt-stm32-dev-pulse-encoder/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-10-29T01:02:51.000Z">
+          2025-10-29
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <p>cubeMX 里面配置，选某定时器 TIM ,比如 TIM3，Combined Channels 里面，选择 Encoder Mode，记住下面 gpio 部分的两个引脚</p>
+<h2 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h2><p>修改 board&#x2F;Kconfig，添加 pulse encoder 相关部分</p>
+<p>以下为参考</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">menuconfig BSP_USING_PULSE_ENCODER</span><br><span class="line">    bool <span class="string">&quot;enable pulse encoder&quot;</span></span><br><span class="line">    default n</span><br><span class="line">    <span class="keyword">select</span> RT_USING_PULSE_ENCODER</span><br><span class="line">    <span class="keyword">if</span> BSP_USING_PULSE_ENCODER</span><br><span class="line">        config BSP_USING_PULSE_ENCODER3</span><br><span class="line">            bool <span class="string">&quot;enable pulse encoder3&quot;</span></span><br><span class="line">            default n</span><br><span class="line">    endif</span><br></pre></td></tr></table></figure>
+
+<p>如果启用的 pulse encoder 不自带，需要手工修改</p>
+<p>修改<code>libraries/HAL_Drivers/config/f4/pulse_encoder_config.h</code></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">ifdef</span> BSP_USING_PULSE_ENCODER3</span></span><br><span class="line"><span class="meta">#<span class="keyword">ifndef</span> PULSE_ENCODER3_CONFIG</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PULSE_ENCODER3_CONFIG                          \</span></span><br><span class="line"><span class="meta">    &#123;                                                  \</span></span><br><span class="line"><span class="meta">       .tim_handler.Instance    = TIM3,                \</span></span><br><span class="line"><span class="meta">       .encoder_irqn            = TIM3_IRQn,           \</span></span><br><span class="line"><span class="meta">       .name                    = <span class="string">&quot;pulse3&quot;</span>             \</span></span><br><span class="line"><span class="meta">    &#125;</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br></pre></td></tr></table></figure>
+
+<h2 id="menuconfig"><a href="#menuconfig" class="headerlink" title="menuconfig"></a>menuconfig</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">scons --menuconfig 启用 pulse encoder</span><br><span class="line">stm32XXxx_hal_conf.h 需要启用 HAL_TIM_MODULE_ENABLED</span><br></pre></td></tr></table></figure>
+
+<h2 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h2><p>如果发现旋转过程中突然产生了很大的数，需要改一下驱动</p>
+<p><code>libraries/HAL_Drivers/drv_pulse_encoder.c</code>, <code>，pulse_encoder_init</code>方法内, <code>sConfig.IC1Filter</code> 和 <code>sConfig.IC2Filter</code> 都改成最大 15</p>
+<p>但是不能根本解决，根本上解决的话，需要滤波电容。</p>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/stm32/">stm32</a><a href="/tags/rt-thread/">rt-thread</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
     <h3 class="article-title"><a href="/2025/10/28/rtt-stm32-dev-i2c/"><span>rt-thread 下，配置 stm32 的 i2c</span></a></h3>
     
   
@@ -618,177 +745,6 @@
     <span class="post-tags">
       <i class="icon-tags"></i>
         <a href="/tags/freebsd/">freebsd</a>
-    </span>
-    
-
-    </div>
-
-    
-  </div>
-</article>
-
-
-
-  <article>
-
-  
-    
-    <h3 class="article-title"><a href="/2025/10/22/freebsd-jail/"><span>freebsd 下 jail 用法</span></a></h3>
-    
-  
-
-  <div class="article-top-meta">
-    <span class="posted-on">
-      <a href="/2025/10/22/freebsd-jail/" rel="bookmark">
-        <time class="entry-date published" datetime="2025-10-22T03:17:51.000Z">
-          2025-10-22
-        </time>
-      </a>
-    </span>
-  </div>
-
-
-  
-
-  <div class="article-content">
-    <div class="entry">
-      
-        <p>目前使用 qjail</p>
-<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> pkg install -y qjail</span><br><span class="line">axel -o /tmp/ http://mirrors.ustc.edu.cn/freebsd/releases/amd64/13.0-RELEASE/base.txz</span><br><span class="line"><span class="built_in">sudo</span> qjail install -f /tmp/base.txz</span><br></pre></td></tr></table></figure>
-
-<h2 id="常规用法"><a href="#常规用法" class="headerlink" title="常规用法"></a>常规用法</h2><p>创建</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> qjail create -4 192.168.88.123 xxx</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> qjail list</span><br><span class="line"><span class="built_in">sudo</span> qjail start xxx</span><br><span class="line"><span class="built_in">sudo</span> qjail console xxx</span><br><span class="line"><span class="built_in">sudo</span> qjail stop xxx</span><br></pre></td></tr></table></figure>
-
-<p>修改 ip</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> qjail config -4 192.168.88.222 xxx</span><br></pre></td></tr></table></figure>
-
-<p>允许使用主机网络</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> qjail config -k xxx</span><br></pre></td></tr></table></figure>
-
-<p>改名字</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> qjail config -n demo xxx</span><br></pre></td></tr></table></figure>
-
-<p>备份恢复</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> qjail archive xxx</span><br><span class="line"><span class="built_in">sudo</span> qjail delete xxx</span><br><span class="line"><span class="built_in">sudo</span> qjail restore xxx</span><br></pre></td></tr></table></figure>
-
-<h2 id="文件复制"><a href="#文件复制" class="headerlink" title="文件复制"></a>文件复制</h2><p>具体虚拟机路径</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/usr/jails/xxx</span><br></pre></td></tr></table></figure>
-
-<p>模板路径</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/usr/jails/template</span><br></pre></td></tr></table></figure>
-
-<h2 id="任务管理"><a href="#任务管理" class="headerlink" title="任务管理"></a>任务管理</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">jls 查看任务列表</span><br><span class="line"><span class="built_in">sudo</span> jexec 1 csh</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-
-  </div>
-
-  <div class="article-footer">
-    <div class="article-meta pull-left">
-
-    
-
-    
-    
-
-    <span class="post-tags">
-      <i class="icon-tags"></i>
-        <a href="/tags/freebsd/">freebsd</a>
-    </span>
-    
-
-    </div>
-
-    
-  </div>
-</article>
-
-
-
-  <article>
-
-  
-    
-    <h3 class="article-title"><a href="/2025/10/21/erl-genserver-exit/"><span>erlang 下 genserver 的 exit</span></a></h3>
-    
-  
-
-  <div class="article-top-meta">
-    <span class="posted-on">
-      <a href="/2025/10/21/erl-genserver-exit/" rel="bookmark">
-        <time class="entry-date published" datetime="2025-10-21T01:12:29.000Z">
-          2025-10-21
-        </time>
-      </a>
-    </span>
-  </div>
-
-
-  
-
-  <div class="article-content">
-    <div class="entry">
-      
-        <p>本质和普通进程一样</p>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ul>
-<li>内部 crash</li>
-<li>设置 <code>trap_exit</code>, 并且 <code>gen_server</code> 内部处理 <code>{&#39;EXIT&#39;, From , Reason}</code> 消息</li>
-</ul>
-<table>
-<thead>
-<tr>
-<th>gen_server 退出原因</th>
-<th>trap_exit</th>
-<th>terminate</th>
-<th>备注</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>内部 crash</td>
-<td>true&#x2F;false</td>
-<td>执行</td>
-<td>普通业务情况下，保证都能被捕获</td>
-</tr>
-<tr>
-<td>exit(Pid,kill)</td>
-<td>true&#x2F;false</td>
-<td>不执行</td>
-<td>kill 杀进程是 vm 的保留手段</td>
-</tr>
-<tr>
-<td>exit(Pid,Reason)</td>
-<td>true</td>
-<td>如果内部处理了<code>{&#39;EXIT&#39;, From , Reason}</code>消息，则执行</td>
-<td>转换为 handle_info 消息</td>
-</tr>
-<tr>
-<td>exit(Pid,Reason)</td>
-<td>false</td>
-<td>不执行</td>
-<td>同普通 process 一样</td>
-</tr>
-</tbody></table>
-<h2 id="演示代码"><a href="#演示代码" class="headerlink" title="演示代码"></a>演示代码</h2><figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">stop</span><span class="params">(Reason)</span> -&gt;</span></span><br><span class="line">  io:format(<span class="string">&quot;call bbb stop func ~p ~n&quot;</span>, [Reason]),</span><br><span class="line">  gen_server:call(bbb, &#123;stop, Reason&#125;).</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">handle_call</span><span class="params">(&#123;stop, Reason&#125;, _From, State)</span> -&gt;</span></span><br><span class="line">  io:format(<span class="string">&quot;on handle_call stop by ~p ~n&quot;</span>, [Reason]),</span><br><span class="line">  &#123;stop, Reason, ok, State&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">handle_info</span><span class="params">(&#123;&#x27;EXIT&#x27;, From , Reason&#125;, State)</span> -&gt;</span></span><br><span class="line">  io:format(<span class="string">&quot;on handle_info &#x27;EXIT&#x27; ~p ~p~n&quot;</span>, [From, Reason]),</span><br><span class="line">  &#123;stop, Reason, State&#125;;</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-
-  </div>
-
-  <div class="article-footer">
-    <div class="article-meta pull-left">
-
-    
-
-    
-    
-
-    <span class="post-tags">
-      <i class="icon-tags"></i>
-        <a href="/tags/erlang/">erlang</a>
     </span>
     
 

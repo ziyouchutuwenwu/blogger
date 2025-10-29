@@ -63,6 +63,177 @@
 
   
     
+    <h3 class="article-title"><a href="/2025/10/22/freebsd-jail/"><span>freebsd 下 jail 用法</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/10/22/freebsd-jail/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-10-22T03:17:51.000Z">
+          2025-10-22
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <p>目前使用 qjail</p>
+<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> pkg install -y qjail</span><br><span class="line">axel -o /tmp/ http://mirrors.ustc.edu.cn/freebsd/releases/amd64/13.0-RELEASE/base.txz</span><br><span class="line"><span class="built_in">sudo</span> qjail install -f /tmp/base.txz</span><br></pre></td></tr></table></figure>
+
+<h2 id="常规用法"><a href="#常规用法" class="headerlink" title="常规用法"></a>常规用法</h2><p>创建</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> qjail create -4 192.168.88.123 xxx</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> qjail list</span><br><span class="line"><span class="built_in">sudo</span> qjail start xxx</span><br><span class="line"><span class="built_in">sudo</span> qjail console xxx</span><br><span class="line"><span class="built_in">sudo</span> qjail stop xxx</span><br></pre></td></tr></table></figure>
+
+<p>修改 ip</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> qjail config -4 192.168.88.222 xxx</span><br></pre></td></tr></table></figure>
+
+<p>允许使用主机网络</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> qjail config -k xxx</span><br></pre></td></tr></table></figure>
+
+<p>改名字</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> qjail config -n demo xxx</span><br></pre></td></tr></table></figure>
+
+<p>备份恢复</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> qjail archive xxx</span><br><span class="line"><span class="built_in">sudo</span> qjail delete xxx</span><br><span class="line"><span class="built_in">sudo</span> qjail restore xxx</span><br></pre></td></tr></table></figure>
+
+<h2 id="文件复制"><a href="#文件复制" class="headerlink" title="文件复制"></a>文件复制</h2><p>具体虚拟机路径</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/usr/jails/xxx</span><br></pre></td></tr></table></figure>
+
+<p>模板路径</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/usr/jails/template</span><br></pre></td></tr></table></figure>
+
+<h2 id="任务管理"><a href="#任务管理" class="headerlink" title="任务管理"></a>任务管理</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">jls 查看任务列表</span><br><span class="line"><span class="built_in">sudo</span> jexec 1 csh</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/freebsd/">freebsd</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
+    <h3 class="article-title"><a href="/2025/10/21/erl-genserver-exit/"><span>erlang 下 genserver 的 exit</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/10/21/erl-genserver-exit/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-10-21T01:12:29.000Z">
+          2025-10-21
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <p>本质和普通进程一样</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ul>
+<li>内部 crash</li>
+<li>设置 <code>trap_exit</code>, 并且 <code>gen_server</code> 内部处理 <code>{&#39;EXIT&#39;, From , Reason}</code> 消息</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>gen_server 退出原因</th>
+<th>trap_exit</th>
+<th>terminate</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>内部 crash</td>
+<td>true&#x2F;false</td>
+<td>执行</td>
+<td>普通业务情况下，保证都能被捕获</td>
+</tr>
+<tr>
+<td>exit(Pid,kill)</td>
+<td>true&#x2F;false</td>
+<td>不执行</td>
+<td>kill 杀进程是 vm 的保留手段</td>
+</tr>
+<tr>
+<td>exit(Pid,Reason)</td>
+<td>true</td>
+<td>如果内部处理了<code>{&#39;EXIT&#39;, From , Reason}</code>消息，则执行</td>
+<td>转换为 handle_info 消息</td>
+</tr>
+<tr>
+<td>exit(Pid,Reason)</td>
+<td>false</td>
+<td>不执行</td>
+<td>同普通 process 一样</td>
+</tr>
+</tbody></table>
+<h2 id="演示代码"><a href="#演示代码" class="headerlink" title="演示代码"></a>演示代码</h2><figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">stop</span><span class="params">(Reason)</span> -&gt;</span></span><br><span class="line">  io:format(<span class="string">&quot;call bbb stop func ~p ~n&quot;</span>, [Reason]),</span><br><span class="line">  gen_server:call(bbb, &#123;stop, Reason&#125;).</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">handle_call</span><span class="params">(&#123;stop, Reason&#125;, _From, State)</span> -&gt;</span></span><br><span class="line">  io:format(<span class="string">&quot;on handle_call stop by ~p ~n&quot;</span>, [Reason]),</span><br><span class="line">  &#123;stop, Reason, ok, State&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">handle_info</span><span class="params">(&#123;&#x27;EXIT&#x27;, From , Reason&#125;, State)</span> -&gt;</span></span><br><span class="line">  io:format(<span class="string">&quot;on handle_info &#x27;EXIT&#x27; ~p ~p~n&quot;</span>, [From, Reason]),</span><br><span class="line">  &#123;stop, Reason, State&#125;;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/erlang/">erlang</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
     <h3 class="article-title"><a href="/2025/10/20/erl-proc-exit/"><span>erlang 的 trap_exit</span></a></h3>
     
   
@@ -589,138 +760,6 @@
     <span class="post-tags">
       <i class="icon-tags"></i>
         <a href="/tags/erlang/">erlang</a>
-    </span>
-    
-
-    </div>
-
-    
-  </div>
-</article>
-
-
-
-  <article>
-
-  
-    
-    <h3 class="article-title"><a href="/2025/10/12/erl-multi-env/"><span>erlang 多环境发布</span></a></h3>
-    
-  
-
-  <div class="article-top-meta">
-    <span class="posted-on">
-      <a href="/2025/10/12/erl-multi-env/" rel="bookmark">
-        <time class="entry-date published" datetime="2025-10-12T06:51:01.000Z">
-          2025-10-12
-        </time>
-      </a>
-    </span>
-  </div>
-
-
-  
-
-  <div class="article-content">
-    <div class="entry">
-      
-        <p><a target="_blank" rel="noopener" href="https://rebar3.org/docs/deployment/releases/">参考链接</a></p>
-<h2 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h2><h3 id="创建项目"><a href="#创建项目" class="headerlink" title="创建项目"></a>创建项目</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">rebar3 new release demo</span><br><span class="line"><span class="built_in">cd</span> demo/apps/</span><br><span class="line">rebar3 new app demo1</span><br><span class="line">rebar3 new app demo2</span><br></pre></td></tr></table></figure>
-
-<h3 id="rebar-配置"><a href="#rebar-配置" class="headerlink" title="rebar 配置"></a>rebar 配置</h3><p>demo1, demo2 等为自动启动的 application</p>
-<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">% 编译时配置</span></span><br><span class="line">&#123;erl_opts, [debug_info]&#125;.</span><br><span class="line">&#123;deps, []&#125;.</span><br><span class="line"></span><br><span class="line"><span class="comment">% 发布时配置</span></span><br><span class="line"><span class="comment">% 默认配置</span></span><br><span class="line"><span class="comment">% release 需要在这里统一配置</span></span><br><span class="line">&#123;relx, [</span><br><span class="line">    &#123;release, &#123;demo, <span class="string">&quot;0.1.0&quot;</span>&#125;, [</span><br><span class="line">        sasl,</span><br><span class="line">        demo1,</span><br><span class="line">        demo2</span><br><span class="line">    ]&#125;,</span><br><span class="line"></span><br><span class="line">    &#123;mode, dev&#125;</span><br><span class="line">]&#125;.</span><br><span class="line"></span><br><span class="line"><span class="comment">% 特定模式的配置，缺乏的从默认发布时配置里面拿</span></span><br><span class="line">&#123;profiles, [</span><br><span class="line">  &#123;dev,</span><br><span class="line">    [</span><br><span class="line">      &#123;erl_opts, [native, &#123;hipe, [verbose]&#125;, debug_info]&#125;,</span><br><span class="line">      &#123;relx, [</span><br><span class="line">        &#123;mode, dev&#125;,</span><br><span class="line">        &#123;vm_args_src,    <span class="string">&quot;config/dev/vm.args.src&quot;</span>&#125;,</span><br><span class="line">        &#123;sys_config_src, <span class="string">&quot;config/dev/sys.config.src&quot;</span>&#125;]</span><br><span class="line">      &#125;</span><br><span class="line">    ]</span><br><span class="line">  &#125;,</span><br><span class="line">  &#123;prod,</span><br><span class="line">    [</span><br><span class="line">      <span class="comment">% 编译时就需要 key 文件</span></span><br><span class="line">      <span class="comment">% &#123;erl_opts, [encrypt_debug_info]&#125;,</span></span><br><span class="line">      <span class="comment">% 反编译时才需要 key 文件</span></span><br><span class="line">      <span class="comment">% &#123;erl_opts, [debug_info,&#123;debug_info_key,&#123;des3_cbc,&quot;12345&quot;&#125;&#125;]&#125;,</span></span><br><span class="line">      &#123;erl_opts, [no_debug_info]&#125;,</span><br><span class="line">      &#123;relx, [</span><br><span class="line">        <span class="comment">% 这个参数自动设置 include_erts</span></span><br><span class="line">        &#123;mode, prod&#125;,</span><br><span class="line">        &#123;vm_args_src,    <span class="string">&quot;config/prod/vm.args.src&quot;</span>&#125;,</span><br><span class="line">        &#123;sys_config_src, <span class="string">&quot;config/prod/sys.config.src&quot;</span>&#125;]</span><br><span class="line">      &#125;</span><br><span class="line">    ]</span><br><span class="line">  &#125;,</span><br><span class="line">  &#123;test,</span><br><span class="line">    [</span><br><span class="line">      &#123;erl_opts, [&#123;native, o3&#125;]&#125;,</span><br><span class="line">      &#123;relx, [</span><br><span class="line">        &#123;dev_mode,      false&#125;,</span><br><span class="line">        &#123;include_erts,  false&#125;,</span><br><span class="line">        &#123;include_src,   false&#125;,</span><br><span class="line">        &#123;vm_args_src,    <span class="string">&quot;config/test/vm.args.src&quot;</span>&#125;,</span><br><span class="line">        &#123;sys_config_src, <span class="string">&quot;config/test/sys.config.src&quot;</span>&#125;]</span><br><span class="line">      &#125;</span><br><span class="line">    ]</span><br><span class="line">  &#125;</span><br><span class="line">]&#125;.</span><br></pre></td></tr></table></figure>
-
-<h3 id="发布"><a href="#发布" class="headerlink" title="发布"></a>发布</h3><p>生成 release 目录</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">REBAR_PROFILE=prod rebar3 release -o ~/downloads</span><br><span class="line">rebar3 as prod release -o ~/downloads</span><br></pre></td></tr></table></figure>
-
-<h3 id="打包"><a href="#打包" class="headerlink" title="打包"></a>打包</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">REBAR_PROFILE=prod rebar3 tar -o ~/downloads</span><br><span class="line">rebar3 as prod tar -o ~/downloads</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-
-  </div>
-
-  <div class="article-footer">
-    <div class="article-meta pull-left">
-
-    
-
-    
-    
-
-    <span class="post-tags">
-      <i class="icon-tags"></i>
-        <a href="/tags/erlang/">erlang</a>
-    </span>
-    
-
-    </div>
-
-    
-  </div>
-</article>
-
-
-
-  <article>
-
-  
-    
-    <h3 class="article-title"><a href="/2025/10/11/ng-seo-title/"><span>angular 动态修改 title description</span></a></h3>
-    
-  
-
-  <div class="article-top-meta">
-    <span class="posted-on">
-      <a href="/2025/10/11/ng-seo-title/" rel="bookmark">
-        <time class="entry-date published" datetime="2025-10-11T04:41:48.000Z">
-          2025-10-11
-        </time>
-      </a>
-    </span>
-  </div>
-
-
-  
-
-  <div class="article-content">
-    <div class="entry">
-      
-        <p>根据路由修改 title, description</p>
-<p>用于 seo</p>
-<h2 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h2><h3 id="创建"><a href="#创建" class="headerlink" title="创建"></a>创建</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ng new demo</span><br><span class="line"></span><br><span class="line">ng g c aaa</span><br><span class="line">ng g c bbb</span><br></pre></td></tr></table></figure>
-
-<h3 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h3><p>app.routes.ts</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">Routes</span> &#125; <span class="keyword">from</span> <span class="string">&quot;@angular/router&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">Home</span> &#125; <span class="keyword">from</span> <span class="string">&quot;./home/home&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">Aaa</span> &#125; <span class="keyword">from</span> <span class="string">&quot;./aaa/aaa&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">Bbb</span> &#125; <span class="keyword">from</span> <span class="string">&quot;./bbb/bbb&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> <span class="attr">routes</span>: <span class="title class_">Routes</span> = [</span><br><span class="line">  &#123; <span class="attr">path</span>: <span class="string">&quot;&quot;</span>, <span class="attr">component</span>: <span class="title class_">Home</span> &#125;,</span><br><span class="line">  &#123; <span class="attr">path</span>: <span class="string">&quot;aaa&quot;</span>, <span class="attr">component</span>: <span class="title class_">Aaa</span> &#125;,</span><br><span class="line">  &#123; <span class="attr">path</span>: <span class="string">&quot;bbb&quot;</span>, <span class="attr">component</span>: <span class="title class_">Bbb</span> &#125;,</span><br><span class="line">];</span><br></pre></td></tr></table></figure>
-
-<p>app.html</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">a</span> [<span class="attr">routerLink</span>]=<span class="string">&quot;[&#x27;/aaa&#x27;]&quot;</span>&gt;</span>aaa<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">a</span> [<span class="attr">routerLink</span>]=<span class="string">&quot;[&#x27;/bbb&#x27;]&quot;</span>&gt;</span>bbb<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;button&quot;</span> <span class="attr">value</span>=<span class="string">&quot;js 到 aaa&quot;</span> (<span class="attr">click</span>)=<span class="string">&quot;toAaa()&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">router-outlet</span>&gt;</span><span class="tag">&lt;/<span class="name">router-outlet</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p>app.ts</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">Component</span> &#125; <span class="keyword">from</span> <span class="string">&quot;@angular/core&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">Router</span>, <span class="title class_">RouterModule</span>, <span class="title class_">RouterOutlet</span> &#125; <span class="keyword">from</span> <span class="string">&quot;@angular/router&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Component</span>(&#123;</span><br><span class="line">  <span class="attr">selector</span>: <span class="string">&quot;app-root&quot;</span>,</span><br><span class="line">  <span class="attr">imports</span>: [<span class="title class_">RouterOutlet</span>, <span class="title class_">RouterModule</span>],</span><br><span class="line">  <span class="attr">templateUrl</span>: <span class="string">&quot;./app.html&quot;</span>,</span><br><span class="line">  <span class="attr">styleUrl</span>: <span class="string">&quot;./app.css&quot;</span>,</span><br><span class="line">&#125;)</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> <span class="title class_">App</span> &#123;</span><br><span class="line">  <span class="keyword">protected</span> title = <span class="string">&quot;demo&quot;</span>;</span><br><span class="line"></span><br><span class="line">  <span class="title function_">constructor</span>(<span class="params"><span class="keyword">private</span> <span class="attr">router</span>: <span class="title class_">Router</span></span>) &#123;&#125;</span><br><span class="line"></span><br><span class="line">  <span class="title function_">toAaa</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">router</span>.<span class="title function_">navigate</span>([<span class="string">&quot;/aaa&quot;</span>]);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>aaa.ts</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> <span class="title class_">Aaa</span> <span class="keyword">implements</span> <span class="title class_">OnInit</span> &#123;</span><br><span class="line">  <span class="title function_">constructor</span>(<span class="params"><span class="keyword">private</span> <span class="attr">title</span>: <span class="title class_">Title</span>, <span class="keyword">private</span> <span class="attr">meta</span>: <span class="title class_">Meta</span></span>) &#123;&#125;</span><br><span class="line"></span><br><span class="line">  <span class="title function_">ngOnInit</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">title</span>.<span class="title function_">setTitle</span>(<span class="string">&quot;aaa 页的 title&quot;</span>);</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">meta</span>.<span class="title function_">updateTag</span>(&#123;</span><br><span class="line">      <span class="attr">name</span>: <span class="string">&quot;description&quot;</span>,</span><br><span class="line">      <span class="attr">content</span>: <span class="string">&quot;aaa 页的 description&quot;</span>,</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>bbb.ts</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> <span class="title class_">Bbb</span> <span class="keyword">implements</span> <span class="title class_">OnInit</span> &#123;</span><br><span class="line">  <span class="title function_">constructor</span>(<span class="params"><span class="keyword">private</span> <span class="attr">title</span>: <span class="title class_">Title</span>, <span class="keyword">private</span> <span class="attr">meta</span>: <span class="title class_">Meta</span></span>) &#123;&#125;</span><br><span class="line"></span><br><span class="line">  <span class="title function_">ngOnInit</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">title</span>.<span class="title function_">setTitle</span>(<span class="string">&quot;bbb 页的 title&quot;</span>);</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">meta</span>.<span class="title function_">updateTag</span>(&#123;</span><br><span class="line">      <span class="attr">name</span>: <span class="string">&quot;description&quot;</span>,</span><br><span class="line">      <span class="attr">content</span>: <span class="string">&quot;bbb 页的 description&quot;</span>,</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-
-  </div>
-
-  <div class="article-footer">
-    <div class="article-meta pull-left">
-
-    
-
-    
-    
-
-    <span class="post-tags">
-      <i class="icon-tags"></i>
-        <a href="/tags/angular/">angular</a>
     </span>
     
 
