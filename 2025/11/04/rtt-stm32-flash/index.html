@@ -1,0 +1,168 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>rtt-stm32-flash | 独钓寒江雪</title>
+
+  
+  <meta name="author" content="John Doe">
+  
+
+  
+  <meta name="description" content="外挂 flash 读写参考这里
+配置cubeMX根据原理图，找到相应的 spi 脚，配置引脚
+Kconfig1234567891011121314151617181920menuconfig BSP_USING_SPI    bool &amp;quot;Enable SPI BUS&amp;quot;    de">
+  
+
+  
+  
+  <meta name="keywords" content="stm32,rt-thread">
+  
+
+  <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+  <meta property="og:title" content="rtt-stm32-flash"/>
+
+  <meta property="og:site_name" content="独钓寒江雪"/>
+
+  
+  <meta property="og:image" content="/favicon.ico"/>
+  
+
+  <link href="/favicon.ico" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="独钓寒江雪" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+<meta name="generator" content="Hexo 8.0.0"></head>
+
+
+<body>
+<div class="blog">
+  <div class="content">
+
+    <header>
+  <div class="site-branding">
+    <h1 class="site-title">
+      <a href="/">独钓寒江雪</a>
+    </h1>
+    <p class="site-description"></p>
+  </div>
+  <nav class="site-navigation">
+    <ul>
+      
+        <li><a href="/">首页</a></li>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/tags">标签</a></li>
+      
+        <li><a href="/about">关于</a></li>
+      
+    </ul>
+  </nav>
+</header>
+
+    <main class="site-main posts-loop">
+    <article>
+
+  
+    
+    <h3 class="article-title"><span>rtt-stm32-flash</span></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/11/04/rtt-stm32-flash/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-11-04T03:56:10.000Z">
+          2025-11-04
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <p>外挂 flash 读写<br>参考<a target="_blank" rel="noopener" href="https://www.rt-thread.org/document/site/application-note/components/sfud/an0048-sfud/">这里</a></p>
+<h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><h3 id="cubeMX"><a href="#cubeMX" class="headerlink" title="cubeMX"></a>cubeMX</h3><p>根据原理图，找到相应的 spi 脚，配置引脚</p>
+<h3 id="Kconfig"><a href="#Kconfig" class="headerlink" title="Kconfig"></a>Kconfig</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">menuconfig BSP_USING_SPI</span><br><span class="line">    bool <span class="string">&quot;Enable SPI BUS&quot;</span></span><br><span class="line">    default n</span><br><span class="line">    <span class="keyword">select</span> RT_USING_SPI</span><br><span class="line">    <span class="keyword">if</span> BSP_USING_SPI</span><br><span class="line">        config BSP_USING_SPI2</span><br><span class="line">            bool <span class="string">&quot;Enable SPI2 BUS&quot;</span></span><br><span class="line">            default n</span><br><span class="line"></span><br><span class="line">        config BSP_SPI2_TX_USING_DMA</span><br><span class="line">            bool <span class="string">&quot;Enable SPI2 TX DMA&quot;</span></span><br><span class="line">            depends on BSP_USING_SPI2</span><br><span class="line">            default n</span><br><span class="line"></span><br><span class="line">        config BSP_SPI2_RX_USING_DMA</span><br><span class="line">            bool <span class="string">&quot;Enable SPI1 RX DMA&quot;</span></span><br><span class="line">            depends on BSP_USING_SPI2</span><br><span class="line">            <span class="keyword">select</span> BSP_SPI2_TX_USING_DMA</span><br><span class="line">            default n</span><br><span class="line">    endif</span><br></pre></td></tr></table></figure>
+
+<p>Kconfig 的 <code>&quot;Onboard Peripheral Drivers&quot;</code> 添加</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">config BSP_USING_QSPI_FLASH</span><br><span class="line">    bool <span class="string">&quot;Enable QSPI FLASH (W25Q128 spi10)&quot;</span></span><br><span class="line">    <span class="keyword">select</span> BSP_USING_QSPI</span><br><span class="line">    <span class="keyword">select</span> RT_USING_SFUD</span><br><span class="line">    <span class="keyword">select</span> RT_SFUD_USING_QSPI</span><br><span class="line">    default n</span><br></pre></td></tr></table></figure>
+
+<h3 id="menuconfig"><a href="#menuconfig" class="headerlink" title="menuconfig"></a>menuconfig</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">Hardware Drivers Config &gt; Onboard Peripheral Drivers</span><br><span class="line">  [*] Enable QSPI FLASH (W25Q128 spi10)</span><br><span class="line"></span><br><span class="line">RT-Thread Components &gt; Device Drivers</span><br><span class="line">  [*] Using MTD Nor Flash device drivers</span><br><span class="line"></span><br><span class="line">RT-Thread online packages &gt;</span><br><span class="line"> system packages &gt;</span><br><span class="line">  [*] fal: Flash Abstraction Layer implement. Manage flash device and partition.  ---&gt;</span><br><span class="line">    (W25Q128) The name of the device used by FAL</span><br><span class="line">    这是 SFUD 初始化 flash 后创建的设备名</span><br><span class="line"></span><br><span class="line">Hardware Drivers Config &gt; On-chip Peripheral Drivers &gt; Enable SPI BUS</span><br><span class="line">  [*] Enable SPI BUS  ---&gt;</span><br><span class="line">    [*]   Enable SPI2 BUS</span><br><span class="line">    -*-     Enable SPI2 TX DMA</span><br><span class="line">    [*]     Enable SPI1 RX DMA</span><br><span class="line"></span><br><span class="line">RT-Thread Components &gt; Device Drivers</span><br><span class="line">  [*] Using SPI Bus/Device device drivers</span><br><span class="line">  -*- Enable QSPI mode</span><br><span class="line">  -*- Using Serial Flash Universal Driver</span><br><span class="line">  [*] Using auto probe flash JEDEC SFDP parameter</span><br><span class="line">  [*] Using defined supported flash chip information table</span><br><span class="line">  -*- Using QSPI mode support</span><br><span class="line">  (50000000) Default spi maximum speed(HZ)</span><br></pre></td></tr></table></figure>
+
+<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><p>fal_cfg.h</p>
+<figure class="highlight h"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">ifndef</span> _FAL_CFG_H_</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> _FAL_CFG_H_</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;rtthread.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;board.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">if</span> defined(BSP_USING_ON_CHIP_FLASH)</span></span><br><span class="line"><span class="keyword">extern</span> <span class="type">const</span> <span class="class"><span class="keyword">struct</span> <span class="title">fal_flash_dev</span> <span class="title">stm32_onchip_flash</span>;</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span> <span class="comment">/* BSP_USING_ON_CHIP_FLASH */</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">if</span> defined(BSP_USING_QSPI_FLASH)</span></span><br><span class="line"><span class="keyword">extern</span> <span class="class"><span class="keyword">struct</span> <span class="title">fal_flash_dev</span> <span class="title">nor_flash0</span>;</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span> <span class="comment">/* BSP_USING_QSPI_FLASH */</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">/* ========================= Device Configuration ========================== */</span></span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> BSP_USING_ON_CHIP_FLASH</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> ONCHIP_FLASH_DEV     &amp;stm32_onchip_flash,</span></span><br><span class="line"><span class="meta">#<span class="keyword">else</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> ONCHIP_FLASH_DEV</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span> <span class="comment">/* BSP_USING_ON_CHIP_FLASH */</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> BSP_USING_QSPI_FLASH</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> SPI_FLASH_DEV        &amp;nor_flash0,</span></span><br><span class="line"><span class="meta">#<span class="keyword">else</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> SPI_FLASH_DEV</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span> <span class="comment">/* BSP_USING_QSPI_FLASH */</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">/* flash device table */</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> FAL_FLASH_DEV_TABLE                                          \</span></span><br><span class="line"><span class="meta">&#123;                                                                    \</span></span><br><span class="line"><span class="meta">    ONCHIP_FLASH_DEV                                                 \</span></span><br><span class="line"><span class="meta">    SPI_FLASH_DEV                                                    \</span></span><br><span class="line"><span class="meta">&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/* ====================== Partition Configuration ========================== */</span></span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> FAL_PART_HAS_TABLE_CFG</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> BSP_USING_ON_CHIP_FLASH</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> ONCHIP_FLASH_PATITION          &#123;FAL_PART_MAGIC_WROD, <span class="string">&quot;app&quot;</span>,   <span class="string">&quot;onchip_flash&quot;</span>,   0,           496 * 1024, 0&#125;,      \</span></span><br><span class="line"><span class="meta">                                       &#123;FAL_PART_MAGIC_WROD, <span class="string">&quot;param&quot;</span>, <span class="string">&quot;onchip_flash&quot;</span>,   496* 1024,   16 * 1024,  0&#125;,</span></span><br><span class="line"><span class="meta">#<span class="keyword">else</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> ONCHIP_FLASH_PATITION</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> BSP_USING_QSPI_FLASH</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> SPI_FLASH_PARTITION            &#123;FAL_PART_MAGIC_WROD, <span class="string">&quot;filesystem&quot;</span>, <span class="string">&quot;W25Q128&quot;</span>, 9 * 1024 * 1024, 16 * 1024 * 1024, 0&#125;,</span></span><br><span class="line"><span class="meta">#<span class="keyword">else</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> SPI_FLASH_PARTITION</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">/* partition table */</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> FAL_PART_TABLE                                               \</span></span><br><span class="line"><span class="meta">&#123;                                                                    \</span></span><br><span class="line"><span class="meta">    ONCHIP_FLASH_PATITION                                            \</span></span><br><span class="line"><span class="meta">    SPI_FLASH_PARTITION                                              \</span></span><br><span class="line"><span class="meta">&#125;</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span> <span class="comment">/* FAL_PART_HAS_TABLE_CFG */</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span> <span class="comment">/* _FAL_CFG_H_ */</span></span></span><br></pre></td></tr></table></figure>
+
+<p>w25q128_auto_init.c</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;rtthread.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;rtdevice.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;board.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="type">int</span> <span class="title function_">w25q128_auto_init</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    __HAL_RCC_GPIOB_CLK_ENABLE();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 最后俩参数是spi接口的cs脚</span></span><br><span class="line">    rt_hw_spi_device_attach(<span class="string">&quot;spi2&quot;</span>, <span class="string">&quot;spi10&quot;</span>, GPIOI, GPIO_PIN_0);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (RT_NULL == rt_sfud_flash_probe(<span class="string">&quot;W25Q128&quot;</span>, <span class="string">&quot;spi10&quot;</span>))</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> -RT_ERROR;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> RT_EOK;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/* 导出到自动初始化 */</span></span><br><span class="line">INIT_COMPONENT_EXPORT(w25q128_auto_init);</span><br></pre></td></tr></table></figure>
+
+<p>w25q128_flash_demo.c</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;rtthread.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;rtdevice.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;board.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sfud.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> SPI_FLASH_DEVICE_NAME <span class="string">&quot;spi10&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">w25q128_flash_demo</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    sfud_err result;</span><br><span class="line">    <span class="type">uint8_t</span>* read_data;</span><br><span class="line">    <span class="type">uint8_t</span>* write_data;</span><br><span class="line">    sfud_flash* sfud_dev = <span class="literal">NULL</span>;</span><br><span class="line"></span><br><span class="line">    sfud_dev = rt_sfud_flash_find(SPI_FLASH_DEVICE_NAME);</span><br><span class="line">    <span class="comment">// 或者 sfud_dev = rt_sfud_flash_find_by_dev_name(&quot;W25Q128&quot;);</span></span><br><span class="line"></span><br><span class="line">    sfud_erase(sfud_dev, <span class="number">0</span>, <span class="number">4096</span>);</span><br><span class="line"></span><br><span class="line">    write_data = rt_malloc(<span class="number">32</span>);</span><br><span class="line">    rt_memset(write_data, <span class="number">3</span>, <span class="number">32</span>);</span><br><span class="line">    sfud_write(sfud_dev, <span class="number">0</span>, <span class="number">32</span>, write_data);</span><br><span class="line"></span><br><span class="line">    read_data = rt_malloc(<span class="number">32</span>);</span><br><span class="line">    sfud_read(sfud_dev, <span class="number">0</span>, <span class="number">32</span>, read_data);</span><br><span class="line"></span><br><span class="line">    rt_kprintf(<span class="string">&quot;please run cmd to check result\r\n&quot;</span>);</span><br><span class="line">    rt_kprintf(<span class="string">&quot;sf probe %s\r\n&quot;</span>, SPI_FLASH_DEVICE_NAME);</span><br><span class="line">    rt_kprintf(<span class="string">&quot;sf read 0 32\r\n&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">MSH_CMD_EXPORT(w25q128_flash_demo, w25q128_flash_demo);</span><br></pre></td></tr></table></figure>
+
+<h2 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">msh /&gt;list_device</span><br><span class="line">device           <span class="built_in">type</span>         ref count</span><br><span class="line">-------- -------------------- ----------</span><br><span class="line">W25Q128  Block Device         0</span><br><span class="line">spi10    SPI Device           0</span><br><span class="line">e0       Network Interface    0</span><br><span class="line">spi2     SPI Bus              0</span><br><span class="line">uart1    Character Device     2</span><br><span class="line">pin      Miscellaneous Device 0</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">msh /&gt;sf probe spi10</span><br><span class="line">msh /&gt;sf erase 0 10</span><br><span class="line">msh /&gt;sf <span class="built_in">read</span> 0 10</span><br><span class="line">msh /&gt;sf bench <span class="built_in">yes</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h2><p>Flash 先擦后写<br>写入之前请先擦除，这是 flash 特性决定的，因为 flash 的编程原理就是只能将 1 写为 0，而不能将 0 写为 1。擦除动作就是相应的页 &#x2F; 块的所有位变为 1（所有字节均为 0xFF），所以不擦除直接写入会有问题。</p>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/stm32/">stm32</a><a href="/tags/rt-thread/">rt-thread</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+  
+
+
+
+
+
+
+
+
+
+    </main>
+
+    <footer class="site-footer">
+  <p class="site-info">
+    Proudly powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and
+    Theme by <a href="https://github.com/CodeDaraW/Hacker" target="_blank">Hacker</a>
+    </br>
+    
+    &copy; 2025 John Doe
+    
+  </p>
+</footer>
+    
+    
+  </div>
+</div>
+</body>
+</html>
