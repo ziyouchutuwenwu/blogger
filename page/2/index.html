@@ -63,6 +63,67 @@
 
   
     
+    <h3 class="article-title"><a href="/2025/10/29/rtt-stm32-dev-pwm/"><span>rt-thread 下，配置 stm32 的 pwm</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/10/29/rtt-stm32-dev-pwm/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-10-29T01:02:55.000Z">
+          2025-10-29
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <p>cubeMX 里面配置的时候，一定要注意，<code>Clock Source 记得选一下</code>，默认是 disable; ChannelX 选 <code>PWM Generation CHX</code></p>
+<p>一个定时器只能产生一个频率的 pwm，可以产生多个通道 pwm 信号，不同信道可以占空比不同但频率必须相同，否则会被后面启用的 pwm 覆盖</p>
+<h2 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h2><p>修改 board&#x2F;Kconfig，添加 pwm 相关部分，以下为参考</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">menuconfig BSP_USING_PWM</span><br><span class="line">    bool <span class="string">&quot;enable pwm&quot;</span></span><br><span class="line">    default n</span><br><span class="line">    <span class="keyword">select</span> RT_USING_PWM</span><br><span class="line">    <span class="keyword">if</span> BSP_USING_PWM</span><br><span class="line">    menuconfig BSP_USING_PWM2</span><br><span class="line">        bool <span class="string">&quot;enable timer2 output pwm&quot;</span></span><br><span class="line">        default n</span><br><span class="line">        <span class="keyword">if</span> BSP_USING_PWM2</span><br><span class="line">            config BSP_USING_PWM2_CH4</span><br><span class="line">                bool <span class="string">&quot;enable pwm2 channel4&quot;</span></span><br><span class="line">                default n</span><br><span class="line">        endif</span><br><span class="line">    endif</span><br></pre></td></tr></table></figure>
+
+<p>如果启用的 pwm 不自带，需要手工修改，修改<code>libraries/HAL_Drivers/config/f4/pwm_config.h</code></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">ifdef</span> BSP_USING_PWM2</span></span><br><span class="line"><span class="meta">#<span class="keyword">ifndef</span> PWM2_CONFIG</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PWM2_CONFIG                             \</span></span><br><span class="line"><span class="meta">    &#123;                                           \</span></span><br><span class="line"><span class="meta">       .tim_handle.Instance     = TIM2,         \</span></span><br><span class="line"><span class="meta">       .name                    = <span class="string">&quot;pwm2&quot;</span>,       \</span></span><br><span class="line"><span class="meta">       .channel                 = 0             \</span></span><br><span class="line"><span class="meta">    &#125;</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br></pre></td></tr></table></figure>
+
+<h2 id="menuconfig"><a href="#menuconfig" class="headerlink" title="menuconfig"></a>menuconfig</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">scons --menuconfig 启用 pwm</span><br><span class="line">stm32XXxx_hal_conf.h 需要启用 HAL_TIM_MODULE_ENABLED</span><br><span class="line">开发板的时钟一定要设置正确，否则会出现正确的周期和占空比，但是电机转的结果错误</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/stm32/">stm32</a><a href="/tags/rt-thread/">rt-thread</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
     <h3 class="article-title"><a href="/2025/10/29/rtt-stm32-dev-pulse-encoder/"><span>rt-thread 下，配置 stm32 的脉冲编码器</span></a></h3>
     
   
@@ -667,85 +728,6 @@
 <h3 id="本机"><a href="#本机" class="headerlink" title="本机"></a>本机</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">zfs send demo1@aaa | zfs recv demo2@bbb</span><br></pre></td></tr></table></figure>
 
 <h3 id="远程"><a href="#远程" class="headerlink" title="远程"></a>远程</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">nc -w 120 -l 8023 | zfs receive -F demo2</span><br><span class="line">zfs send demo1@aaa | nc -w 120 127.0.0.1 8023</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-
-  </div>
-
-  <div class="article-footer">
-    <div class="article-meta pull-left">
-
-    
-
-    
-    
-
-    <span class="post-tags">
-      <i class="icon-tags"></i>
-        <a href="/tags/freebsd/">freebsd</a>
-    </span>
-    
-
-    </div>
-
-    
-  </div>
-</article>
-
-
-
-  <article>
-
-  
-    
-    <h3 class="article-title"><a href="/2025/10/22/freebsd-jail/"><span>freebsd 下 jail 用法</span></a></h3>
-    
-  
-
-  <div class="article-top-meta">
-    <span class="posted-on">
-      <a href="/2025/10/22/freebsd-jail/" rel="bookmark">
-        <time class="entry-date published" datetime="2025-10-22T03:17:51.000Z">
-          2025-10-22
-        </time>
-      </a>
-    </span>
-  </div>
-
-
-  
-
-  <div class="article-content">
-    <div class="entry">
-      
-        <p>目前使用 qjail</p>
-<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> pkg install -y qjail</span><br><span class="line">axel -o /tmp/ http://mirrors.ustc.edu.cn/freebsd/releases/amd64/13.0-RELEASE/base.txz</span><br><span class="line"><span class="built_in">sudo</span> qjail install -f /tmp/base.txz</span><br></pre></td></tr></table></figure>
-
-<h2 id="常规用法"><a href="#常规用法" class="headerlink" title="常规用法"></a>常规用法</h2><p>创建</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> qjail create -4 192.168.88.123 xxx</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> qjail list</span><br><span class="line"><span class="built_in">sudo</span> qjail start xxx</span><br><span class="line"><span class="built_in">sudo</span> qjail console xxx</span><br><span class="line"><span class="built_in">sudo</span> qjail stop xxx</span><br></pre></td></tr></table></figure>
-
-<p>修改 ip</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> qjail config -4 192.168.88.222 xxx</span><br></pre></td></tr></table></figure>
-
-<p>允许使用主机网络</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> qjail config -k xxx</span><br></pre></td></tr></table></figure>
-
-<p>改名字</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> qjail config -n demo xxx</span><br></pre></td></tr></table></figure>
-
-<p>备份恢复</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> qjail archive xxx</span><br><span class="line"><span class="built_in">sudo</span> qjail delete xxx</span><br><span class="line"><span class="built_in">sudo</span> qjail restore xxx</span><br></pre></td></tr></table></figure>
-
-<h2 id="文件复制"><a href="#文件复制" class="headerlink" title="文件复制"></a>文件复制</h2><p>具体虚拟机路径</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/usr/jails/xxx</span><br></pre></td></tr></table></figure>
-
-<p>模板路径</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/usr/jails/template</span><br></pre></td></tr></table></figure>
-
-<h2 id="任务管理"><a href="#任务管理" class="headerlink" title="任务管理"></a>任务管理</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">jls 查看任务列表</span><br><span class="line"><span class="built_in">sudo</span> jexec 1 csh</span><br></pre></td></tr></table></figure>
 
       
     </div>
