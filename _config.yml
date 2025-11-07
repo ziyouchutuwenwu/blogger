@@ -110,3 +110,7 @@ deploy:
   type: git
   repo: https://github.com/ziyouchutuwenwu/blogger.git
   branch: gh-pages
+
+sitemap:
+  path: sitemap.xml
+  rel: true
