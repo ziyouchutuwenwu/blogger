@@ -114,3 +114,5 @@ deploy:
 sitemap:
   path: sitemap.xml
   rel: true
+
+tag: true
