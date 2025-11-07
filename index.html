@@ -63,6 +63,80 @@
 
   
     
+    <h3 class="article-title"><a href="/2025/11/07/rtt-stm32-at-socket/"><span>rtt-stm32-at-socket</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/11/07/rtt-stm32-at-socket/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-11-07T02:09:24.000Z">
+          2025-11-07
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <p>参考<a target="_blank" rel="noopener" href="https://www.rt-thread.org/document/site/application-note/components/at/an0014-at-client/#at-socket">链接</a></p>
+<h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><p>先启用 uart2</p>
+<h3 id="软件包"><a href="#软件包" class="headerlink" title="软件包"></a>软件包</h3><p>开启 at device 的支持</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">RT-Thread online packages &gt;</span><br><span class="line">  IoT - internet of things &gt;</span><br><span class="line">    AT DEVICE: RT-Thread AT component porting or samples <span class="keyword">for</span> different device</span><br><span class="line">       [*]  Espressif ESP8266  ---&gt;</span><br></pre></td></tr></table></figure>
+
+<p>配置参数</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">缓冲区大小可以设置大一点</span><br><span class="line">配置使用 laster 版本软件包；</span><br></pre></td></tr></table></figure>
+
+<h3 id="驱动部分"><a href="#驱动部分" class="headerlink" title="驱动部分"></a>驱动部分</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">RT-Thread Components</span><br><span class="line">  Network</span><br><span class="line">    Socket abstraction layer</span><br><span class="line">      protocol stack implement</span><br><span class="line">        [*]Support AT Commands stack</span><br><span class="line">        [*]Enable BSD socket operated by the file system API</span><br><span class="line">    Enable AT commands</span><br><span class="line">      -*-   Enable AT commands client</span><br><span class="line">      -*-     Enable BSD Socket API support by AT commnads</span><br><span class="line">      <span class="comment"># 这里是选择显示at命令日志</span></span><br><span class="line">      [ ]     Enable <span class="built_in">print</span> RAW format AT <span class="built_in">command</span> communication data</span><br><span class="line">     (128)   The maximum lenght of AT Commonds buffer</span><br></pre></td></tr></table></figure>
+
+<h3 id="调试"><a href="#调试" class="headerlink" title="调试"></a>调试</h3><p>使用 cutecom 连接，回车模式选择 CR&#x2F;LF</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">AT+CWMODE=1</span><br><span class="line">AT+CWJAP=<span class="string">&quot;ssid&quot;</span>,<span class="string">&quot;password&quot;</span></span><br><span class="line">AT+CIFSR</span><br><span class="line"></span><br><span class="line">AT+RST</span><br></pre></td></tr></table></figure>
+
+<h3 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h3><ul>
+<li>模块串口和开发板的串口反接</li>
+<li>注意供电, wifi 芯片功耗很大，vcc 要接 5v，如果提示 <code>wait AT client(uart2) connect timeout(5000 tick)</code>，可能是 vcc 供电不足，可以<code>换一个 5v 的供电口解决</code></li>
+<li>模块如果使用杜邦线接线，用短的，长的可能会出现很多奇怪的问题</li>
+<li>如果提示缓冲区不够，可以使用串口调试器（cutecom）先调试 at 指令，很可能是不同的模块里面，在某些非正常时刻，发出太多的 response 导致的，可以看情况修改调用 at_create_resp 函数的地方针对性的修改缓冲区大小</li>
+</ul>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">比如 [E/at.clnt] Read response buffer failed. The Response buffer size is out of buffer size(xxx)</span><br><span class="line">可以在 at.client.c 的 at_create_resp 函数上下断点观察流程，尝试把缓冲区都改大一点</span><br></pre></td></tr></table></figure>
+
+<p>如果还有解决不了的问题，看<a target="_blank" rel="noopener" href="https://www.rt-thread.org/qa/forum.php?mod=viewthread&tid=11919&extra=page=1&filter=typeid&typeid=5">这里</a></p>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/stm32/">stm32</a><a href="/tags/rt-thread/">rt-thread</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
     <h3 class="article-title"><a href="/2025/11/06/rtt-stm32-eth-lan8720a/"><span>rtt-stm32-eth-lan8720a</span></a></h3>
     
   
@@ -660,65 +734,6 @@
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">menuconfig BSP_USING_SPI</span><br><span class="line">    bool <span class="string">&quot;Enable SPI BUS&quot;</span></span><br><span class="line">    default n</span><br><span class="line">    <span class="keyword">select</span> RT_USING_SPI</span><br><span class="line">    <span class="keyword">if</span> BSP_USING_SPI</span><br><span class="line">        config BSP_USING_SPI1</span><br><span class="line">            bool <span class="string">&quot;Enable SPI1 BUS&quot;</span></span><br><span class="line">            default n</span><br><span class="line"></span><br><span class="line">        config BSP_SPI1_TX_USING_DMA</span><br><span class="line">            bool <span class="string">&quot;Enable SPI1 TX DMA&quot;</span></span><br><span class="line">            depends on BSP_USING_SPI1</span><br><span class="line">            default n</span><br><span class="line"></span><br><span class="line">        config BSP_SPI1_RX_USING_DMA</span><br><span class="line">            bool <span class="string">&quot;Enable SPI1 RX DMA&quot;</span></span><br><span class="line">            depends on BSP_USING_SPI1</span><br><span class="line">            <span class="keyword">select</span> BSP_SPI1_TX_USING_DMA</span><br><span class="line">            default n</span><br><span class="line">    endif</span><br></pre></td></tr></table></figure>
 
 <h2 id="menuconfig"><a href="#menuconfig" class="headerlink" title="menuconfig"></a>menuconfig</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">scons --menuconfig 启用 spi</span><br><span class="line">stm32XXxx_hal_conf.h 需要启用 HAL_SPI_MODULE_ENABLED</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-
-  </div>
-
-  <div class="article-footer">
-    <div class="article-meta pull-left">
-
-    
-
-    
-    
-
-    <span class="post-tags">
-      <i class="icon-tags"></i>
-        <a href="/tags/stm32/">stm32</a><a href="/tags/rt-thread/">rt-thread</a>
-    </span>
-    
-
-    </div>
-
-    
-  </div>
-</article>
-
-
-
-  <article>
-
-  
-    
-    <h3 class="article-title"><a href="/2025/10/31/rtt-stm32-dev-sensor/"><span>rt-thread 下，配置 stm32 的 sensor</span></a></h3>
-    
-  
-
-  <div class="article-top-meta">
-    <span class="posted-on">
-      <a href="/2025/10/31/rtt-stm32-dev-sensor/" rel="bookmark">
-        <time class="entry-date published" datetime="2025-10-31T00:40:57.000Z">
-          2025-10-31
-        </time>
-      </a>
-    </span>
-  </div>
-
-
-  
-
-  <div class="article-content">
-    <div class="entry">
-      
-        <p>以 aht10 为例</p>
-<p>用法见 <a target="_blank" rel="noopener" href="https://github.com/RT-Thread-packages/aht10#readme">这里</a></p>
-<p>注意, 由于 aht 为温湿度传感器，因此，sensor 框架会抽象出 温度和湿度两个设备</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rt_hw_aht10_init(<span class="string">&quot;aaa&quot;</span>, &amp;cfg);</span><br></pre></td></tr></table></figure>
-
-<p>list_device 查看结果</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">device           <span class="built_in">type</span>         ref count</span><br><span class="line">-------- -------------------- ----------</span><br><span class="line">humi_aaa Sensor Device        0</span><br><span class="line">temp_aaa Sensor Device        0</span><br><span class="line">i2c1     I2C Bus              0</span><br><span class="line">uart1    Character Device     2</span><br><span class="line">pin      Miscellaneous Device 0</span><br></pre></td></tr></table></figure>
 
       
     </div>

@@ -1,0 +1,168 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>rtt-stm32-at-socket | 独钓寒江雪</title>
+
+  
+  <meta name="author" content="John Doe">
+  
+
+  
+  <meta name="description" content="参考链接
+配置先启用 uart2
+软件包开启 at device 的支持
+1234RT-Thread online packages &amp;gt;  IoT - internet of things &amp;gt;    AT DEVICE: RT-Thread AT component porting or">
+  
+
+  
+  
+  <meta name="keywords" content="stm32,rt-thread">
+  
+
+  <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+  <meta property="og:title" content="rtt-stm32-at-socket"/>
+
+  <meta property="og:site_name" content="独钓寒江雪"/>
+
+  
+  <meta property="og:image" content="/favicon.ico"/>
+  
+
+  <link href="/favicon.ico" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="独钓寒江雪" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+<meta name="generator" content="Hexo 8.0.0"></head>
+
+
+<body>
+<div class="blog">
+  <div class="content">
+
+    <header>
+  <div class="site-branding">
+    <h1 class="site-title">
+      <a href="/">独钓寒江雪</a>
+    </h1>
+    <p class="site-description"></p>
+  </div>
+  <nav class="site-navigation">
+    <ul>
+      
+        <li><a href="/">首页</a></li>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/tags">标签</a></li>
+      
+        <li><a href="/about">关于</a></li>
+      
+    </ul>
+  </nav>
+</header>
+
+    <main class="site-main posts-loop">
+    <article>
+
+  
+    
+    <h3 class="article-title"><span>rtt-stm32-at-socket</span></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/11/07/rtt-stm32-at-socket/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-11-07T02:09:24.000Z">
+          2025-11-07
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <p>参考<a target="_blank" rel="noopener" href="https://www.rt-thread.org/document/site/application-note/components/at/an0014-at-client/#at-socket">链接</a></p>
+<h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><p>先启用 uart2</p>
+<h3 id="软件包"><a href="#软件包" class="headerlink" title="软件包"></a>软件包</h3><p>开启 at device 的支持</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">RT-Thread online packages &gt;</span><br><span class="line">  IoT - internet of things &gt;</span><br><span class="line">    AT DEVICE: RT-Thread AT component porting or samples <span class="keyword">for</span> different device</span><br><span class="line">       [*]  Espressif ESP8266  ---&gt;</span><br></pre></td></tr></table></figure>
+
+<p>配置参数</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">缓冲区大小可以设置大一点</span><br><span class="line">配置使用 laster 版本软件包；</span><br></pre></td></tr></table></figure>
+
+<h3 id="驱动部分"><a href="#驱动部分" class="headerlink" title="驱动部分"></a>驱动部分</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">RT-Thread Components</span><br><span class="line">  Network</span><br><span class="line">    Socket abstraction layer</span><br><span class="line">      protocol stack implement</span><br><span class="line">        [*]Support AT Commands stack</span><br><span class="line">        [*]Enable BSD socket operated by the file system API</span><br><span class="line">    Enable AT commands</span><br><span class="line">      -*-   Enable AT commands client</span><br><span class="line">      -*-     Enable BSD Socket API support by AT commnads</span><br><span class="line">      <span class="comment"># 这里是选择显示at命令日志</span></span><br><span class="line">      [ ]     Enable <span class="built_in">print</span> RAW format AT <span class="built_in">command</span> communication data</span><br><span class="line">     (128)   The maximum lenght of AT Commonds buffer</span><br></pre></td></tr></table></figure>
+
+<h3 id="调试"><a href="#调试" class="headerlink" title="调试"></a>调试</h3><p>使用 cutecom 连接，回车模式选择 CR&#x2F;LF</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">AT+CWMODE=1</span><br><span class="line">AT+CWJAP=<span class="string">&quot;ssid&quot;</span>,<span class="string">&quot;password&quot;</span></span><br><span class="line">AT+CIFSR</span><br><span class="line"></span><br><span class="line">AT+RST</span><br></pre></td></tr></table></figure>
+
+<h3 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h3><ul>
+<li>模块串口和开发板的串口反接</li>
+<li>注意供电, wifi 芯片功耗很大，vcc 要接 5v，如果提示 <code>wait AT client(uart2) connect timeout(5000 tick)</code>，可能是 vcc 供电不足，可以<code>换一个 5v 的供电口解决</code></li>
+<li>模块如果使用杜邦线接线，用短的，长的可能会出现很多奇怪的问题</li>
+<li>如果提示缓冲区不够，可以使用串口调试器（cutecom）先调试 at 指令，很可能是不同的模块里面，在某些非正常时刻，发出太多的 response 导致的，可以看情况修改调用 at_create_resp 函数的地方针对性的修改缓冲区大小</li>
+</ul>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">比如 [E/at.clnt] Read response buffer failed. The Response buffer size is out of buffer size(xxx)</span><br><span class="line">可以在 at.client.c 的 at_create_resp 函数上下断点观察流程，尝试把缓冲区都改大一点</span><br></pre></td></tr></table></figure>
+
+<p>如果还有解决不了的问题，看<a target="_blank" rel="noopener" href="https://www.rt-thread.org/qa/forum.php?mod=viewthread&tid=11919&extra=page=1&filter=typeid&typeid=5">这里</a></p>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/stm32/">stm32</a><a href="/tags/rt-thread/">rt-thread</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+  
+
+
+
+
+
+
+
+
+
+    </main>
+
+    <footer class="site-footer">
+  <p class="site-info">
+    Proudly powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and
+    Theme by <a href="https://github.com/CodeDaraW/Hacker" target="_blank">Hacker</a>
+    </br>
+    
+    &copy; 2025 John Doe
+    
+  </p>
+</footer>
+    
+    
+  </div>
+</div>
+</body>
+</html>
