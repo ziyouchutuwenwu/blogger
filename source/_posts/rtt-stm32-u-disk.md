@@ -1,5 +1,5 @@
 ---
-title: rtt-stm32-u-disk
+title: rt-thread 下，配置 stm32 的 u 盘
 date: 2025-11-02 08:50:24
 tags:
   - stm32

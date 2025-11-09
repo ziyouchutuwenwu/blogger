@@ -1,5 +1,5 @@
 ---
-title: rtt-stm32-on-chip-flash
+title: rt-thread 下，配置 stm32 片上 flash 读写
 date: 2025-11-03 14:48:02
 tags:
   - stm32

@@ -1,5 +1,5 @@
 ---
-title: rtt-stm32-eth-w5500
+title: rt-thread 下，配置 stm32 的 w5500 网卡
 date: 2025-11-05 14:14:34
 tags:
   - stm32

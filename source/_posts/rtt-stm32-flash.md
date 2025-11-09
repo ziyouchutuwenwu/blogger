@@ -1,5 +1,5 @@
 ---
-title: rtt-stm32-flash
+title: rt-thread 下，配置 stm32 的外挂 flash
 date: 2025-11-04 11:56:10
 tags:
   - stm32

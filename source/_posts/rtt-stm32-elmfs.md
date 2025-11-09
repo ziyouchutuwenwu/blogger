@@ -1,5 +1,5 @@
 ---
-title: rtt-stm32-elmfs
+title: rt-thread 下，配置 stm32 的 elmfs
 date: 2025-11-08 08:52:39
 tags:
   - stm32

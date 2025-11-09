@@ -1,5 +1,5 @@
 ---
-title: rtt-stm32-eth-lan8720a
+title: rt-thread 下，配置 stm32 的 LAN8720A 网卡
 date: 2025-11-06 09:32:22
 tags:
   - stm32
