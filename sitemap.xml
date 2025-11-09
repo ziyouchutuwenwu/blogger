@@ -2,6 +2,69 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://hanjiangxue.uk/2025/11/03/rtt-stm32-on-chip-flash/</loc>
+    
+    <lastmod>2025-11-09</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://hanjiangxue.uk/2025/11/04/rtt-stm32-flash/</loc>
+    
+    <lastmod>2025-11-09</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://hanjiangxue.uk/2025/11/05/rtt-stm32-eth-w5500/</loc>
+    
+    <lastmod>2025-11-09</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://hanjiangxue.uk/2025/11/06/rtt-stm32-eth-lan8720a/</loc>
+    
+    <lastmod>2025-11-09</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://hanjiangxue.uk/2025/11/08/rtt-stm32-elmfs/</loc>
+    
+    <lastmod>2025-11-09</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://hanjiangxue.uk/2025/11/02/rtt-stm32-u-disk/</loc>
+    
+    <lastmod>2025-11-09</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://hanjiangxue.uk/2025/11/10/rtt-stm32-vuart/</loc>
+    
+    <lastmod>2025-11-09</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://hanjiangxue.uk/about/index.html</loc>
     
     <lastmod>2025-11-07</lastmod>
@@ -20,42 +83,6 @@
   </url>
   
   <url>
-    <loc>https://hanjiangxue.uk/2025/11/06/rtt-stm32-eth-lan8720a/</loc>
-    
-    <lastmod>2025-11-06</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://hanjiangxue.uk/2025/11/05/rtt-stm32-eth-w5500/</loc>
-    
-    <lastmod>2025-11-05</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://hanjiangxue.uk/2025/11/04/rtt-stm32-flash/</loc>
-    
-    <lastmod>2025-11-04</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://hanjiangxue.uk/2025/11/03/rtt-stm32-on-chip-flash/</loc>
-    
-    <lastmod>2025-11-03</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>https://hanjiangxue.uk/2025/11/01/rtt-stm32-dev-uart/</loc>
     
     <lastmod>2025-11-02</lastmod>
@@ -66,15 +93,6 @@
   
   <url>
     <loc>https://hanjiangxue.uk/2025/11/01/rtt-stm32-dev-watchdog/</loc>
-    
-    <lastmod>2025-11-02</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://hanjiangxue.uk/2025/11/02/rtt-stm32-u-disk/</loc>
     
     <lastmod>2025-11-02</lastmod>
     
@@ -427,7 +445,7 @@
 
   <url>
     <loc>https://hanjiangxue.uk/</loc>
-    <lastmod>2025-11-07</lastmod>
+    <lastmod>2025-11-09</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
@@ -435,77 +453,77 @@
   
   <url>
     <loc>https://hanjiangxue.uk/tags/freebsd/</loc>
-    <lastmod>2025-11-07</lastmod>
+    <lastmod>2025-11-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://hanjiangxue.uk/tags/linux/</loc>
-    <lastmod>2025-11-07</lastmod>
+    <lastmod>2025-11-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://hanjiangxue.uk/tags/kernel/</loc>
-    <lastmod>2025-11-07</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://hanjiangxue.uk/tags/erlang/</loc>
-    <lastmod>2025-11-07</lastmod>
+    <lastmod>2025-11-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://hanjiangxue.uk/tags/docker/</loc>
-    <lastmod>2025-11-07</lastmod>
+    <lastmod>2025-11-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://hanjiangxue.uk/tags/erlang/</loc>
+    <lastmod>2025-11-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://hanjiangxue.uk/tags/python/</loc>
-    <lastmod>2025-11-07</lastmod>
+    <lastmod>2025-11-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://hanjiangxue.uk/tags/angular/</loc>
-    <lastmod>2025-11-07</lastmod>
+    <lastmod>2025-11-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://hanjiangxue.uk/tags/stm32/</loc>
-    <lastmod>2025-11-07</lastmod>
+    <lastmod>2025-11-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://hanjiangxue.uk/tags/rt-thread/</loc>
-    <lastmod>2025-11-07</lastmod>
+    <lastmod>2025-11-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://hanjiangxue.uk/tags/vm/</loc>
-    <lastmod>2025-11-07</lastmod>
+    <lastmod>2025-11-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://hanjiangxue.uk/tags/zig/</loc>
-    <lastmod>2025-11-07</lastmod>
+    <lastmod>2025-11-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>

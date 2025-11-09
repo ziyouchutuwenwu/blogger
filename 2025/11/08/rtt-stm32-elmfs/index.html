@@ -1,0 +1,159 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>rt-thread 下，配置 stm32 的 elmfs | 独钓寒江雪</title>
+
+  
+  <meta name="author" content="John Doe">
+  
+
+  
+  <meta name="description" content="elm 文件系统
+说明外挂 flash 上的 elm 文件系统
+参考的 这里
+配置准备先按照外挂 flash 的配置配置好
+menuconfig123456789101112131415RT-Thread Components &amp;gt; Device virtual file system  ---">
+  
+
+  
+  
+  <meta name="keywords" content="stm32,rt-thread">
+  
+
+  <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+  <meta property="og:title" content="rt-thread 下，配置 stm32 的 elmfs"/>
+
+  <meta property="og:site_name" content="独钓寒江雪"/>
+
+  
+  <meta property="og:image" content="/favicon.ico"/>
+  
+
+  <link href="/favicon.ico" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="独钓寒江雪" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+<meta name="generator" content="Hexo 8.0.0"></head>
+
+
+<body>
+<div class="blog">
+  <div class="content">
+
+    <header>
+  <div class="site-branding">
+    <h1 class="site-title">
+      <a href="/">独钓寒江雪</a>
+    </h1>
+    <p class="site-description"></p>
+  </div>
+  <nav class="site-navigation">
+    <ul>
+      
+        <li><a href="/">首页</a></li>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/tags">标签</a></li>
+      
+        <li><a href="/about">关于</a></li>
+      
+    </ul>
+  </nav>
+</header>
+
+    <main class="site-main posts-loop">
+    <article>
+
+  
+    
+    <h3 class="article-title"><span>rt-thread 下，配置 stm32 的 elmfs</span></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/11/08/rtt-stm32-elmfs/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-11-08T00:52:39.000Z">
+          2025-11-08
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <p>elm 文件系统</p>
+<h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>外挂 flash 上的 elm 文件系统</p>
+<p>参考的 <a target="_blank" rel="noopener" href="https://www.rt-thread.org/document/site/application-note/components/dfs/an0012-dfs/">这里</a></p>
+<h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><h3 id="准备"><a href="#准备" class="headerlink" title="准备"></a>准备</h3><p>先按照外挂 flash 的配置配置好</p>
+<h3 id="menuconfig"><a href="#menuconfig" class="headerlink" title="menuconfig"></a>menuconfig</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">RT-Thread Components &gt; Device virtual file system  ---&gt;</span><br><span class="line">  -*- Using device virtual file system</span><br><span class="line">  [*] Using working directory</span><br><span class="line">  (2) The maximal number of mounted file system</span><br><span class="line">  (2) The maximal number of file system <span class="built_in">type</span></span><br><span class="line">  (16) The maximal number of opened files</span><br><span class="line">  [*] Enable elm-chan fatfs</span><br><span class="line">    elm-chan<span class="string">&#x27;s FatFs, Generic FAT Filesystem Module  ---&gt;</span></span><br><span class="line"><span class="string">      Support long file name (3: LFN with dynamic LFN working buffer on the heap)  ---&gt;</span></span><br><span class="line"><span class="string">        (X) 3: LFN with dynamic LFN working buffer on the heap</span></span><br><span class="line"><span class="string">      (4096) Maximum sector size to be handled.</span></span><br><span class="line"><span class="string">      [*] Enable sector erase feature</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">RT-Thread Components &gt; POSIX layer and C standard library</span></span><br><span class="line"><span class="string">  [*] Enable libc APIs from toolchain</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><p>w25q128_elmfs_demo.c</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;fal.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;dfs_fs.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;rtdbg.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">[I/FAL] ==================== FAL partition table ====================</span></span><br><span class="line"><span class="comment">[I/FAL] | name       | flash_dev |   offset   |    length  |</span></span><br><span class="line"><span class="comment">[I/FAL] -------------------------------------------------------------</span></span><br><span class="line"><span class="comment">[I/FAL] | filesystem | W25Q128   | 0x00000000 | 0x01000000 |</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> FS_PARTITION_NAME <span class="string">&quot;filesystem&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> FS_DEVICE_NAME    <span class="string">&quot;W25Q128&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">w25q128_elmfs_demo</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    fal_init();</span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">rt_device</span>* <span class="title">mtd_dev</span> =</span> RT_NULL;</span><br><span class="line">    mtd_dev = fal_mtd_nor_device_create(FS_PARTITION_NAME);</span><br><span class="line">    <span class="keyword">if</span> ( !mtd_dev )&#123;</span><br><span class="line">        LOG_E(<span class="string">&quot;Can&#x27;t create a mtd device on &#x27;%s&#x27; partition.&quot;</span>, FS_PARTITION_NAME);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="comment">// 以防万一，先unmount</span></span><br><span class="line">        dfs_unmount(<span class="string">&quot;/&quot;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (dfs_mount(FS_DEVICE_NAME, <span class="string">&quot;/&quot;</span>, <span class="string">&quot;elm&quot;</span>, <span class="number">0</span>, <span class="number">0</span>) == <span class="number">0</span>)&#123;</span><br><span class="line">            LOG_I(<span class="string">&quot;Filesystem initialized!&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span>&#123;</span><br><span class="line">            <span class="comment">// mkfs -t elm W25Q128</span></span><br><span class="line">            dfs_mkfs(<span class="string">&quot;elm&quot;</span>, FS_DEVICE_NAME);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (dfs_mount(FS_DEVICE_NAME, <span class="string">&quot;/&quot;</span>, <span class="string">&quot;elm&quot;</span>, <span class="number">0</span>, <span class="number">0</span>) == <span class="number">0</span>)&#123;</span><br><span class="line">                LOG_I(<span class="string">&quot;Filesystem initialized!&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">else</span>&#123;</span><br><span class="line">                LOG_E(<span class="string">&quot;Failed to initialize filesystem!&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> RT_EOK;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">MSH_CMD_EXPORT(w25q128_elmfs_demo, w25q128_elmfs_demo);</span><br></pre></td></tr></table></figure>
+
+<h2 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h2><p>demo 代码里面的 <code>dfs_mount</code> 和 <code>dfs_mkfs</code> 的参数，DEVICE_NAME, lfs 和 elm 是不一样的</p>
+<h2 id="建议"><a href="#建议" class="headerlink" title="建议"></a>建议</h2><p>4096 扇区，挂载成 FAT，要格式化成功，至少要 800KB 以上。且还要修改格式化参数。</p>
+<p>所以建议 4MB 以下的 FLASH 不要用 FAT，用 littlefs</p>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/stm32/">stm32</a><a href="/tags/rt-thread/">rt-thread</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+  
+
+
+
+
+
+
+
+
+
+    </main>
+
+    <footer class="site-footer">
+  <p class="site-info">
+    Proudly powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and
+    Theme by <a href="https://github.com/CodeDaraW/Hacker" target="_blank">Hacker</a>
+    </br>
+    
+    &copy; 2025 John Doe
+    
+  </p>
+</footer>
+    
+    
+  </div>
+</div>
+</body>
+</html>

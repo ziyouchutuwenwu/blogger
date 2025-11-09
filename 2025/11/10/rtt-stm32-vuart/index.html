@@ -1,0 +1,152 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>rt-thread 下，配置 stm32 的 虚拟串口 | 独钓寒江雪</title>
+
+  
+  <meta name="author" content="John Doe">
+  
+
+  
+  <meta name="description" content="参考这里
+步骤cubeMX12345打开 cubeMX，开启 USB_OTG, 使用 device 模式，启用 usb otg 的全局中断，配置时钟，生成代码，复制到项目注意，cubeMX 里面配置的时候，rcc 需要启用 hse，外部晶震，usb 的时钟需要设置为 48MHZ，我是 F411CEU">
+  
+
+  
+  
+  <meta name="keywords" content="stm32,rt-thread">
+  
+
+  <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+  <meta property="og:title" content="rt-thread 下，配置 stm32 的 虚拟串口"/>
+
+  <meta property="og:site_name" content="独钓寒江雪"/>
+
+  
+  <meta property="og:image" content="/favicon.ico"/>
+  
+
+  <link href="/favicon.ico" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="独钓寒江雪" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+<meta name="generator" content="Hexo 8.0.0"></head>
+
+
+<body>
+<div class="blog">
+  <div class="content">
+
+    <header>
+  <div class="site-branding">
+    <h1 class="site-title">
+      <a href="/">独钓寒江雪</a>
+    </h1>
+    <p class="site-description"></p>
+  </div>
+  <nav class="site-navigation">
+    <ul>
+      
+        <li><a href="/">首页</a></li>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/tags">标签</a></li>
+      
+        <li><a href="/about">关于</a></li>
+      
+    </ul>
+  </nav>
+</header>
+
+    <main class="site-main posts-loop">
+    <article>
+
+  
+    
+    <h3 class="article-title"><span>rt-thread 下，配置 stm32 的 虚拟串口</span></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/11/10/rtt-stm32-vuart/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-11-09T23:55:00.000Z">
+          2025-11-10
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <p>参考<a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/s8R4zg5-5HjxA4ldt0_n8g">这里</a></p>
+<h2 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h2><h3 id="cubeMX"><a href="#cubeMX" class="headerlink" title="cubeMX"></a>cubeMX</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">打开 cubeMX，开启 USB_OTG, 使用 device 模式，启用 usb otg 的全局中断，配置时钟，生成代码，复制到项目</span><br><span class="line"></span><br><span class="line">注意，cubeMX 里面配置的时候，rcc 需要启用 hse，外部晶震，usb 的时钟需要设置为 48MHZ，我是 F411CEU6 的板</span><br><span class="line"></span><br><span class="line">复制 main.c 里面的时钟配置到 board.c</span><br></pre></td></tr></table></figure>
+
+<h3 id="Kconfig"><a href="#Kconfig" class="headerlink" title="Kconfig"></a>Kconfig</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">config BSP_USING_USBD_FS</span><br><span class="line">    bool <span class="string">&quot;Enable OTGFS as USB device&quot;</span></span><br><span class="line">    <span class="keyword">select</span> RT_USING_USB_DEVICE</span><br><span class="line">    <span class="keyword">select</span> _RT_USB_DEVICE_CDC</span><br><span class="line">    default n</span><br></pre></td></tr></table></figure>
+
+<h3 id="menuconfig"><a href="#menuconfig" class="headerlink" title="menuconfig"></a>menuconfig</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Hardware Drivers Config &gt;</span><br><span class="line">  On-chip Peripheral Drivers</span><br><span class="line">    [*] Enable OTGFS as USB device</span><br><span class="line"></span><br><span class="line">RT-Thread Components &gt;</span><br><span class="line">  Device Drivers &gt;</span><br><span class="line">    Using USB &gt;</span><br><span class="line">      [*] Enable composite device &gt;</span><br><span class="line">        [*] Enable to use device as CDC device</span><br></pre></td></tr></table></figure>
+
+<h3 id="测试代码"><a href="#测试代码" class="headerlink" title="测试代码"></a>测试代码</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;rtthread.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;rtdevice.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">vcom_test</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">rt_device_t</span> dev = RT_NULL;</span><br><span class="line">    <span class="type">char</span> buf[] = <span class="string">&quot;hello vcom!\r\n&quot;</span>;</span><br><span class="line"></span><br><span class="line">    dev = rt_device_find(<span class="string">&quot;vcom&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (dev)</span><br><span class="line">        rt_device_open(dev, RT_DEVICE_FLAG_RDWR);</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        <span class="keyword">return</span> -RT_ERROR;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> (<span class="number">1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        rt_device_write(dev, <span class="number">0</span>, buf, rt_strlen(buf));</span><br><span class="line">        rt_thread_mdelay(<span class="number">500</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    rt_device_close(dev);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">MSH_CMD_EXPORT(vcom_test, vcom_test)</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/stm32/">stm32</a><a href="/tags/rt-thread/">rt-thread</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+  
+
+
+
+
+
+
+
+
+
+    </main>
+
+    <footer class="site-footer">
+  <p class="site-info">
+    Proudly powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and
+    Theme by <a href="https://github.com/CodeDaraW/Hacker" target="_blank">Hacker</a>
+    </br>
+    
+    &copy; 2025 John Doe
+    
+  </p>
+</footer>
+    
+    
+  </div>
+</div>
+</body>
+</html>
