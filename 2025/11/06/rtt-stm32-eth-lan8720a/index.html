@@ -1,0 +1,167 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>rtt-stm32-eth-lan8720a | 独钓寒江雪</title>
+
+  
+  <meta name="author" content="John Doe">
+  
+
+  
+  <meta name="description" content="配置 LAN8720A 接入网络
+参考链接
+cubeMX 配置启用 Eth 模块
+12选择 RMII对比实际板的原理图，修改引脚位置，注意rst引脚的位置
+
+项目配置修改 ports&amp;#x2F;phy_reset.c 内 rst 引脚位置, 复制 ports 目录到 board 下，修改 SCons">
+  
+
+  
+  
+  <meta name="keywords" content="stm32,rt-thread">
+  
+
+  <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+  <meta property="og:title" content="rtt-stm32-eth-lan8720a"/>
+
+  <meta property="og:site_name" content="独钓寒江雪"/>
+
+  
+  <meta property="og:image" content="/favicon.ico"/>
+  
+
+  <link href="/favicon.ico" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="独钓寒江雪" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+<meta name="generator" content="Hexo 8.0.0"></head>
+
+
+<body>
+<div class="blog">
+  <div class="content">
+
+    <header>
+  <div class="site-branding">
+    <h1 class="site-title">
+      <a href="/">独钓寒江雪</a>
+    </h1>
+    <p class="site-description"></p>
+  </div>
+  <nav class="site-navigation">
+    <ul>
+      
+        <li><a href="/">首页</a></li>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/tags">标签</a></li>
+      
+        <li><a href="/about">关于</a></li>
+      
+    </ul>
+  </nav>
+</header>
+
+    <main class="site-main posts-loop">
+    <article>
+
+  
+    
+    <h3 class="article-title"><span>rtt-stm32-eth-lan8720a</span></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/11/06/rtt-stm32-eth-lan8720a/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-11-06T01:32:22.000Z">
+          2025-11-06
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <p>配置 LAN8720A 接入网络</p>
+<p>参考<a target="_blank" rel="noopener" href="https://www.rt-thread.org/document/site/application-note/components/network/an0010-lwip-driver-porting/">链接</a></p>
+<h2 id="cubeMX-配置"><a href="#cubeMX-配置" class="headerlink" title="cubeMX 配置"></a>cubeMX 配置</h2><p>启用 Eth 模块</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">选择 RMII</span><br><span class="line">对比实际板的原理图，修改引脚位置，注意rst引脚的位置</span><br></pre></td></tr></table></figure>
+
+<h2 id="项目配置"><a href="#项目配置" class="headerlink" title="项目配置"></a>项目配置</h2><p>修改 ports&#x2F;phy_reset.c 内 rst 引脚位置, 复制 ports 目录到 board 下，修改 SConscript</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">path += [cwd + <span class="string">&#x27;/ports&#x27;</span>]</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> GetDepend([<span class="string">&#x27;BSP_USING_ETH&#x27;</span>]):</span><br><span class="line">    src += Glob(<span class="string">&#x27;ports/phy_reset.c&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<h2 id="board-Kconfig-配置"><a href="#board-Kconfig-配置" class="headerlink" title="board&#x2F;Kconfig 配置"></a>board&#x2F;Kconfig 配置</h2><p>Kconfig 里面，menu “Onboard Peripheral Drivers”内添加</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">config PHY_USING_LAN8720A</span><br><span class="line">    bool</span><br><span class="line">config BSP_USING_ETH</span><br><span class="line">    bool <span class="string">&quot;Enable Ethernet&quot;</span></span><br><span class="line">    default n</span><br><span class="line">    <span class="keyword">select</span> RT_USING_LWIP</span><br><span class="line">    <span class="keyword">select</span> PHY_USING_LAN8720A</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">RT-Thread Components &gt;</span><br><span class="line">  Network &gt;</span><br><span class="line">    Socket abstraction layer</span><br><span class="line">      [*] Enable socket abstraction layer</span><br><span class="line">      [*] Enable BSD socket operated by file system API</span><br><span class="line">    light weight TCP/IP stack</span><br><span class="line">      [] Enable alloc ip address through DHCP</span><br><span class="line">      [*] Enable lwIP stack</span><br></pre></td></tr></table></figure>
+
+<p>在<code>light weight TCP/IP stack</code>里面, 选项 <code>Enable alloc ip address through DHCP</code>来控制 dhcp 或者固定 ip</p>
+<h2 id="打开调试开关"><a href="#打开调试开关" class="headerlink" title="打开调试开关"></a>打开调试开关</h2><p>libraries&#x2F;HAL_Drivers&#x2F;drv_eth.c</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> ETH_RX_DUMP</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> ETH_TX_DUMP</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> DRV_DEBUG</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="相关代码"><a href="#相关代码" class="headerlink" title="相关代码"></a>相关代码</h2><p>phy_reset.c</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;board.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> RESET_IO GET_PIN(H, 2)</span></span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">phy_reset</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    rt_pin_write(RESET_IO, PIN_LOW);</span><br><span class="line">    rt_thread_mdelay(<span class="number">50</span>);</span><br><span class="line">    rt_pin_write(RESET_IO, PIN_HIGH);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">phy_init</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    rt_pin_mode(RESET_IO, PIN_MODE_OUTPUT);</span><br><span class="line">    rt_pin_write(RESET_IO, PIN_HIGH);</span><br><span class="line">    <span class="keyword">return</span> RT_EOK;</span><br><span class="line">&#125;</span><br><span class="line">INIT_BOARD_EXPORT(phy_init);</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/stm32/">stm32</a><a href="/tags/rt-thread/">rt-thread</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+  
+
+
+
+
+
+
+
+
+
+    </main>
+
+    <footer class="site-footer">
+  <p class="site-info">
+    Proudly powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and
+    Theme by <a href="https://github.com/CodeDaraW/Hacker" target="_blank">Hacker</a>
+    </br>
+    
+    &copy; 2025 John Doe
+    
+  </p>
+</footer>
+    
+    
+  </div>
+</div>
+</body>
+</html>

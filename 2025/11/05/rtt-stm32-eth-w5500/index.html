@@ -1,0 +1,164 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>rtt-stm32-eth-w5500 | 独钓寒江雪</title>
+
+  
+  <meta name="author" content="John Doe">
+  
+
+  
+  <meta name="description" content="配置 w5500 网卡接入网络
+物理接线cubeMX 里面的 nss 脚貌似不需要接，cubeMX 里面的 sck 脚是对应模块的 sclk 脚
+模块的 scs 脚接的位置就是, rt_hw_spi_device_attach 的最后两个参数的值
+开发板和模块之间的 MISO 和 MOSI 不需要反">
+  
+
+  
+  
+  <meta name="keywords" content="stm32,rt-thread">
+  
+
+  <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+  <meta property="og:title" content="rtt-stm32-eth-w5500"/>
+
+  <meta property="og:site_name" content="独钓寒江雪"/>
+
+  
+  <meta property="og:image" content="/favicon.ico"/>
+  
+
+  <link href="/favicon.ico" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="独钓寒江雪" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+<meta name="generator" content="Hexo 8.0.0"></head>
+
+
+<body>
+<div class="blog">
+  <div class="content">
+
+    <header>
+  <div class="site-branding">
+    <h1 class="site-title">
+      <a href="/">独钓寒江雪</a>
+    </h1>
+    <p class="site-description"></p>
+  </div>
+  <nav class="site-navigation">
+    <ul>
+      
+        <li><a href="/">首页</a></li>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/tags">标签</a></li>
+      
+        <li><a href="/about">关于</a></li>
+      
+    </ul>
+  </nav>
+</header>
+
+    <main class="site-main posts-loop">
+    <article>
+
+  
+    
+    <h3 class="article-title"><span>rtt-stm32-eth-w5500</span></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/11/05/rtt-stm32-eth-w5500/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-11-05T06:14:34.000Z">
+          2025-11-05
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <p>配置 w5500 网卡接入网络</p>
+<h2 id="物理接线"><a href="#物理接线" class="headerlink" title="物理接线"></a>物理接线</h2><p>cubeMX 里面的 nss 脚貌似不需要接，cubeMX 里面的 sck 脚是对应模块的 sclk 脚</p>
+<p>模块的 scs 脚接的位置就是, rt_hw_spi_device_attach 的<code>最后两个参数的值</code></p>
+<p>开发板和模块之间的 MISO 和 MOSI <code>不需要反接</code></p>
+<h2 id="cubeMX-配置"><a href="#cubeMX-配置" class="headerlink" title="cubeMX 配置"></a>cubeMX 配置</h2><p>启用 spi1</p>
+<p>设置 Mode 为 Full Duplex Master</p>
+<p>设置 Hardware NSS Signal 为 output 模式</p>
+<h2 id="menuconfig-配置"><a href="#menuconfig-配置" class="headerlink" title="menuconfig 配置"></a>menuconfig 配置</h2><p>参考驱动配置，在 board&#x2F;Kconfig 里面启用 spi1 的配置</p>
+<p>配置 iot packages 里面的 wiznet 部分</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">RT-Thread online packages ---&gt;</span><br><span class="line">  IoT - internet of things ---&gt;</span><br><span class="line">    WIZnet: WIZnet TCP/IP chips SAL framework imlement ---&gt;</span><br><span class="line">      WIZnet device configure</span><br><span class="line">         (spi10) SPI device name</span><br><span class="line">         (10) Reset PIN number (NEW)</span><br><span class="line">         (11) IRQ PIN number (NEW)</span><br></pre></td></tr></table></figure>
+
+<p>参数说明</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">SPI device name 不是 spi 的总线名，需要手工创建，比如 spi10</span><br><span class="line">设置 Reset PIN number</span><br><span class="line">设置IRQ PIN number，也就是模块上的int引脚</span><br></pre></td></tr></table></figure>
+
+<h2 id="编写-spi-初始化代码"><a href="#编写-spi-初始化代码" class="headerlink" title="编写 spi 初始化代码"></a>编写 spi 初始化代码</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;rtthread.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;rtdevice.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;board.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="type">int</span> <span class="title function_">w5500_spi_init</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    __HAL_RCC_GPIOA_CLK_ENABLE();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 最后两个参数是spi模块scs引脚的位置</span></span><br><span class="line">    <span class="keyword">return</span> rt_hw_spi_device_attach(<span class="string">&quot;spi1&quot;</span>, <span class="string">&quot;spi10&quot;</span>, GPIOA, GPIO_PIN_4);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/* 导出到自动初始化 */</span></span><br><span class="line">INIT_COMPONENT_EXPORT(w5500_spi_init);</span><br></pre></td></tr></table></figure>
+
+<h2 id="重连测试"><a href="#重连测试" class="headerlink" title="重连测试"></a>重连测试</h2><p>测试模拟：开机断网，中间断网，重连以后，看到 W5500 提示 link up 以后，可以 ping 通其他主机</p>
+<p>无论 dhcp 模式打开还是关闭，均支持。</p>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/stm32/">stm32</a><a href="/tags/rt-thread/">rt-thread</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+  
+
+
+
+
+
+
+
+
+
+    </main>
+
+    <footer class="site-footer">
+  <p class="site-info">
+    Proudly powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and
+    Theme by <a href="https://github.com/CodeDaraW/Hacker" target="_blank">Hacker</a>
+    </br>
+    
+    &copy; 2025 John Doe
+    
+  </p>
+</footer>
+    
+    
+  </div>
+</div>
+</body>
+</html>
