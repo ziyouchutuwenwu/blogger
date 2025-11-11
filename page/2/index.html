@@ -63,6 +63,119 @@
 
   
     
+    <h3 class="article-title"><a href="/2025/11/01/rtt-stm32-dev-watchdog/"><span>rt-thread 下，配置 stm32 的 watchdog</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/11/01/rtt-stm32-dev-watchdog/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-11-01T02:24:24.000Z">
+          2025-11-01
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h2 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h2><p>修改 board&#x2F;Kconfig，添加 watchdog 相关部分，以下为参考</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">config BSP_USING_WDT</span><br><span class="line">    bool <span class="string">&quot;Enable Watchdog Timer&quot;</span></span><br><span class="line">    <span class="keyword">select</span> RT_USING_WDT</span><br><span class="line">    default n</span><br></pre></td></tr></table></figure>
+
+<h2 id="menuconfig"><a href="#menuconfig" class="headerlink" title="menuconfig"></a>menuconfig</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">scons --menuconfig 启用 watchdog</span><br><span class="line">stm32XXxx_hal_conf.h 需要启用 HAL_IWDG_MODULE_ENABLED</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/stm32/">stm32</a><a href="/tags/rt-thread/">rt-thread</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
+    <h3 class="article-title"><a href="/2025/11/01/rtt-stm32-dev-uart/"><span>rt-thread 下，配置 stm32 的 uart</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/11/01/rtt-stm32-dev-uart/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-11-01T02:24:19.000Z">
+          2025-11-01
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h2 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h2><p>cubeMX 导出配置，引脚位置在 xxxx_hal_msp.c 中</p>
+<h2 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h2><p>参考下面的改 board&#x2F;Kconfig</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">menuconfig BSP_USING_UART</span><br><span class="line">    bool <span class="string">&quot;Enable UART&quot;</span></span><br><span class="line">    default y</span><br><span class="line">    <span class="keyword">select</span> RT_USING_SERIAL</span><br><span class="line">    <span class="keyword">if</span> BSP_USING_UART</span><br><span class="line">        config BSP_USING_UART1</span><br><span class="line">            bool <span class="string">&quot;Enable UART1&quot;</span></span><br><span class="line">            default y</span><br><span class="line">        config BSP_UART1_RX_USING_DMA</span><br><span class="line">            bool <span class="string">&quot;Enable UART1 RX DMA&quot;</span></span><br><span class="line">            depends on BSP_USING_UART1 &amp;&amp; RT_SERIAL_USING_DMA</span><br><span class="line">            default n</span><br><span class="line">    endif</span><br></pre></td></tr></table></figure>
+
+<h2 id="menuconfig"><a href="#menuconfig" class="headerlink" title="menuconfig"></a>menuconfig</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">scons --menuconfig 启用 uart，默认启用</span><br><span class="line">stm32XXxx_hal_conf.h 需要启用 HAL_UART_MODULE_ENABLED</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/stm32/">stm32</a><a href="/tags/rt-thread/">rt-thread</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
     <h3 class="article-title"><a href="/2025/10/31/rtt-stm32-dev-timer/"><span>rt-thread 下，配置 stm32 的 timer</span></a></h3>
     
   
@@ -526,125 +639,6 @@
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> GetDepend([<span class="string">&quot;RT_USING_DAC&quot;</span>]):</span><br><span class="line">    src += [<span class="string">&quot;STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dac.c&quot;</span>]</span><br><span class="line">    src += [<span class="string">&quot;STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dac_ex.c&quot;</span>]</span><br></pre></td></tr></table></figure>
 
 <h2 id="menuconfig"><a href="#menuconfig" class="headerlink" title="menuconfig"></a>menuconfig</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">使用 cubeMX 配置项目, 启用 dac 和对应的 channel</span><br><span class="line">scons --menuconfig 启用 dac</span><br><span class="line">stm32XXxx_hal_conf.h 需要启用 HAL_ADC_MODULE_ENABLED</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-
-  </div>
-
-  <div class="article-footer">
-    <div class="article-meta pull-left">
-
-    
-
-    
-    
-
-    <span class="post-tags">
-      <i class="icon-tags"></i>
-        <a href="/tags/stm32/">stm32</a><a href="/tags/rt-thread/">rt-thread</a>
-    </span>
-    
-
-    </div>
-
-    
-  </div>
-</article>
-
-
-
-  <article>
-
-  
-    
-    <h3 class="article-title"><a href="/2025/10/27/rtt-stm32-dev-can/"><span>rt-thread 下，配置 stm32 的 can</span></a></h3>
-    
-  
-
-  <div class="article-top-meta">
-    <span class="posted-on">
-      <a href="/2025/10/27/rtt-stm32-dev-can/" rel="bookmark">
-        <time class="entry-date published" datetime="2025-10-27T02:18:11.000Z">
-          2025-10-27
-        </time>
-      </a>
-    </span>
-  </div>
-
-
-  
-
-  <div class="article-content">
-    <div class="entry">
-      
-        <h2 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h2><p>修改 board&#x2F;Kconfig，添加 can 相关部分，以下为参考</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">menuconfig BSP_USING_CAN</span><br><span class="line">    bool <span class="string">&quot;enable can&quot;</span></span><br><span class="line">    default n</span><br><span class="line">    <span class="keyword">select</span> RT_USING_CAN</span><br><span class="line">    <span class="keyword">if</span> BSP_USING_CAN</span><br><span class="line">     config BSP_USING_CAN1</span><br><span class="line">        bool <span class="string">&quot;enable CAN1&quot;</span></span><br><span class="line">        default n</span><br><span class="line">    endif</span><br></pre></td></tr></table></figure>
-
-<h2 id="menuconfig"><a href="#menuconfig" class="headerlink" title="menuconfig"></a>menuconfig</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">scons --menuconfig 启用 can</span><br><span class="line">stm32XXxx_hal_conf.h 需要启用 HAL_CAN_MODULE_ENABLED</span><br></pre></td></tr></table></figure>
-
-<h2 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h2><p>一定要注意 cubeMX 里面的时钟配置<code>apb1 peripheral clocks</code>，这个和 PSC, BS1, BS2, SJW, 会共同影响波特率错误，导致收不到数据</p>
-<p>波特率计算公式 <code>baud = APB_PERIPHERAL_CLOCK / ( PSC*( BS1 + BS2 + SJW) )</code></p>
-
-      
-    </div>
-
-  </div>
-
-  <div class="article-footer">
-    <div class="article-meta pull-left">
-
-    
-
-    
-    
-
-    <span class="post-tags">
-      <i class="icon-tags"></i>
-        <a href="/tags/stm32/">stm32</a><a href="/tags/rt-thread/">rt-thread</a>
-    </span>
-    
-
-    </div>
-
-    
-  </div>
-</article>
-
-
-
-  <article>
-
-  
-    
-    <h3 class="article-title"><a href="/2025/10/26/rtt-stm32-dev-adc/"><span>rt-thread 下，配置 stm32 的 adc</span></a></h3>
-    
-  
-
-  <div class="article-top-meta">
-    <span class="posted-on">
-      <a href="/2025/10/26/rtt-stm32-dev-adc/" rel="bookmark">
-        <time class="entry-date published" datetime="2025-10-26T02:00:50.000Z">
-          2025-10-26
-        </time>
-      </a>
-    </span>
-  </div>
-
-
-  
-
-  <div class="article-content">
-    <div class="entry">
-      
-        <h2 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h2><p>修改 board&#x2F;Kconfig，添加 adc 相关部分，以下为参考</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">menuconfig BSP_USING_ADC</span><br><span class="line">    bool <span class="string">&quot;enable ADC&quot;</span></span><br><span class="line">    default n</span><br><span class="line">    <span class="keyword">select</span> RT_USING_ADC</span><br><span class="line">    <span class="keyword">if</span> BSP_USING_ADC</span><br><span class="line">     config BSP_USING_ADC1</span><br><span class="line">        bool <span class="string">&quot;enable ADC1&quot;</span></span><br><span class="line">        default n</span><br><span class="line">    endif</span><br></pre></td></tr></table></figure>
-
-<p>如果启用的 adc 不自带，需要手工修改</p>
-<p>修改<code>libraries/HAL_Drivers/config/f4/adc_config.h</code></p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">ifdef</span> BSP_USING_ADC1</span></span><br><span class="line"><span class="meta">#<span class="keyword">ifndef</span> ADC1_CONFIG</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> ADC1_CONFIG                                                 \</span></span><br><span class="line"><span class="meta">    &#123;                                                               \</span></span><br><span class="line"><span class="meta">       .Instance                   = ADC1,                          \</span></span><br><span class="line"><span class="meta">       .Init.ClockPrescaler        = ADC_CLOCK_SYNC_PCLK_DIV4,      \</span></span><br><span class="line"><span class="meta">       .Init.Resolution            = ADC_RESOLUTION_12B,            \</span></span><br><span class="line"><span class="meta">       .Init.DataAlign             = ADC_DATAALIGN_RIGHT,           \</span></span><br><span class="line"><span class="meta">       .Init.ScanConvMode          = DISABLE,                       \</span></span><br><span class="line"><span class="meta">       .Init.EOCSelection          = DISABLE,                       \</span></span><br><span class="line"><span class="meta">       .Init.ContinuousConvMode    = DISABLE,                       \</span></span><br><span class="line"><span class="meta">       .Init.NbrOfConversion       = 1,                             \</span></span><br><span class="line"><span class="meta">       .Init.DiscontinuousConvMode = DISABLE,                       \</span></span><br><span class="line"><span class="meta">       .Init.NbrOfDiscConversion   = 0,                             \</span></span><br><span class="line"><span class="meta">       .Init.ExternalTrigConv      = ADC_SOFTWARE_START,            \</span></span><br><span class="line"><span class="meta">       .Init.ExternalTrigConvEdge  = ADC_EXTERNALTRIGCONVEDGE_NONE, \</span></span><br><span class="line"><span class="meta">       .Init.DMAContinuousRequests = DISABLE,                       \</span></span><br><span class="line"><span class="meta">    &#125;</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br></pre></td></tr></table></figure>
-
-<h2 id="menuconfig"><a href="#menuconfig" class="headerlink" title="menuconfig"></a>menuconfig</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">scons --menuconfig 启用 adc</span><br><span class="line">stm32XXxx_hal_conf.h 需要启用 HAL_ADC_MODULE_ENABLED</span><br></pre></td></tr></table></figure>
 
       
     </div>
