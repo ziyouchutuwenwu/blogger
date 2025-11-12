@@ -63,6 +63,70 @@
 
   
     
+    <h3 class="article-title"><a href="/2025/11/12/rtt-stm32-freemodbus/"><span>rt-thread 下，配置 stm32 的 freemodbus</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/11/12/rtt-stm32-freemodbus/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-11-12T01:07:43.000Z">
+          2025-11-12
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <p>freemodbus</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">RT-Thread online packages -&gt;</span><br><span class="line">  [*] FreeModbus: Modbus master and slave stack</span><br></pre></td></tr></table></figure>
+
+<p>rtu 的话，用 freemodbus</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">例子里面只有 rtu 的 master 和 slave 模式</span><br></pre></td></tr></table></figure>
+
+<p>代码</p>
+<p>freemodbus_rtu_master_demo.c</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;rtthread.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;mb.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;mb_m.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> MB_POLL_THREAD_PRIORITY  10</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> MB_SEND_THREAD_PRIORITY  RT_THREAD_PRIORITY_MAX - 1</span></span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="type">void</span> <span class="title function_">rtu_master_demo_thread</span><span class="params">(<span class="type">void</span> *parameter)</span> &#123;</span><br><span class="line">    eMBMasterReqErrCode error_code = MB_MRE_NO_ERR;</span><br><span class="line">    <span class="type">rt_uint16_t</span> error_count = <span class="number">0</span>;</span><br><span class="line">    USHORT data[<span class="number">2</span>] = &#123;<span class="number">0</span>&#125;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> (<span class="number">1</span>)&#123;</span><br><span class="line">        data[<span class="number">0</span>] = (USHORT)(rt_tick_get() / <span class="number">10</span>);</span><br><span class="line">        data[<span class="number">1</span>] = (USHORT)(rt_tick_get() % <span class="number">10</span>);</span><br><span class="line"></span><br><span class="line">        error_code = eMBMasterReqWriteMultipleHoldingRegister(</span><br><span class="line">            <span class="number">1</span>,     <span class="comment">/* salve address */</span></span><br><span class="line">            <span class="number">2</span>,     <span class="comment">/* register start address */</span></span><br><span class="line">            <span class="number">2</span>,     <span class="comment">/* register total number */</span></span><br><span class="line">            data,  <span class="comment">/* data to be written */</span></span><br><span class="line">            RT_WAITING_FOREVER); <span class="comment">/* timeout */</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">/* Record the number of errors */</span></span><br><span class="line">        <span class="keyword">if</span> (error_code != MB_MRE_NO_ERR)</span><br><span class="line">        &#123;</span><br><span class="line">            error_count++;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="type">void</span> <span class="title function_">modbus_master_poll</span><span class="params">(<span class="type">void</span> *parameter)</span>&#123;</span><br><span class="line">    <span class="comment">// uart5</span></span><br><span class="line">    eMBMasterInit(MB_RTU, <span class="number">5</span>, <span class="number">115200</span>, MB_PAR_EVEN);</span><br><span class="line">    eMBMasterEnable();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> (<span class="number">1</span>)&#123;</span><br><span class="line">        eMBMasterPoll();</span><br><span class="line">        rt_thread_mdelay(<span class="number">500</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">freemodbus_rtu_master_demo</span><span class="params">()</span>&#123;</span><br><span class="line">    <span class="type">static</span> <span class="type">rt_uint8_t</span> is_init = <span class="number">0</span>;</span><br><span class="line">    <span class="type">rt_thread_t</span> tid1 = RT_NULL, tid2 = RT_NULL;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (is_init &gt; <span class="number">0</span>)&#123;</span><br><span class="line">        rt_kprintf(<span class="string">&quot;libmodbus_rtu_master is running\n&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> -RT_ERROR;</span><br><span class="line">    &#125;</span><br><span class="line">    tid1 = rt_thread_create(<span class="string">&quot;modbus_master_poll&quot;</span>, modbus_master_poll, RT_NULL, <span class="number">512</span>, MB_POLL_THREAD_PRIORITY, <span class="number">10</span>);</span><br><span class="line">    <span class="keyword">if</span> (tid1 != RT_NULL)&#123;</span><br><span class="line">        rt_thread_startup(tid1);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="keyword">goto</span> __exit;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    tid2 = rt_thread_create(<span class="string">&quot;rtu_master_demo_thread&quot;</span>, rtu_master_demo_thread, RT_NULL, <span class="number">512</span>, MB_SEND_THREAD_PRIORITY, <span class="number">10</span>);</span><br><span class="line">    <span class="keyword">if</span> (tid2 != RT_NULL)&#123;</span><br><span class="line">        rt_thread_startup(tid2);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="keyword">goto</span> __exit;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    is_init = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">return</span> RT_EOK;</span><br><span class="line"></span><br><span class="line">__exit:</span><br><span class="line">    <span class="keyword">if</span> (tid1) rt_thread_delete(tid1);</span><br><span class="line">    <span class="keyword">if</span> (tid2) rt_thread_delete(tid2);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> -RT_ERROR;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">MSH_CMD_EXPORT(freemodbus_rtu_master_demo, freemodbus_rtu_master_demo)</span><br></pre></td></tr></table></figure>
+
+<p>freemodbus_rtu_slave_demo.c</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;rtthread.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;mb.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;mb_m.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;user_mb_app.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> MB_POLL_THREAD_PRIORITY  10</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> MB_SEND_THREAD_PRIORITY  RT_THREAD_PRIORITY_MAX - 1</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">extern</span> USHORT usSRegHoldBuf[S_REG_HOLDING_NREGS];</span><br><span class="line"></span><br><span class="line"><span class="comment">// master来读取slave的数据</span></span><br><span class="line"><span class="type">static</span> <span class="type">void</span> <span class="title function_">rtu_slave_demo_thread</span><span class="params">(<span class="type">void</span> *parameter)</span></span><br><span class="line">&#123;</span><br><span class="line">    USHORT*           usRegHoldingBuf;</span><br><span class="line">    usRegHoldingBuf = usSRegHoldBuf;</span><br><span class="line">    <span class="type">rt_base_t</span> level;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> (<span class="number">1</span>)&#123;</span><br><span class="line">        level = rt_hw_interrupt_disable();</span><br><span class="line"></span><br><span class="line">        usRegHoldingBuf[<span class="number">3</span>] = (USHORT)(rt_tick_get() / <span class="number">100</span>);</span><br><span class="line"></span><br><span class="line">        rt_hw_interrupt_enable(level);</span><br><span class="line"></span><br><span class="line">        rt_thread_mdelay(<span class="number">1000</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="type">void</span> <span class="title function_">modbus_slave_poll</span><span class="params">(<span class="type">void</span> *parameter)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// 从机地址1, uart5</span></span><br><span class="line">    eMBInit(MB_RTU, <span class="number">1</span>, <span class="number">5</span>, <span class="number">115200</span>, MB_PAR_EVEN);</span><br><span class="line">    eMBEnable();</span><br><span class="line">    <span class="keyword">while</span> (<span class="number">1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        eMBPoll();</span><br><span class="line">        rt_thread_mdelay(<span class="number">200</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="type">int</span> <span class="title function_">freemodbus_rtu_slave_demo</span><span class="params">()</span>&#123;</span><br><span class="line">    <span class="type">static</span> <span class="type">rt_uint8_t</span> is_init = <span class="number">0</span>;</span><br><span class="line">    <span class="type">rt_thread_t</span> tid1 = RT_NULL, tid2 = RT_NULL;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (is_init &gt; <span class="number">0</span>)&#123;</span><br><span class="line">        rt_kprintf(<span class="string">&quot;sample is running\n&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> -RT_ERROR;</span><br><span class="line">    &#125;</span><br><span class="line">    tid1 = rt_thread_create(<span class="string">&quot;modbus_slave_poll&quot;</span>, modbus_slave_poll, RT_NULL, <span class="number">512</span>, MB_POLL_THREAD_PRIORITY, <span class="number">10</span>);</span><br><span class="line">    <span class="keyword">if</span> (tid1 != RT_NULL)&#123;</span><br><span class="line">        rt_thread_startup(tid1);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="keyword">goto</span> __exit;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    tid2 = rt_thread_create(<span class="string">&quot;rtu_slave_demo_thread&quot;</span>, rtu_slave_demo_thread, RT_NULL, <span class="number">512</span>, MB_SEND_THREAD_PRIORITY, <span class="number">10</span>);</span><br><span class="line">    <span class="keyword">if</span> (tid2 != RT_NULL)&#123;</span><br><span class="line">        rt_thread_startup(tid2);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="keyword">goto</span> __exit;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    is_init = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">return</span> RT_EOK;</span><br><span class="line"></span><br><span class="line">__exit:</span><br><span class="line">    <span class="keyword">if</span> (tid1) rt_thread_delete(tid1);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (tid2) rt_thread_delete(tid2);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> -RT_ERROR;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">MSH_CMD_EXPORT(freemodbus_rtu_slave_demo, freemodbus_rtu_slave_demo)</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/stm32/">stm32</a><a href="/tags/rt-thread/">rt-thread</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
     <h3 class="article-title"><a href="/2025/11/11/rtt-stm32-libmodbus/"><span>rt-thread 下，配置 stm32 的 libmodbus</span></a></h3>
     
   
@@ -676,88 +740,6 @@
 
 <h2 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h2><p>已知的问题：<strong>在某些板子上，fal 和 lfs 不兼容，同时启用以后，会导致 fal 的 erase 挂掉，当然 lfs 的格式化也会挂掉</strong></p>
 <p>elm 貌似格式化会报错，不管了</p>
-
-      
-    </div>
-
-  </div>
-
-  <div class="article-footer">
-    <div class="article-meta pull-left">
-
-    
-
-    
-    
-
-    <span class="post-tags">
-      <i class="icon-tags"></i>
-        <a href="/tags/stm32/">stm32</a><a href="/tags/rt-thread/">rt-thread</a>
-    </span>
-    
-
-    </div>
-
-    
-  </div>
-</article>
-
-
-
-  <article>
-
-  
-    
-    <h3 class="article-title"><a href="/2025/11/02/rtt-stm32-u-disk/"><span>rt-thread 下，配置 stm32 的 u 盘</span></a></h3>
-    
-  
-
-  <div class="article-top-meta">
-    <span class="posted-on">
-      <a href="/2025/11/02/rtt-stm32-u-disk/" rel="bookmark">
-        <time class="entry-date published" datetime="2025-11-02T00:50:24.000Z">
-          2025-11-02
-        </time>
-      </a>
-    </span>
-  </div>
-
-
-  
-
-  <div class="article-content">
-    <div class="entry">
-      
-        <h2 id="当成-u-盘"><a href="#当成-u-盘" class="headerlink" title="当成 u 盘"></a>当成 u 盘</h2><p>单片机作为 u 盘</p>
-<h3 id="打开-usb"><a href="#打开-usb" class="headerlink" title="打开 usb"></a>打开 usb</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">打开 cubeMX，配置 USB_OTG, 使用 host_device 模式，nvic interrupt table 配置 usb on the go fs global interrupt, 生成代码，复制到项目</span><br><span class="line"></span><br><span class="line">cubeMX 里面配置的时候，rcc 需要启用 hse，外部晶震，usb 的时钟需要设置为 48MHZ</span><br><span class="line"></span><br><span class="line">复制 main.c 里面的时钟配置到 board.c</span><br></pre></td></tr></table></figure>
-
-<p>修改 board&#x2F;Kconfig，添加</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">config BSP_USING_USBD</span><br><span class="line">    bool <span class="string">&quot;Enable USB device&quot;</span></span><br><span class="line">    <span class="keyword">select</span> RT_USING_USB_DEVICE</span><br><span class="line">    default n</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">RT-Thread Components ---&gt;</span><br><span class="line">  Device Drivers ---&gt;</span><br><span class="line">    Using USB ---&gt;</span><br><span class="line">      [*] Using USB device</span><br><span class="line">      [*] Enable composite device</span><br><span class="line">      [*] Enable to use device as Mass Storage device</span><br><span class="line">      (自己改名字) msc class disk name</span><br></pre></td></tr></table></figure>
-
-<h3 id="其他配置"><a href="#其他配置" class="headerlink" title="其他配置"></a>其他配置</h3><p>参考 sdio 的配置，即可将 sd 卡插在 stm32 上，在电脑上显示出来</p>
-<p>sd 卡的文件系统用 fat 和 ntfs 都可以</p>
-<h2 id="读写-u-盘"><a href="#读写-u-盘" class="headerlink" title="读写 u 盘"></a>读写 u 盘</h2><p>使用 usb host 读写 u 盘</p>
-<p>参考 <a target="_blank" rel="noopener" href="https://www.rt-thread.org/document/site/application-note/driver/usb/an0046-rtthread-driver-usbh/">这里</a></p>
-<h3 id="usb-host"><a href="#usb-host" class="headerlink" title="usb host"></a>usb host</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">打开 cubeMX，配置 USB_OTG, 使用 host_only 模式，nvic interrupt table 配置 usb on the go fs global interrupt, 生成代码，复制到项目</span><br><span class="line"></span><br><span class="line">cubeMX 里面配置的时候，rcc 需要启用 hse，外部晶震，usb 的时钟需要设置为 48MHZ</span><br><span class="line">复制 main.c 里面的时钟配置到 board.c</span><br></pre></td></tr></table></figure>
-
-<p>修改 board&#x2F;Kconfig，添加</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">config BSP_USING_USBH</span><br><span class="line">    bool <span class="string">&quot;Enable USB host&quot;</span></span><br><span class="line">    <span class="keyword">select</span> RT_USING_USB_HOST</span><br><span class="line">    default n</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">RT-Thread Components ---&gt;</span><br><span class="line">  Device Drivers ---&gt;</span><br><span class="line">    Using USB ---&gt;</span><br><span class="line">      [*] Using USB host</span><br><span class="line">      [*] Enable Udisk Drivers</span><br><span class="line">      (/)   Udisk mount <span class="built_in">dir</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="文件系统"><a href="#文件系统" class="headerlink" title="文件系统"></a>文件系统</h3><p>位置</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">RT-Thread Components ---&gt;</span><br><span class="line">  Device virtual file system ---&gt;</span><br><span class="line">    [*]Using device virtual file system</span><br><span class="line">      [*] Enable elm-chan fatfs</span><br><span class="line">        elm-chan<span class="string">&#x27;s FatFs, Generic FAT Filesystem Module  ---&gt;</span></span><br><span class="line"><span class="string">        (4096) Maximum sector size to be handled.</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="libc"><a href="#libc" class="headerlink" title="libc"></a>libc</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">RT-Thread Components ---&gt;</span><br><span class="line">  POSIX layer and C standard library ---&gt;</span><br><span class="line">    [*] Enable libc APIs from toolchain</span><br></pre></td></tr></table></figure>
-
-<h3 id="复制驱动"><a href="#复制驱动" class="headerlink" title="复制驱动"></a>复制驱动</h3><p>去 gitee 的 rt thread 的 master 分支里面找到 drv_usbh.c 和 drv_usbh.h， 放到项目的 libraries&#x2F;HAL_Drivers 里面</p>
-<p>修改，添加 libraries&#x2F;HAL_Drivers&#x2F;SConscript</p>
-<figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">if GetDepend([&#x27;BSP_USING_USBH&#x27;]):</span><br><span class="line">    src += [&#x27;drv_usbh.c&#x27;]</span><br></pre></td></tr></table></figure>
-
-<h3 id="备注"><a href="#备注" class="headerlink" title="备注"></a>备注</h3><p>u 盘的供电需要 <code>5v</code></p>
-<p>可以修改 usb 调试宏查看日志 RT_DEBUG_USB</p>
 
       
     </div>

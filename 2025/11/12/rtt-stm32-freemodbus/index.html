@@ -1,0 +1,162 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>rt-thread 下，配置 stm32 的 freemodbus | 独钓寒江雪</title>
+
+  
+  <meta name="author" content="John Doe">
+  
+
+  
+  <meta name="description" content="freemodbus
+12RT-Thread online packages -&amp;gt;  [*] FreeModbus: Modbus master and slave stack
+
+rtu 的话，用 freemodbus
+1例子里面只有 rtu 的 master 和 slave 模式
+
+代码
+f">
+  
+
+  
+  
+  <meta name="keywords" content="stm32,rt-thread">
+  
+
+  <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+  <meta property="og:title" content="rt-thread 下，配置 stm32 的 freemodbus"/>
+
+  <meta property="og:site_name" content="独钓寒江雪"/>
+
+  
+  <meta property="og:image" content="/favicon.ico"/>
+  
+
+  <link href="/favicon.ico" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="独钓寒江雪" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+<meta name="generator" content="Hexo 8.0.0"></head>
+
+
+<body>
+<div class="blog">
+  <div class="content">
+
+    <header>
+  <div class="site-branding">
+    <h1 class="site-title">
+      <a href="/">独钓寒江雪</a>
+    </h1>
+    <p class="site-description"></p>
+  </div>
+  <nav class="site-navigation">
+    <ul>
+      
+        <li><a href="/">首页</a></li>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/tags">标签</a></li>
+      
+        <li><a href="/about">关于</a></li>
+      
+    </ul>
+  </nav>
+</header>
+
+    <main class="site-main posts-loop">
+    <article>
+
+  
+    
+    <h3 class="article-title"><span>rt-thread 下，配置 stm32 的 freemodbus</span></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/11/12/rtt-stm32-freemodbus/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-11-12T01:07:43.000Z">
+          2025-11-12
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <p>freemodbus</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">RT-Thread online packages -&gt;</span><br><span class="line">  [*] FreeModbus: Modbus master and slave stack</span><br></pre></td></tr></table></figure>
+
+<p>rtu 的话，用 freemodbus</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">例子里面只有 rtu 的 master 和 slave 模式</span><br></pre></td></tr></table></figure>
+
+<p>代码</p>
+<p>freemodbus_rtu_master_demo.c</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;rtthread.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;mb.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;mb_m.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> MB_POLL_THREAD_PRIORITY  10</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> MB_SEND_THREAD_PRIORITY  RT_THREAD_PRIORITY_MAX - 1</span></span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="type">void</span> <span class="title function_">rtu_master_demo_thread</span><span class="params">(<span class="type">void</span> *parameter)</span> &#123;</span><br><span class="line">    eMBMasterReqErrCode error_code = MB_MRE_NO_ERR;</span><br><span class="line">    <span class="type">rt_uint16_t</span> error_count = <span class="number">0</span>;</span><br><span class="line">    USHORT data[<span class="number">2</span>] = &#123;<span class="number">0</span>&#125;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> (<span class="number">1</span>)&#123;</span><br><span class="line">        data[<span class="number">0</span>] = (USHORT)(rt_tick_get() / <span class="number">10</span>);</span><br><span class="line">        data[<span class="number">1</span>] = (USHORT)(rt_tick_get() % <span class="number">10</span>);</span><br><span class="line"></span><br><span class="line">        error_code = eMBMasterReqWriteMultipleHoldingRegister(</span><br><span class="line">            <span class="number">1</span>,     <span class="comment">/* salve address */</span></span><br><span class="line">            <span class="number">2</span>,     <span class="comment">/* register start address */</span></span><br><span class="line">            <span class="number">2</span>,     <span class="comment">/* register total number */</span></span><br><span class="line">            data,  <span class="comment">/* data to be written */</span></span><br><span class="line">            RT_WAITING_FOREVER); <span class="comment">/* timeout */</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">/* Record the number of errors */</span></span><br><span class="line">        <span class="keyword">if</span> (error_code != MB_MRE_NO_ERR)</span><br><span class="line">        &#123;</span><br><span class="line">            error_count++;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="type">void</span> <span class="title function_">modbus_master_poll</span><span class="params">(<span class="type">void</span> *parameter)</span>&#123;</span><br><span class="line">    <span class="comment">// uart5</span></span><br><span class="line">    eMBMasterInit(MB_RTU, <span class="number">5</span>, <span class="number">115200</span>, MB_PAR_EVEN);</span><br><span class="line">    eMBMasterEnable();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> (<span class="number">1</span>)&#123;</span><br><span class="line">        eMBMasterPoll();</span><br><span class="line">        rt_thread_mdelay(<span class="number">500</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">freemodbus_rtu_master_demo</span><span class="params">()</span>&#123;</span><br><span class="line">    <span class="type">static</span> <span class="type">rt_uint8_t</span> is_init = <span class="number">0</span>;</span><br><span class="line">    <span class="type">rt_thread_t</span> tid1 = RT_NULL, tid2 = RT_NULL;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (is_init &gt; <span class="number">0</span>)&#123;</span><br><span class="line">        rt_kprintf(<span class="string">&quot;libmodbus_rtu_master is running\n&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> -RT_ERROR;</span><br><span class="line">    &#125;</span><br><span class="line">    tid1 = rt_thread_create(<span class="string">&quot;modbus_master_poll&quot;</span>, modbus_master_poll, RT_NULL, <span class="number">512</span>, MB_POLL_THREAD_PRIORITY, <span class="number">10</span>);</span><br><span class="line">    <span class="keyword">if</span> (tid1 != RT_NULL)&#123;</span><br><span class="line">        rt_thread_startup(tid1);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="keyword">goto</span> __exit;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    tid2 = rt_thread_create(<span class="string">&quot;rtu_master_demo_thread&quot;</span>, rtu_master_demo_thread, RT_NULL, <span class="number">512</span>, MB_SEND_THREAD_PRIORITY, <span class="number">10</span>);</span><br><span class="line">    <span class="keyword">if</span> (tid2 != RT_NULL)&#123;</span><br><span class="line">        rt_thread_startup(tid2);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="keyword">goto</span> __exit;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    is_init = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">return</span> RT_EOK;</span><br><span class="line"></span><br><span class="line">__exit:</span><br><span class="line">    <span class="keyword">if</span> (tid1) rt_thread_delete(tid1);</span><br><span class="line">    <span class="keyword">if</span> (tid2) rt_thread_delete(tid2);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> -RT_ERROR;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">MSH_CMD_EXPORT(freemodbus_rtu_master_demo, freemodbus_rtu_master_demo)</span><br></pre></td></tr></table></figure>
+
+<p>freemodbus_rtu_slave_demo.c</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;rtthread.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;mb.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;mb_m.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;user_mb_app.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> MB_POLL_THREAD_PRIORITY  10</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> MB_SEND_THREAD_PRIORITY  RT_THREAD_PRIORITY_MAX - 1</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">extern</span> USHORT usSRegHoldBuf[S_REG_HOLDING_NREGS];</span><br><span class="line"></span><br><span class="line"><span class="comment">// master来读取slave的数据</span></span><br><span class="line"><span class="type">static</span> <span class="type">void</span> <span class="title function_">rtu_slave_demo_thread</span><span class="params">(<span class="type">void</span> *parameter)</span></span><br><span class="line">&#123;</span><br><span class="line">    USHORT*           usRegHoldingBuf;</span><br><span class="line">    usRegHoldingBuf = usSRegHoldBuf;</span><br><span class="line">    <span class="type">rt_base_t</span> level;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> (<span class="number">1</span>)&#123;</span><br><span class="line">        level = rt_hw_interrupt_disable();</span><br><span class="line"></span><br><span class="line">        usRegHoldingBuf[<span class="number">3</span>] = (USHORT)(rt_tick_get() / <span class="number">100</span>);</span><br><span class="line"></span><br><span class="line">        rt_hw_interrupt_enable(level);</span><br><span class="line"></span><br><span class="line">        rt_thread_mdelay(<span class="number">1000</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="type">void</span> <span class="title function_">modbus_slave_poll</span><span class="params">(<span class="type">void</span> *parameter)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// 从机地址1, uart5</span></span><br><span class="line">    eMBInit(MB_RTU, <span class="number">1</span>, <span class="number">5</span>, <span class="number">115200</span>, MB_PAR_EVEN);</span><br><span class="line">    eMBEnable();</span><br><span class="line">    <span class="keyword">while</span> (<span class="number">1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        eMBPoll();</span><br><span class="line">        rt_thread_mdelay(<span class="number">200</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="type">int</span> <span class="title function_">freemodbus_rtu_slave_demo</span><span class="params">()</span>&#123;</span><br><span class="line">    <span class="type">static</span> <span class="type">rt_uint8_t</span> is_init = <span class="number">0</span>;</span><br><span class="line">    <span class="type">rt_thread_t</span> tid1 = RT_NULL, tid2 = RT_NULL;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (is_init &gt; <span class="number">0</span>)&#123;</span><br><span class="line">        rt_kprintf(<span class="string">&quot;sample is running\n&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> -RT_ERROR;</span><br><span class="line">    &#125;</span><br><span class="line">    tid1 = rt_thread_create(<span class="string">&quot;modbus_slave_poll&quot;</span>, modbus_slave_poll, RT_NULL, <span class="number">512</span>, MB_POLL_THREAD_PRIORITY, <span class="number">10</span>);</span><br><span class="line">    <span class="keyword">if</span> (tid1 != RT_NULL)&#123;</span><br><span class="line">        rt_thread_startup(tid1);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="keyword">goto</span> __exit;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    tid2 = rt_thread_create(<span class="string">&quot;rtu_slave_demo_thread&quot;</span>, rtu_slave_demo_thread, RT_NULL, <span class="number">512</span>, MB_SEND_THREAD_PRIORITY, <span class="number">10</span>);</span><br><span class="line">    <span class="keyword">if</span> (tid2 != RT_NULL)&#123;</span><br><span class="line">        rt_thread_startup(tid2);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="keyword">goto</span> __exit;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    is_init = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">return</span> RT_EOK;</span><br><span class="line"></span><br><span class="line">__exit:</span><br><span class="line">    <span class="keyword">if</span> (tid1) rt_thread_delete(tid1);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (tid2) rt_thread_delete(tid2);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> -RT_ERROR;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">MSH_CMD_EXPORT(freemodbus_rtu_slave_demo, freemodbus_rtu_slave_demo)</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/stm32/">stm32</a><a href="/tags/rt-thread/">rt-thread</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+  
+
+
+
+
+
+
+
+
+
+    </main>
+
+    <footer class="site-footer">
+  <p class="site-info">
+    Proudly powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and
+    Theme by <a href="https://github.com/CodeDaraW/Hacker" target="_blank">Hacker</a>
+    </br>
+    
+    &copy; 2025 John Doe
+    
+  </p>
+</footer>
+    
+    
+  </div>
+</div>
+</body>
+</html>
