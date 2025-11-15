@@ -1,33 +1,41 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
   <title>独钓寒江雪</title>
 
   
-  <meta name="author" content="John Doe">
-  
+  <meta name="author" content="John Doe" />
+    
+
+  <meta
+    id="viewport"
+    name="viewport"
+    content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
 
   
 
-  
-
-  <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta property="og:site_name" content="独钓寒江雪" />
 
   
-
-  <meta property="og:site_name" content="独钓寒江雪"/>
-
-  
-  <meta property="og:image" content="/favicon.ico"/>
+  <meta property="og:image" content="/favicon.ico" />
   
 
-  <link href="/favicon.ico" rel="icon">
-  <link rel="alternate" href="/atom.xml" title="独钓寒江雪" type="application/atom+xml">
-  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link href="/favicon.ico" rel="icon" />
+  <link
+    rel="alternate"
+    href="/atom.xml"
+    title="独钓寒江雪"
+    type="application/atom+xml" />
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css" />
+
+  <script
+    async
+    src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9313450459437229"
+    crossorigin="anonymous"></script>
 <meta name="generator" content="Hexo 8.0.0"></head>
 
 
@@ -59,6 +67,391 @@
 
     <main class="site-main posts-loop">
     
+  <article>
+
+  
+    
+    <h3 class="article-title"><a href="/2025/11/15/rtt-stm32-sdcard/"><span>rt-thread 下，配置 stm32 的 sd 卡</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/11/15/rtt-stm32-sdcard/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-11-15T03:37:24.000Z">
+          2025-11-15
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><h3 id="cubemx"><a href="#cubemx" class="headerlink" title="cubemx"></a>cubemx</h3><p>配置 sdio 接口</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">选择 SD 4 bit wide bus，生成代码，复制到项目</span><br><span class="line"></span><br><span class="line">cubeMX 里面配置的时候，rcc 需要启用 hse，外部晶震，usb 的时钟需要设置为 48MHZ</span><br><span class="line"></span><br><span class="line">复制 main.c 里面的时钟配置到 board.c</span><br></pre></td></tr></table></figure>
+
+<h3 id="Kconfig"><a href="#Kconfig" class="headerlink" title="Kconfig"></a>Kconfig</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">config BSP_USING_SDIO</span><br><span class="line">    bool <span class="string">&quot;Enable sd card&quot;</span></span><br><span class="line">    <span class="keyword">select</span> RT_USING_SDIO</span><br><span class="line">    default n</span><br></pre></td></tr></table></figure>
+
+<h3 id="文件系统"><a href="#文件系统" class="headerlink" title="文件系统"></a>文件系统</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">RT-Thread Components ---&gt;</span><br><span class="line">  Device virtual file system ---&gt;</span><br><span class="line">    [*]Using device virtual file system</span><br></pre></td></tr></table></figure>
+
+<p>配置参数</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[*] Enable elm-chan fatfs</span><br><span class="line">      elm-chan<span class="string">&#x27;s FatFs, Generic FAT Filesystem Module  ---&gt;</span></span><br><span class="line"><span class="string">        (4096) Maximum sector size to be handled.</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="libc"><a href="#libc" class="headerlink" title="libc"></a>libc</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">RT-Thread Components ---&gt;</span><br><span class="line">  POSIX layer and C standard library ---&gt;</span><br><span class="line">    [*] Enable libc APIs from toolchain</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/stm32/">stm32</a><a href="/tags/rt-thread/">rt-thread</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
+    <h3 class="article-title"><a href="/2025/11/14/rtt-stm32-pwm/"><span>rt-thread 下，配置 stm32 的 pwm</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/11/14/rtt-stm32-pwm/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-11-14T00:05:55.000Z">
+          2025-11-14
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <p>同一个定时器，多个通道，频率必须一致，占空比可以不同</p>
+<p>脉冲经过光耦会失真</p>
+<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><p>pwm_demo.c</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;rtthread.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;rtdevice.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PWM_DEV_NAME        <span class="string">&quot;pwm1&quot;</span>      <span class="comment">// 硬件定时器设备名</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PWM_CHANNEL1        1           <span class="comment">// 通道1</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PWM_CHANNEL2        2           <span class="comment">// 通道2</span></span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">rt_device_pwm</span> *<span class="title">pwm_dev</span>;</span></span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="type">int</span> <span class="title function_">pwm_demo</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv[])</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">rt_uint32_t</span> period, pulse1, pulse2;</span><br><span class="line"></span><br><span class="line">    pwm_dev = (<span class="keyword">struct</span> rt_device_pwm *)rt_device_find(PWM_DEV_NAME);</span><br><span class="line">    <span class="keyword">if</span> (pwm_dev == RT_NULL)</span><br><span class="line">    &#123;</span><br><span class="line">        rt_kprintf(<span class="string">&quot;can&#x27;t find %s device!\n&quot;</span>, PWM_DEV_NAME);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 2. 设置周期和脉宽（单位：纳秒）</span></span><br><span class="line">    period = <span class="number">50000</span>;      <span class="comment">// 20kHz = 1s/20000 = 50,000ns</span></span><br><span class="line">    pulse1 = period * <span class="number">30</span> / <span class="number">100</span>; <span class="comment">// 30% 占空比</span></span><br><span class="line">    pulse2 = period * <span class="number">60</span> / <span class="number">100</span>; <span class="comment">// 60% 占空比</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 3. 配置 PWM 通道1</span></span><br><span class="line">    rt_pwm_set(pwm_dev, PWM_CHANNEL1, period, pulse1);</span><br><span class="line">    rt_pwm_enable(pwm_dev, PWM_CHANNEL1);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 4. 配置 PWM 通道2</span></span><br><span class="line">    rt_pwm_set(pwm_dev, PWM_CHANNEL2, period, pulse2);</span><br><span class="line">    rt_pwm_enable(pwm_dev, PWM_CHANNEL2);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">MSH_CMD_EXPORT(pwm_demo, pwm demo);</span><br></pre></td></tr></table></figure>
+
+<h2 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h2><p>逻辑分析仪的 gnd 一定要接，不然数据会不准</p>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/stm32/">stm32</a><a href="/tags/rt-thread/">rt-thread</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
+    <h3 class="article-title"><a href="/2025/11/14/rtt-stm32-pulse-encoder/"><span>rt-thread 下，配置 stm32 的 pulse-encoder</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/11/14/rtt-stm32-pulse-encoder/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-11-14T00:05:51.000Z">
+          2025-11-14
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <p>脉冲编码器</p>
+<h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><h3 id="cubemx"><a href="#cubemx" class="headerlink" title="cubemx"></a>cubemx</h3><p>选一个定时器,设置 Combined Channels 为 <code>Encoder Mode</code></p>
+<h3 id="接线"><a href="#接线" class="headerlink" title="接线"></a>接线</h3><p>定时器对应的 channel 接 DT 和 CLK,正反接都可以</p>
+<h3 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h3><p>pulse_encoder_demo.c</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;rtthread.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;rtdevice.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PULSE_ENCODER_DEV_NAME    <span class="string">&quot;pulse3&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="type">int</span> <span class="title function_">pulse_encoder_demo</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv[])</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">rt_err_t</span> ret = RT_EOK;</span><br><span class="line">    <span class="type">rt_device_t</span> pulse_encoder_dev = RT_NULL;</span><br><span class="line"></span><br><span class="line">    <span class="type">rt_int32_t</span> count;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* 查找脉冲编码器设备 */</span></span><br><span class="line">    pulse_encoder_dev = rt_device_find(PULSE_ENCODER_DEV_NAME);</span><br><span class="line">    <span class="keyword">if</span> (pulse_encoder_dev == RT_NULL)</span><br><span class="line">    &#123;</span><br><span class="line">        rt_kprintf(<span class="string">&quot;pulse encoder sample run failed! can&#x27;t find %s device!\n&quot;</span>, PULSE_ENCODER_DEV_NAME);</span><br><span class="line">        <span class="keyword">return</span> RT_ERROR;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* 以只读方式打开设备 */</span></span><br><span class="line">    ret = rt_device_open(pulse_encoder_dev, RT_DEVICE_OFLAG_RDONLY);</span><br><span class="line">    <span class="keyword">if</span> (ret != RT_EOK)</span><br><span class="line">    &#123;</span><br><span class="line">        rt_kprintf(<span class="string">&quot;open %s device failed!\n&quot;</span>, PULSE_ENCODER_DEV_NAME);</span><br><span class="line">        <span class="keyword">return</span> ret;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span>(<span class="type">rt_uint32_t</span> i = <span class="number">0</span>; i &lt;= <span class="number">10000</span>; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        rt_thread_mdelay(<span class="number">500</span>);</span><br><span class="line"></span><br><span class="line">        rt_device_read(pulse_encoder_dev, <span class="number">0</span>, &amp;count, <span class="number">1</span>);</span><br><span class="line">        rt_device_control(pulse_encoder_dev, PULSE_ENCODER_CMD_CLEAR_COUNT, RT_NULL);</span><br><span class="line">        rt_kprintf(<span class="string">&quot;get count %d\n&quot;</span>,count);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    rt_device_close(pulse_encoder_dev);</span><br><span class="line">    <span class="keyword">return</span> ret;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">MSH_CMD_EXPORT(pulse_encoder_demo, pulse_encoder_demo);</span><br></pre></td></tr></table></figure>
+
+<h2 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h2><p>同一个定时器,如果某通道发了脉冲,其他通道不能再用来读取脉冲编码器了,会冲突</p>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/stm32/">stm32</a><a href="/tags/rt-thread/">rt-thread</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
+    <h3 class="article-title"><a href="/2025/11/13/rtt-stm32-mqtt/"><span>rt-thread 下，配置 stm32 的 mqtt</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/11/13/rtt-stm32-mqtt/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-11-13T01:35:08.000Z">
+          2025-11-13
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <p>目前使用的是 kawaii-mqtt</p>
+<h2 id="服务器"><a href="#服务器" class="headerlink" title="服务器"></a>服务器</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run --<span class="built_in">rm</span> -d --name emqx -p 1883:1883 -p 8083:8083 -p 8883:8883 -p 8084:8084 -p 18083:18083 emqx/emqx:v3.1.1</span><br></pre></td></tr></table></figure>
+
+<p>说明：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">1883 MQTT 端口</span><br><span class="line">8883 MQTT / SSL 端口</span><br><span class="line">8083 MQTT / WebSocket 端口</span><br><span class="line">8084 MQTT / WebSocket / SSL 端口</span><br><span class="line">8080 HTTP 管理 API 端口</span><br><span class="line">18083 Web 仪表板端口</span><br></pre></td></tr></table></figure>
+
+<p>管理后台</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">http://127.0.0.1:18083</span><br><span class="line">admin</span><br><span class="line">public</span><br></pre></td></tr></table></figure>
+
+<h2 id="rtthread"><a href="#rtthread" class="headerlink" title="rtthread"></a>rtthread</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">RT-Thread online packages &gt;</span><br><span class="line">  IoT - internet of things</span><br><span class="line">    [*] kawaii-mqtt: a mqtt client based on the socket API, support QoS2, mbedtls</span><br><span class="line">    [*] using SAL</span><br><span class="line"></span><br><span class="line">RT-Thread Components &gt;</span><br><span class="line">  Network &gt; Socket abstraction layer</span><br><span class="line">    [*] Enable BSD socket operated by file system API</span><br></pre></td></tr></table></figure>
+
+<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><p>demo.py</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -*-coding:utf-8-*-</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># Import paho-mqtt Client class:</span></span><br><span class="line"><span class="keyword">import</span> paho.mqtt.client <span class="keyword">as</span> mqtt</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line">unacked_sub = []  <span class="comment"># a list for unacknowledged subscription</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Define the callback to handle CONNACK from the broker, if the connection created normal, the value of rc is 0</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">on_connect</span>(<span class="params">client, userdata, flags, rc</span>):</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Connection returned with result code:&quot;</span> + <span class="built_in">str</span>(rc))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># Define the callback to hande publish from broker, here we simply print out the topic and payload of the received message</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">on_message</span>(<span class="params">client, userdata, msg</span>):</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Received message, topic: &quot;</span> + msg.topic + <span class="string">&quot; payload: &quot;</span> + <span class="built_in">str</span>(msg.payload))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># Callback handles disconnection, print the rc value</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">on_disconnect</span>(<span class="params">client, userdata, rc</span>):</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Disconnection returned result: &quot;</span> + <span class="built_in">str</span>(rc))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># Remove the message id from the list for unacknowledged subscription</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">on_subscribe</span>(<span class="params">client, userdata, mid, granted_qos</span>):</span><br><span class="line">    unacked_sub.remove(mid)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># Create an instance of `Client`</span></span><br><span class="line">client = mqtt.Client()</span><br><span class="line">client.on_connect = on_connect</span><br><span class="line">client.on_disconnect = on_disconnect</span><br><span class="line">client.on_message = on_message</span><br><span class="line">client.on_subscribe = on_subscribe</span><br><span class="line"></span><br><span class="line"><span class="comment"># Connect to broker</span></span><br><span class="line"><span class="comment"># connect() is blocking, it returns when the connection is successful or failed. If you want client connects in a non-blocking way, you may use connect_async() instead</span></span><br><span class="line">client.connect(<span class="string">&quot;127.0.0.1&quot;</span>, <span class="number">1883</span>, <span class="number">60</span>)</span><br><span class="line"></span><br><span class="line">client.loop_start()</span><br><span class="line"></span><br><span class="line"><span class="comment"># Subscribe to a single topic</span></span><br><span class="line">result, mid = client.subscribe(<span class="string">&quot;demo_topic&quot;</span>, <span class="number">0</span>)</span><br><span class="line">unacked_sub.append(mid)</span><br><span class="line"><span class="comment"># Subscribe to multiple topics</span></span><br><span class="line">result, mid = client.subscribe([(<span class="string">&quot;temperature&quot;</span>, <span class="number">0</span>), (<span class="string">&quot;humidity&quot;</span>, <span class="number">0</span>)])</span><br><span class="line">unacked_sub.append(mid)</span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span> <span class="built_in">len</span>(unacked_sub) != <span class="number">0</span>:</span><br><span class="line">    time.sleep(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">client.publish(<span class="string">&quot;demo_topic&quot;</span>, payload=<span class="string">&quot;Hello world!&quot;</span>)</span><br><span class="line">client.publish(<span class="string">&quot;temperature&quot;</span>, payload=<span class="string">&quot;24.0&quot;</span>)</span><br><span class="line">client.publish(<span class="string">&quot;humidity&quot;</span>, payload=<span class="string">&quot;65%&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Disconnection</span></span><br><span class="line">time.sleep(<span class="number">5</span>)</span><br><span class="line">client.loop_stop()</span><br><span class="line">client.disconnect()</span><br></pre></td></tr></table></figure>
+
+<p>demo_mqtt.c</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdint.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;mqttclient.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="type">void</span> <span class="title function_">on_message_receive</span><span class="params">(<span class="type">void</span>* client, <span class="type">message_data_t</span>* msg)</span></span><br><span class="line">&#123;</span><br><span class="line">    (<span class="type">void</span>) client;</span><br><span class="line">    rt_kprintf(<span class="string">&quot;-----------------------------------------------------------------------------------&quot;</span>);</span><br><span class="line">    rt_kprintf(<span class="string">&quot;%s:%d %s()...\ntopic: %s\nmessage:%s&quot;</span>, __FILE__, __LINE__, __FUNCTION__, msg-&gt;topic_name, (<span class="type">char</span>*)msg-&gt;message-&gt;payload);</span><br><span class="line">    rt_kprintf(<span class="string">&quot;-----------------------------------------------------------------------------------&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="type">int</span> <span class="title function_">mqtt_say_hello</span><span class="params">(<span class="type">mqtt_client_t</span> *client)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">mqtt_message_t</span> msg;</span><br><span class="line">    <span class="built_in">memset</span>(&amp;msg, <span class="number">0</span>, <span class="keyword">sizeof</span>(msg));</span><br><span class="line"></span><br><span class="line">    msg.qos = <span class="number">0</span>;</span><br><span class="line">    msg.payload = (<span class="type">void</span> *) <span class="string">&quot;payload to sent&quot;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> mqtt_publish(client, <span class="string">&quot;demo_topic&quot;</span>, &amp;msg);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">mqtt_demo</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">mqtt_client_t</span> *client = <span class="literal">NULL</span>;</span><br><span class="line"></span><br><span class="line">    mqtt_log_init();</span><br><span class="line"></span><br><span class="line">    client = mqtt_lease();</span><br><span class="line"></span><br><span class="line">    mqtt_set_host(client, <span class="string">&quot;192.168.88.234&quot;</span>);</span><br><span class="line">    mqtt_set_port(client, <span class="string">&quot;1883&quot;</span>);</span><br><span class="line">    mqtt_set_clean_session(client, <span class="number">1</span>);</span><br><span class="line">    mqtt_set_keep_alive_interval(client, <span class="number">10</span>);</span><br><span class="line"></span><br><span class="line">    mqtt_connect(client);</span><br><span class="line">    mqtt_subscribe(client, <span class="string">&quot;demo_topic&quot;</span>, QOS0, on_message_receive);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> (<span class="number">1</span>) &#123;</span><br><span class="line">        mqtt_say_hello(client);</span><br><span class="line">        mqtt_sleep_ms(<span class="number">4</span> * <span class="number">1000</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">MSH_CMD_EXPORT(mqtt_demo, mqtt_demo);</span><br></pre></td></tr></table></figure>
+
+<h2 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h2><p>esp8266 可以连</p>
+<p>LAN8720A 很稳定</p>
+<p>目前 w5500 各种连不上</p>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/stm32/">stm32</a><a href="/tags/rt-thread/">rt-thread</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
+    <h3 class="article-title"><a href="/2025/11/12/rtt-stm32-freemodbus/"><span>rt-thread 下，配置 stm32 的 freemodbus</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/11/12/rtt-stm32-freemodbus/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-11-12T01:07:43.000Z">
+          2025-11-12
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <p>freemodbus</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">RT-Thread online packages -&gt;</span><br><span class="line">  [*] FreeModbus: Modbus master and slave stack</span><br></pre></td></tr></table></figure>
+
+<p>rtu 的话，用 freemodbus</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">例子里面只有 rtu 的 master 和 slave 模式</span><br></pre></td></tr></table></figure>
+
+<p>代码</p>
+<p>freemodbus_rtu_master_demo.c</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;rtthread.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;mb.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;mb_m.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> MB_POLL_THREAD_PRIORITY  10</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> MB_SEND_THREAD_PRIORITY  RT_THREAD_PRIORITY_MAX - 1</span></span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="type">void</span> <span class="title function_">rtu_master_demo_thread</span><span class="params">(<span class="type">void</span> *parameter)</span> &#123;</span><br><span class="line">    eMBMasterReqErrCode error_code = MB_MRE_NO_ERR;</span><br><span class="line">    <span class="type">rt_uint16_t</span> error_count = <span class="number">0</span>;</span><br><span class="line">    USHORT data[<span class="number">2</span>] = &#123;<span class="number">0</span>&#125;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> (<span class="number">1</span>)&#123;</span><br><span class="line">        data[<span class="number">0</span>] = (USHORT)(rt_tick_get() / <span class="number">10</span>);</span><br><span class="line">        data[<span class="number">1</span>] = (USHORT)(rt_tick_get() % <span class="number">10</span>);</span><br><span class="line"></span><br><span class="line">        error_code = eMBMasterReqWriteMultipleHoldingRegister(</span><br><span class="line">            <span class="number">1</span>,     <span class="comment">/* salve address */</span></span><br><span class="line">            <span class="number">2</span>,     <span class="comment">/* register start address */</span></span><br><span class="line">            <span class="number">2</span>,     <span class="comment">/* register total number */</span></span><br><span class="line">            data,  <span class="comment">/* data to be written */</span></span><br><span class="line">            RT_WAITING_FOREVER); <span class="comment">/* timeout */</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">/* Record the number of errors */</span></span><br><span class="line">        <span class="keyword">if</span> (error_code != MB_MRE_NO_ERR)</span><br><span class="line">        &#123;</span><br><span class="line">            error_count++;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="type">void</span> <span class="title function_">modbus_master_poll</span><span class="params">(<span class="type">void</span> *parameter)</span>&#123;</span><br><span class="line">    <span class="comment">// uart5</span></span><br><span class="line">    eMBMasterInit(MB_RTU, <span class="number">5</span>, <span class="number">115200</span>, MB_PAR_EVEN);</span><br><span class="line">    eMBMasterEnable();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> (<span class="number">1</span>)&#123;</span><br><span class="line">        eMBMasterPoll();</span><br><span class="line">        rt_thread_mdelay(<span class="number">500</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">freemodbus_rtu_master_demo</span><span class="params">()</span>&#123;</span><br><span class="line">    <span class="type">static</span> <span class="type">rt_uint8_t</span> is_init = <span class="number">0</span>;</span><br><span class="line">    <span class="type">rt_thread_t</span> tid1 = RT_NULL, tid2 = RT_NULL;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (is_init &gt; <span class="number">0</span>)&#123;</span><br><span class="line">        rt_kprintf(<span class="string">&quot;libmodbus_rtu_master is running\n&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> -RT_ERROR;</span><br><span class="line">    &#125;</span><br><span class="line">    tid1 = rt_thread_create(<span class="string">&quot;modbus_master_poll&quot;</span>, modbus_master_poll, RT_NULL, <span class="number">512</span>, MB_POLL_THREAD_PRIORITY, <span class="number">10</span>);</span><br><span class="line">    <span class="keyword">if</span> (tid1 != RT_NULL)&#123;</span><br><span class="line">        rt_thread_startup(tid1);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="keyword">goto</span> __exit;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    tid2 = rt_thread_create(<span class="string">&quot;rtu_master_demo_thread&quot;</span>, rtu_master_demo_thread, RT_NULL, <span class="number">512</span>, MB_SEND_THREAD_PRIORITY, <span class="number">10</span>);</span><br><span class="line">    <span class="keyword">if</span> (tid2 != RT_NULL)&#123;</span><br><span class="line">        rt_thread_startup(tid2);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="keyword">goto</span> __exit;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    is_init = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">return</span> RT_EOK;</span><br><span class="line"></span><br><span class="line">__exit:</span><br><span class="line">    <span class="keyword">if</span> (tid1) rt_thread_delete(tid1);</span><br><span class="line">    <span class="keyword">if</span> (tid2) rt_thread_delete(tid2);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> -RT_ERROR;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">MSH_CMD_EXPORT(freemodbus_rtu_master_demo, freemodbus_rtu_master_demo)</span><br></pre></td></tr></table></figure>
+
+<p>freemodbus_rtu_slave_demo.c</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;rtthread.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;mb.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;mb_m.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;user_mb_app.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> MB_POLL_THREAD_PRIORITY  10</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> MB_SEND_THREAD_PRIORITY  RT_THREAD_PRIORITY_MAX - 1</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">extern</span> USHORT usSRegHoldBuf[S_REG_HOLDING_NREGS];</span><br><span class="line"></span><br><span class="line"><span class="comment">// master来读取slave的数据</span></span><br><span class="line"><span class="type">static</span> <span class="type">void</span> <span class="title function_">rtu_slave_demo_thread</span><span class="params">(<span class="type">void</span> *parameter)</span></span><br><span class="line">&#123;</span><br><span class="line">    USHORT*           usRegHoldingBuf;</span><br><span class="line">    usRegHoldingBuf = usSRegHoldBuf;</span><br><span class="line">    <span class="type">rt_base_t</span> level;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> (<span class="number">1</span>)&#123;</span><br><span class="line">        level = rt_hw_interrupt_disable();</span><br><span class="line"></span><br><span class="line">        usRegHoldingBuf[<span class="number">3</span>] = (USHORT)(rt_tick_get() / <span class="number">100</span>);</span><br><span class="line"></span><br><span class="line">        rt_hw_interrupt_enable(level);</span><br><span class="line"></span><br><span class="line">        rt_thread_mdelay(<span class="number">1000</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="type">void</span> <span class="title function_">modbus_slave_poll</span><span class="params">(<span class="type">void</span> *parameter)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// 从机地址1, uart5</span></span><br><span class="line">    eMBInit(MB_RTU, <span class="number">1</span>, <span class="number">5</span>, <span class="number">115200</span>, MB_PAR_EVEN);</span><br><span class="line">    eMBEnable();</span><br><span class="line">    <span class="keyword">while</span> (<span class="number">1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        eMBPoll();</span><br><span class="line">        rt_thread_mdelay(<span class="number">200</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="type">int</span> <span class="title function_">freemodbus_rtu_slave_demo</span><span class="params">()</span>&#123;</span><br><span class="line">    <span class="type">static</span> <span class="type">rt_uint8_t</span> is_init = <span class="number">0</span>;</span><br><span class="line">    <span class="type">rt_thread_t</span> tid1 = RT_NULL, tid2 = RT_NULL;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (is_init &gt; <span class="number">0</span>)&#123;</span><br><span class="line">        rt_kprintf(<span class="string">&quot;sample is running\n&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> -RT_ERROR;</span><br><span class="line">    &#125;</span><br><span class="line">    tid1 = rt_thread_create(<span class="string">&quot;modbus_slave_poll&quot;</span>, modbus_slave_poll, RT_NULL, <span class="number">512</span>, MB_POLL_THREAD_PRIORITY, <span class="number">10</span>);</span><br><span class="line">    <span class="keyword">if</span> (tid1 != RT_NULL)&#123;</span><br><span class="line">        rt_thread_startup(tid1);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="keyword">goto</span> __exit;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    tid2 = rt_thread_create(<span class="string">&quot;rtu_slave_demo_thread&quot;</span>, rtu_slave_demo_thread, RT_NULL, <span class="number">512</span>, MB_SEND_THREAD_PRIORITY, <span class="number">10</span>);</span><br><span class="line">    <span class="keyword">if</span> (tid2 != RT_NULL)&#123;</span><br><span class="line">        rt_thread_startup(tid2);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="keyword">goto</span> __exit;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    is_init = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">return</span> RT_EOK;</span><br><span class="line"></span><br><span class="line">__exit:</span><br><span class="line">    <span class="keyword">if</span> (tid1) rt_thread_delete(tid1);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (tid2) rt_thread_delete(tid2);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> -RT_ERROR;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">MSH_CMD_EXPORT(freemodbus_rtu_slave_demo, freemodbus_rtu_slave_demo)</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/stm32/">stm32</a><a href="/tags/rt-thread/">rt-thread</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
+    <h3 class="article-title"><a href="/2025/11/11/rtt-stm32-libmodbus/"><span>rt-thread 下，配置 stm32 的 libmodbus</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/11/11/rtt-stm32-libmodbus/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-11-11T03:24:27.000Z">
+          2025-11-11
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <p>libmodbus</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">tcp 的 master 和 slave 都有</span><br><span class="line">rtu 只有 master</span><br></pre></td></tr></table></figure>
+
+<p>配置</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">RT-Thread online packages &gt; IoT - internet of things</span><br><span class="line">  [*] libmodbus: A Modbus library <span class="keyword">for</span> RT-Thread</span><br></pre></td></tr></table></figure>
+
+<p>rtu 模式，如果开发板接 232 之类的口，对应看到原理图以后，设备名为 <code>/dev/uartx</code></p>
+<p>从 demo 里面看，似乎对于 slave 的支持很一般，解码都需要自己做</p>
+<p>代码</p>
+<p>libmodbus_rtu_master_demo.c</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;rtthread.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;rtdevice.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;modbus.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="type">void</span> <span class="title function_">rtu_master_demo_thread</span><span class="params">(<span class="type">void</span> *param)</span>&#123;</span><br><span class="line">    <span class="type">uint16_t</span> tab_reg[<span class="number">64</span>] = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">    <span class="type">modbus_t</span>* ctx = RT_NULL;</span><br><span class="line"></span><br><span class="line">    ctx = modbus_new_rtu(<span class="string">&quot;/dev/uart5&quot;</span>, <span class="number">115200</span>, <span class="string">&#x27;N&#x27;</span>, <span class="number">8</span>, <span class="number">1</span>);</span><br><span class="line">    modbus_rtu_set_serial_mode(ctx, MODBUS_RTU_RS232);</span><br><span class="line">    modbus_set_slave(ctx, <span class="number">3</span>);</span><br><span class="line">    modbus_connect(ctx);</span><br><span class="line">    modbus_set_response_timeout(ctx, <span class="number">0</span>, <span class="number">1000000</span>);</span><br><span class="line">    <span class="type">int</span> num = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span> (<span class="number">1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">memset</span>(tab_reg, <span class="number">0</span>, <span class="number">64</span> * <span class="number">2</span>);</span><br><span class="line">        <span class="type">int</span> regs = modbus_read_registers(ctx, <span class="number">0</span>, <span class="number">20</span>, tab_reg);</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;-------------------------------------------\n&quot;</span>);</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;[%4d][read num = %d]&quot;</span>, num, regs);</span><br><span class="line">        num++;</span><br><span class="line">        <span class="type">int</span> i;</span><br><span class="line">        <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">20</span>; i++)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">&quot;&lt;%#x&gt;&quot;</span>, tab_reg[i]);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;\n&quot;</span>);</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;-------------------------------------------\n&quot;</span>);</span><br><span class="line">        rt_thread_mdelay(<span class="number">2000</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    modbus_close(ctx);</span><br><span class="line">    modbus_free(ctx);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">libmodbus_rtu_master_demo</span><span class="params">()</span>&#123;</span><br><span class="line">    <span class="type">rt_thread_t</span> tid;</span><br><span class="line">    tid = rt_thread_create(<span class="string">&quot;rtu_master_demo&quot;</span>,</span><br><span class="line">                           rtu_master_demo_thread, RT_NULL,</span><br><span class="line">                           <span class="number">2048</span>,</span><br><span class="line">                           <span class="number">12</span>, <span class="number">10</span>);</span><br><span class="line">    <span class="keyword">if</span> (tid != RT_NULL) rt_thread_startup(tid);</span><br><span class="line">    <span class="keyword">return</span> RT_EOK;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">MSH_CMD_EXPORT(libmodbus_rtu_master_demo, libmodbus_rtu_master_demo)</span><br></pre></td></tr></table></figure>
+
+<p>libmodbus_tcp_master_demo.c</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;rtthread.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;rtdevice.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;modbus.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sal_socket.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="type">void</span> <span class="title function_">tcp_master_demo_thread</span><span class="params">(<span class="type">void</span> *param)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">uint16_t</span> tab_reg[<span class="number">64</span>] = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">    <span class="type">modbus_t</span> *ctx = RT_NULL;</span><br><span class="line"></span><br><span class="line">    ctx = modbus_new_tcp(<span class="string">&quot;192.168.88.61&quot;</span>, <span class="number">502</span>, AF_INET);</span><br><span class="line">    modbus_set_slave(ctx, <span class="number">3</span>);</span><br><span class="line">    modbus_set_response_timeout(ctx, <span class="number">0</span>, <span class="number">1000000</span>);</span><br><span class="line">_modbus_tcp_start:</span><br><span class="line">    <span class="keyword">if</span>(modbus_connect(ctx) &lt; <span class="number">0</span>)  <span class="keyword">goto</span> _modbus_tcp_restart;</span><br><span class="line"></span><br><span class="line">    <span class="type">int</span> num = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span> (<span class="number">1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">memset</span>(tab_reg, <span class="number">0</span>, <span class="number">64</span> * <span class="number">2</span>);</span><br><span class="line">        <span class="type">int</span> regs = modbus_read_registers(ctx, <span class="number">0</span>, <span class="number">20</span>, tab_reg);</span><br><span class="line">        <span class="keyword">if</span>(regs &lt; <span class="number">0</span>) <span class="keyword">goto</span> _modbus_tcp_restart;</span><br><span class="line"></span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;-------------------------------------------\n&quot;</span>);</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;[%4d][read num = %d]&quot;</span>, num, regs);</span><br><span class="line">        num++;</span><br><span class="line">        <span class="type">int</span> i;</span><br><span class="line">        <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">20</span>; i++)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">&quot;&lt;%#x&gt;&quot;</span>, tab_reg[i]);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;\n&quot;</span>);</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;-------------------------------------------\n&quot;</span>);</span><br><span class="line">        rt_thread_mdelay(<span class="number">1000</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">_modbus_tcp_restart:</span><br><span class="line">    modbus_close(ctx);</span><br><span class="line">    rt_thread_mdelay(<span class="number">2000</span>);</span><br><span class="line">    <span class="keyword">goto</span> _modbus_tcp_start;</span><br><span class="line"></span><br><span class="line">    modbus_free(ctx);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">libmodbus_tcp_master_demo</span><span class="params">()</span>&#123;</span><br><span class="line">    <span class="type">rt_thread_t</span> tid;</span><br><span class="line">    tid = rt_thread_create(<span class="string">&quot;tcp_master_demo&quot;</span>,</span><br><span class="line">                           tcp_master_demo_thread, RT_NULL,</span><br><span class="line">                           <span class="number">2048</span>,</span><br><span class="line">                           <span class="number">12</span>, <span class="number">10</span>);</span><br><span class="line">    <span class="keyword">if</span> (tid != RT_NULL) rt_thread_startup(tid);</span><br><span class="line">    <span class="keyword">return</span> RT_EOK;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">MSH_CMD_EXPORT(libmodbus_tcp_master_demo, libmodbus_tcp_master_demo)</span><br></pre></td></tr></table></figure>
+
+<p>libmodbus_tcp_slave_demo.c</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;rtthread.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;rtdevice.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;modbus.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sal_socket.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> MAX_CLIENT_NUM  3</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> CLIENT_TIMEOUT  10</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="type">int</span> fd;</span><br><span class="line">    <span class="type">rt_tick_t</span> tick_timeout;</span><br><span class="line">&#125;<span class="type">client_session_t</span>;</span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="type">void</span> <span class="title function_">tcp_slave_demo_thread</span><span class="params">(<span class="type">void</span> *param)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">int</span> server_fd = <span class="number">-1</span>;</span><br><span class="line">    <span class="type">modbus_t</span> *ctx = <span class="literal">NULL</span>;</span><br><span class="line">    <span class="type">modbus_mapping_t</span> *mb_mapping = <span class="literal">NULL</span>;</span><br><span class="line">    <span class="type">client_session_t</span> client_session[MAX_CLIENT_NUM];</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; MAX_CLIENT_NUM; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        client_session[i].fd = <span class="number">-1</span>;</span><br><span class="line">        client_session[i].tick_timeout = rt_tick_get() + rt_tick_from_millisecond(CLIENT_TIMEOUT * <span class="number">1000</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="type">int</span> max_fd = <span class="number">-1</span>;</span><br><span class="line">    fd_set readset;</span><br><span class="line">    <span class="type">int</span> rc;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">timeval</span> <span class="title">select_timeout</span>;</span></span><br><span class="line">    select_timeout.tv_sec = <span class="number">1</span>;</span><br><span class="line">    select_timeout.tv_usec = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    ctx = modbus_new_tcp(RT_NULL, <span class="number">1502</span>, AF_INET);</span><br><span class="line">    RT_ASSERT(ctx != RT_NULL);</span><br><span class="line">    mb_mapping = modbus_mapping_new(MODBUS_MAX_READ_BITS, <span class="number">0</span>,</span><br><span class="line">                                    MODBUS_MAX_READ_REGISTERS, <span class="number">0</span>);</span><br><span class="line">    RT_ASSERT(mb_mapping != RT_NULL);</span><br><span class="line"></span><br><span class="line">_mbtcp_start:</span><br><span class="line">    server_fd = modbus_tcp_listen(ctx, <span class="number">1</span>);</span><br><span class="line">    <span class="keyword">if</span> (server_fd &lt; <span class="number">0</span>)</span><br><span class="line">        <span class="keyword">goto</span> _mbtcp_restart;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> (<span class="number">1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        max_fd = <span class="number">-1</span>;</span><br><span class="line">        FD_ZERO(&amp;readset);</span><br><span class="line">        FD_SET(server_fd, &amp;readset);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span>(max_fd &lt; server_fd)</span><br><span class="line">            max_fd = server_fd;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; MAX_CLIENT_NUM; i++)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span>(client_session[i].fd &gt;= <span class="number">0</span>)</span><br><span class="line">            &#123;</span><br><span class="line">                FD_SET(client_session[i].fd, &amp;readset);</span><br><span class="line">                <span class="keyword">if</span>(max_fd &lt; client_session[i].fd)</span><br><span class="line">                    max_fd = client_session[i].fd;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        rc = select(max_fd + <span class="number">1</span>, &amp;readset, RT_NULL, RT_NULL, &amp;select_timeout);</span><br><span class="line">        <span class="keyword">if</span>(rc &lt; <span class="number">0</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">goto</span> _mbtcp_restart;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span>(rc &gt; <span class="number">0</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span>(FD_ISSET(server_fd, &amp;readset))</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="type">int</span> client_sock_fd = modbus_tcp_accept(ctx, &amp;server_fd);</span><br><span class="line">                <span class="keyword">if</span>(client_sock_fd &gt;= <span class="number">0</span>)</span><br><span class="line">                &#123;</span><br><span class="line">                    <span class="type">int</span> index = <span class="number">-1</span>;</span><br><span class="line">                    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; MAX_CLIENT_NUM; i++)</span><br><span class="line">                    &#123;</span><br><span class="line">                        <span class="keyword">if</span>(client_session[i].fd &lt; <span class="number">0</span>)</span><br><span class="line">                        &#123;</span><br><span class="line">                            index = i;</span><br><span class="line">                            <span class="keyword">break</span>;</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="keyword">if</span>(index &gt;= <span class="number">0</span>)</span><br><span class="line">                    &#123;</span><br><span class="line">                        client_session[index].fd = client_sock_fd;</span><br><span class="line">                        client_session[index].tick_timeout = rt_tick_get() + rt_tick_from_millisecond(CLIENT_TIMEOUT * <span class="number">1000</span>);</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="keyword">else</span></span><br><span class="line">                    &#123;</span><br><span class="line">                        close(client_sock_fd);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; MAX_CLIENT_NUM; i++)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">if</span>(client_session[i].fd &gt;= <span class="number">0</span>)</span><br><span class="line">                &#123;</span><br><span class="line">                    <span class="keyword">if</span>(FD_ISSET(client_session[i].fd, &amp;readset))</span><br><span class="line">                    &#123;</span><br><span class="line">                        <span class="type">uint8_t</span> query[MODBUS_TCP_MAX_ADU_LENGTH];</span><br><span class="line">                        modbus_set_socket(ctx, client_session[i].fd);</span><br><span class="line"></span><br><span class="line">                        rc = modbus_receive(ctx, query);</span><br><span class="line">                        <span class="keyword">if</span> (rc &gt; <span class="number">0</span>)</span><br><span class="line">                        &#123;</span><br><span class="line">                            rc = modbus_reply(ctx, query, rc, mb_mapping);</span><br><span class="line">                            <span class="keyword">if</span>(rc &lt; <span class="number">0</span>)</span><br><span class="line">                            &#123;</span><br><span class="line">                                close(client_session[i].fd);</span><br><span class="line">                                client_session[i].fd = <span class="number">-1</span>;</span><br><span class="line">                            &#125;</span><br><span class="line">                            <span class="keyword">else</span></span><br><span class="line">                            &#123;</span><br><span class="line">                                client_session[i].tick_timeout = rt_tick_get() + rt_tick_from_millisecond(CLIENT_TIMEOUT * <span class="number">1000</span>);</span><br><span class="line">                            &#125;</span><br><span class="line">                        &#125;</span><br><span class="line">                        <span class="keyword">else</span></span><br><span class="line">                        &#123;</span><br><span class="line">                            close(client_session[i].fd);</span><br><span class="line">                            client_session[i].fd = <span class="number">-1</span>;</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 客户端超时未收到数据断开</span></span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> i =<span class="number">0</span>;i&lt;MAX_CLIENT_NUM;i++)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span>(client_session[i].fd &gt;= <span class="number">0</span>)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="comment">//超时</span></span><br><span class="line">                <span class="keyword">if</span>((rt_tick_get() - client_session[i].tick_timeout) &lt; (RT_TICK_MAX / <span class="number">2</span>))</span><br><span class="line">                &#123;</span><br><span class="line">                    close(client_session[i].fd);</span><br><span class="line">                    client_session[i].fd = <span class="number">-1</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">_mbtcp_restart:</span><br><span class="line">    <span class="keyword">if</span>(server_fd &gt;= <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        close(server_fd);</span><br><span class="line">        server_fd = <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> i =<span class="number">0</span>;i&lt;MAX_CLIENT_NUM;i++)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span>(client_session[i].fd &gt;= <span class="number">0</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            close(client_session[i].fd);</span><br><span class="line">            client_session[i].fd = <span class="number">-1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    rt_thread_mdelay(<span class="number">5000</span>);</span><br><span class="line">    <span class="keyword">goto</span> _mbtcp_start;</span><br><span class="line"></span><br><span class="line">    modbus_free(ctx);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">libmodbus_tcp_slave_demo</span><span class="params">()</span>&#123;</span><br><span class="line">    <span class="type">rt_thread_t</span> tid;</span><br><span class="line">    tid = rt_thread_create(<span class="string">&quot;tcp_slave_demo&quot;</span>,</span><br><span class="line">                           tcp_slave_demo_thread, RT_NULL,</span><br><span class="line">                           <span class="number">2048</span>,</span><br><span class="line">                           <span class="number">12</span>, <span class="number">10</span>);</span><br><span class="line">    <span class="keyword">if</span> (tid != RT_NULL) rt_thread_startup(tid);</span><br><span class="line">    <span class="keyword">return</span> RT_EOK;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">MSH_CMD_EXPORT(libmodbus_tcp_slave_demo, libmodbus_tcp_slave_demo)</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/stm32/">stm32</a><a href="/tags/rt-thread/">rt-thread</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
   <article>
 
   
@@ -290,461 +683,6 @@
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">比如 [E/at.clnt] Read response buffer failed. The Response buffer size is out of buffer size(xxx)</span><br><span class="line">可以在 at.client.c 的 at_create_resp 函数上下断点观察流程，尝试把缓冲区都改大一点</span><br></pre></td></tr></table></figure>
 
 <p>如果还有解决不了的问题，看<a target="_blank" rel="noopener" href="https://www.rt-thread.org/qa/forum.php?mod=viewthread&tid=11919&extra=page=1&filter=typeid&typeid=5">这里</a></p>
-
-      
-    </div>
-
-  </div>
-
-  <div class="article-footer">
-    <div class="article-meta pull-left">
-
-    
-
-    
-    
-
-    <span class="post-tags">
-      <i class="icon-tags"></i>
-        <a href="/tags/stm32/">stm32</a><a href="/tags/rt-thread/">rt-thread</a>
-    </span>
-    
-
-    </div>
-
-    
-  </div>
-</article>
-
-
-
-  <article>
-
-  
-    
-    <h3 class="article-title"><a href="/2025/11/06/rtt-stm32-eth-lan8720a/"><span>rt-thread 下，配置 stm32 的 LAN8720A 网卡</span></a></h3>
-    
-  
-
-  <div class="article-top-meta">
-    <span class="posted-on">
-      <a href="/2025/11/06/rtt-stm32-eth-lan8720a/" rel="bookmark">
-        <time class="entry-date published" datetime="2025-11-06T01:32:22.000Z">
-          2025-11-06
-        </time>
-      </a>
-    </span>
-  </div>
-
-
-  
-
-  <div class="article-content">
-    <div class="entry">
-      
-        <p>配置 LAN8720A 接入网络</p>
-<p>参考<a target="_blank" rel="noopener" href="https://www.rt-thread.org/document/site/application-note/components/network/an0010-lwip-driver-porting/">链接</a></p>
-<h2 id="cubeMX-配置"><a href="#cubeMX-配置" class="headerlink" title="cubeMX 配置"></a>cubeMX 配置</h2><p>启用 Eth 模块</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">选择 RMII</span><br><span class="line">对比实际板的原理图，修改引脚位置，注意rst引脚的位置</span><br></pre></td></tr></table></figure>
-
-<h2 id="项目配置"><a href="#项目配置" class="headerlink" title="项目配置"></a>项目配置</h2><p>修改 ports&#x2F;phy_reset.c 内 rst 引脚位置, 复制 ports 目录到 board 下，修改 SConscript</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">path += [cwd + <span class="string">&#x27;/ports&#x27;</span>]</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> GetDepend([<span class="string">&#x27;BSP_USING_ETH&#x27;</span>]):</span><br><span class="line">    src += Glob(<span class="string">&#x27;ports/phy_reset.c&#x27;</span>)</span><br></pre></td></tr></table></figure>
-
-<h2 id="board-Kconfig-配置"><a href="#board-Kconfig-配置" class="headerlink" title="board&#x2F;Kconfig 配置"></a>board&#x2F;Kconfig 配置</h2><p>Kconfig 里面，menu “Onboard Peripheral Drivers”内添加</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">config PHY_USING_LAN8720A</span><br><span class="line">    bool</span><br><span class="line">config BSP_USING_ETH</span><br><span class="line">    bool <span class="string">&quot;Enable Ethernet&quot;</span></span><br><span class="line">    default n</span><br><span class="line">    <span class="keyword">select</span> RT_USING_LWIP</span><br><span class="line">    <span class="keyword">select</span> PHY_USING_LAN8720A</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">RT-Thread Components &gt;</span><br><span class="line">  Network &gt;</span><br><span class="line">    Socket abstraction layer</span><br><span class="line">      [*] Enable socket abstraction layer</span><br><span class="line">      [*] Enable BSD socket operated by file system API</span><br><span class="line">    light weight TCP/IP stack</span><br><span class="line">      [] Enable alloc ip address through DHCP</span><br><span class="line">      [*] Enable lwIP stack</span><br></pre></td></tr></table></figure>
-
-<p>在<code>light weight TCP/IP stack</code>里面, 选项 <code>Enable alloc ip address through DHCP</code>来控制 dhcp 或者固定 ip</p>
-<h2 id="打开调试开关"><a href="#打开调试开关" class="headerlink" title="打开调试开关"></a>打开调试开关</h2><p>libraries&#x2F;HAL_Drivers&#x2F;drv_eth.c</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> ETH_RX_DUMP</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> ETH_TX_DUMP</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> DRV_DEBUG</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="相关代码"><a href="#相关代码" class="headerlink" title="相关代码"></a>相关代码</h2><p>phy_reset.c</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;board.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> RESET_IO GET_PIN(H, 2)</span></span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">phy_reset</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    rt_pin_write(RESET_IO, PIN_LOW);</span><br><span class="line">    rt_thread_mdelay(<span class="number">50</span>);</span><br><span class="line">    rt_pin_write(RESET_IO, PIN_HIGH);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">phy_init</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    rt_pin_mode(RESET_IO, PIN_MODE_OUTPUT);</span><br><span class="line">    rt_pin_write(RESET_IO, PIN_HIGH);</span><br><span class="line">    <span class="keyword">return</span> RT_EOK;</span><br><span class="line">&#125;</span><br><span class="line">INIT_BOARD_EXPORT(phy_init);</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-
-  </div>
-
-  <div class="article-footer">
-    <div class="article-meta pull-left">
-
-    
-
-    
-    
-
-    <span class="post-tags">
-      <i class="icon-tags"></i>
-        <a href="/tags/stm32/">stm32</a><a href="/tags/rt-thread/">rt-thread</a>
-    </span>
-    
-
-    </div>
-
-    
-  </div>
-</article>
-
-
-
-  <article>
-
-  
-    
-    <h3 class="article-title"><a href="/2025/11/05/rtt-stm32-eth-w5500/"><span>rt-thread 下，配置 stm32 的 w5500 网卡</span></a></h3>
-    
-  
-
-  <div class="article-top-meta">
-    <span class="posted-on">
-      <a href="/2025/11/05/rtt-stm32-eth-w5500/" rel="bookmark">
-        <time class="entry-date published" datetime="2025-11-05T06:14:34.000Z">
-          2025-11-05
-        </time>
-      </a>
-    </span>
-  </div>
-
-
-  
-
-  <div class="article-content">
-    <div class="entry">
-      
-        <p>配置 w5500 网卡接入网络</p>
-<h2 id="物理接线"><a href="#物理接线" class="headerlink" title="物理接线"></a>物理接线</h2><p>cubeMX 里面的 nss 脚貌似不需要接，cubeMX 里面的 sck 脚是对应模块的 sclk 脚</p>
-<p>模块的 scs 脚接的位置就是, rt_hw_spi_device_attach 的<code>最后两个参数的值</code></p>
-<p>开发板和模块之间的 MISO 和 MOSI <code>不需要反接</code></p>
-<h2 id="cubeMX-配置"><a href="#cubeMX-配置" class="headerlink" title="cubeMX 配置"></a>cubeMX 配置</h2><p>启用 spi1</p>
-<p>设置 Mode 为 Full Duplex Master</p>
-<p>设置 Hardware NSS Signal 为 output 模式</p>
-<h2 id="menuconfig-配置"><a href="#menuconfig-配置" class="headerlink" title="menuconfig 配置"></a>menuconfig 配置</h2><p>参考驱动配置，在 board&#x2F;Kconfig 里面启用 spi1 的配置</p>
-<p>配置 iot packages 里面的 wiznet 部分</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">RT-Thread online packages ---&gt;</span><br><span class="line">  IoT - internet of things ---&gt;</span><br><span class="line">    WIZnet: WIZnet TCP/IP chips SAL framework imlement ---&gt;</span><br><span class="line">      WIZnet device configure</span><br><span class="line">         (spi10) SPI device name</span><br><span class="line">         (10) Reset PIN number (NEW)</span><br><span class="line">         (11) IRQ PIN number (NEW)</span><br></pre></td></tr></table></figure>
-
-<p>参数说明</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">SPI device name 不是 spi 的总线名，需要手工创建，比如 spi10</span><br><span class="line">设置 Reset PIN number</span><br><span class="line">设置IRQ PIN number，也就是模块上的int引脚</span><br></pre></td></tr></table></figure>
-
-<h2 id="编写-spi-初始化代码"><a href="#编写-spi-初始化代码" class="headerlink" title="编写 spi 初始化代码"></a>编写 spi 初始化代码</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;rtthread.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;rtdevice.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;board.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="type">int</span> <span class="title function_">w5500_spi_init</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    __HAL_RCC_GPIOA_CLK_ENABLE();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 最后两个参数是spi模块scs引脚的位置</span></span><br><span class="line">    <span class="keyword">return</span> rt_hw_spi_device_attach(<span class="string">&quot;spi1&quot;</span>, <span class="string">&quot;spi10&quot;</span>, GPIOA, GPIO_PIN_4);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/* 导出到自动初始化 */</span></span><br><span class="line">INIT_COMPONENT_EXPORT(w5500_spi_init);</span><br></pre></td></tr></table></figure>
-
-<h2 id="重连测试"><a href="#重连测试" class="headerlink" title="重连测试"></a>重连测试</h2><p>测试模拟：开机断网，中间断网，重连以后，看到 W5500 提示 link up 以后，可以 ping 通其他主机</p>
-<p>无论 dhcp 模式打开还是关闭，均支持。</p>
-
-      
-    </div>
-
-  </div>
-
-  <div class="article-footer">
-    <div class="article-meta pull-left">
-
-    
-
-    
-    
-
-    <span class="post-tags">
-      <i class="icon-tags"></i>
-        <a href="/tags/stm32/">stm32</a><a href="/tags/rt-thread/">rt-thread</a>
-    </span>
-    
-
-    </div>
-
-    
-  </div>
-</article>
-
-
-
-  <article>
-
-  
-    
-    <h3 class="article-title"><a href="/2025/11/04/rtt-stm32-flash/"><span>rt-thread 下，配置 stm32 的外挂 flash</span></a></h3>
-    
-  
-
-  <div class="article-top-meta">
-    <span class="posted-on">
-      <a href="/2025/11/04/rtt-stm32-flash/" rel="bookmark">
-        <time class="entry-date published" datetime="2025-11-04T03:56:10.000Z">
-          2025-11-04
-        </time>
-      </a>
-    </span>
-  </div>
-
-
-  
-
-  <div class="article-content">
-    <div class="entry">
-      
-        <p>外挂 flash 读写<br>参考<a target="_blank" rel="noopener" href="https://www.rt-thread.org/document/site/application-note/components/sfud/an0048-sfud/">这里</a></p>
-<h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><h3 id="cubeMX"><a href="#cubeMX" class="headerlink" title="cubeMX"></a>cubeMX</h3><p>根据原理图，找到相应的 spi 脚，配置引脚</p>
-<h3 id="Kconfig"><a href="#Kconfig" class="headerlink" title="Kconfig"></a>Kconfig</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">menuconfig BSP_USING_SPI</span><br><span class="line">    bool <span class="string">&quot;Enable SPI BUS&quot;</span></span><br><span class="line">    default n</span><br><span class="line">    <span class="keyword">select</span> RT_USING_SPI</span><br><span class="line">    <span class="keyword">if</span> BSP_USING_SPI</span><br><span class="line">        config BSP_USING_SPI2</span><br><span class="line">            bool <span class="string">&quot;Enable SPI2 BUS&quot;</span></span><br><span class="line">            default n</span><br><span class="line"></span><br><span class="line">        config BSP_SPI2_TX_USING_DMA</span><br><span class="line">            bool <span class="string">&quot;Enable SPI2 TX DMA&quot;</span></span><br><span class="line">            depends on BSP_USING_SPI2</span><br><span class="line">            default n</span><br><span class="line"></span><br><span class="line">        config BSP_SPI2_RX_USING_DMA</span><br><span class="line">            bool <span class="string">&quot;Enable SPI1 RX DMA&quot;</span></span><br><span class="line">            depends on BSP_USING_SPI2</span><br><span class="line">            <span class="keyword">select</span> BSP_SPI2_TX_USING_DMA</span><br><span class="line">            default n</span><br><span class="line">    endif</span><br></pre></td></tr></table></figure>
-
-<p>Kconfig 的 <code>&quot;Onboard Peripheral Drivers&quot;</code> 添加</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">config BSP_USING_QSPI_FLASH</span><br><span class="line">    bool <span class="string">&quot;Enable QSPI FLASH (W25Q128 spi10)&quot;</span></span><br><span class="line">    <span class="keyword">select</span> BSP_USING_QSPI</span><br><span class="line">    <span class="keyword">select</span> RT_USING_SFUD</span><br><span class="line">    <span class="keyword">select</span> RT_SFUD_USING_QSPI</span><br><span class="line">    default n</span><br></pre></td></tr></table></figure>
-
-<h3 id="menuconfig"><a href="#menuconfig" class="headerlink" title="menuconfig"></a>menuconfig</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">Hardware Drivers Config &gt; Onboard Peripheral Drivers</span><br><span class="line">  [*] Enable QSPI FLASH (W25Q128 spi10)</span><br><span class="line"></span><br><span class="line">RT-Thread Components &gt; Device Drivers</span><br><span class="line">  [*] Using MTD Nor Flash device drivers</span><br><span class="line"></span><br><span class="line">RT-Thread online packages &gt;</span><br><span class="line"> system packages &gt;</span><br><span class="line">  [*] fal: Flash Abstraction Layer implement. Manage flash device and partition.  ---&gt;</span><br><span class="line">    (W25Q128) The name of the device used by FAL</span><br><span class="line">    这是 SFUD 初始化 flash 后创建的设备名</span><br><span class="line"></span><br><span class="line">Hardware Drivers Config &gt; On-chip Peripheral Drivers &gt; Enable SPI BUS</span><br><span class="line">  [*] Enable SPI BUS  ---&gt;</span><br><span class="line">    [*]   Enable SPI2 BUS</span><br><span class="line">    -*-     Enable SPI2 TX DMA</span><br><span class="line">    [*]     Enable SPI1 RX DMA</span><br><span class="line"></span><br><span class="line">RT-Thread Components &gt; Device Drivers</span><br><span class="line">  [*] Using SPI Bus/Device device drivers</span><br><span class="line">  -*- Enable QSPI mode</span><br><span class="line">  -*- Using Serial Flash Universal Driver</span><br><span class="line">  [*] Using auto probe flash JEDEC SFDP parameter</span><br><span class="line">  [*] Using defined supported flash chip information table</span><br><span class="line">  -*- Using QSPI mode support</span><br><span class="line">  (50000000) Default spi maximum speed(HZ)</span><br></pre></td></tr></table></figure>
-
-<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><p>fal_cfg.h</p>
-<figure class="highlight h"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">ifndef</span> _FAL_CFG_H_</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> _FAL_CFG_H_</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;rtthread.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;board.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">if</span> defined(BSP_USING_ON_CHIP_FLASH)</span></span><br><span class="line"><span class="keyword">extern</span> <span class="type">const</span> <span class="class"><span class="keyword">struct</span> <span class="title">fal_flash_dev</span> <span class="title">stm32_onchip_flash</span>;</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span> <span class="comment">/* BSP_USING_ON_CHIP_FLASH */</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">if</span> defined(BSP_USING_QSPI_FLASH)</span></span><br><span class="line"><span class="keyword">extern</span> <span class="class"><span class="keyword">struct</span> <span class="title">fal_flash_dev</span> <span class="title">nor_flash0</span>;</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span> <span class="comment">/* BSP_USING_QSPI_FLASH */</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">/* ========================= Device Configuration ========================== */</span></span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> BSP_USING_ON_CHIP_FLASH</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> ONCHIP_FLASH_DEV     &amp;stm32_onchip_flash,</span></span><br><span class="line"><span class="meta">#<span class="keyword">else</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> ONCHIP_FLASH_DEV</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span> <span class="comment">/* BSP_USING_ON_CHIP_FLASH */</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> BSP_USING_QSPI_FLASH</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> SPI_FLASH_DEV        &amp;nor_flash0,</span></span><br><span class="line"><span class="meta">#<span class="keyword">else</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> SPI_FLASH_DEV</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span> <span class="comment">/* BSP_USING_QSPI_FLASH */</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">/* flash device table */</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> FAL_FLASH_DEV_TABLE                                          \</span></span><br><span class="line"><span class="meta">&#123;                                                                    \</span></span><br><span class="line"><span class="meta">    ONCHIP_FLASH_DEV                                                 \</span></span><br><span class="line"><span class="meta">    SPI_FLASH_DEV                                                    \</span></span><br><span class="line"><span class="meta">&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/* ====================== Partition Configuration ========================== */</span></span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> FAL_PART_HAS_TABLE_CFG</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> BSP_USING_ON_CHIP_FLASH</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> ONCHIP_FLASH_PATITION          &#123;FAL_PART_MAGIC_WROD, <span class="string">&quot;app&quot;</span>,   <span class="string">&quot;onchip_flash&quot;</span>,   0,           496 * 1024, 0&#125;,      \</span></span><br><span class="line"><span class="meta">                                       &#123;FAL_PART_MAGIC_WROD, <span class="string">&quot;param&quot;</span>, <span class="string">&quot;onchip_flash&quot;</span>,   496* 1024,   16 * 1024,  0&#125;,</span></span><br><span class="line"><span class="meta">#<span class="keyword">else</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> ONCHIP_FLASH_PATITION</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> BSP_USING_QSPI_FLASH</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> SPI_FLASH_PARTITION            &#123;FAL_PART_MAGIC_WROD, <span class="string">&quot;filesystem&quot;</span>, <span class="string">&quot;W25Q128&quot;</span>, 9 * 1024 * 1024, 16 * 1024 * 1024, 0&#125;,</span></span><br><span class="line"><span class="meta">#<span class="keyword">else</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> SPI_FLASH_PARTITION</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">/* partition table */</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> FAL_PART_TABLE                                               \</span></span><br><span class="line"><span class="meta">&#123;                                                                    \</span></span><br><span class="line"><span class="meta">    ONCHIP_FLASH_PATITION                                            \</span></span><br><span class="line"><span class="meta">    SPI_FLASH_PARTITION                                              \</span></span><br><span class="line"><span class="meta">&#125;</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span> <span class="comment">/* FAL_PART_HAS_TABLE_CFG */</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span> <span class="comment">/* _FAL_CFG_H_ */</span></span></span><br></pre></td></tr></table></figure>
-
-<p>w25q128_auto_init.c</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;rtthread.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;rtdevice.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;board.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="type">int</span> <span class="title function_">w25q128_auto_init</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    __HAL_RCC_GPIOB_CLK_ENABLE();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 最后俩参数是spi接口的cs脚</span></span><br><span class="line">    rt_hw_spi_device_attach(<span class="string">&quot;spi2&quot;</span>, <span class="string">&quot;spi10&quot;</span>, GPIOI, GPIO_PIN_0);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (RT_NULL == rt_sfud_flash_probe(<span class="string">&quot;W25Q128&quot;</span>, <span class="string">&quot;spi10&quot;</span>))</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> -RT_ERROR;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> RT_EOK;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/* 导出到自动初始化 */</span></span><br><span class="line">INIT_COMPONENT_EXPORT(w25q128_auto_init);</span><br></pre></td></tr></table></figure>
-
-<p>w25q128_flash_demo.c</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;rtthread.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;rtdevice.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;board.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sfud.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> SPI_FLASH_DEVICE_NAME <span class="string">&quot;spi10&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">w25q128_flash_demo</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    sfud_err result;</span><br><span class="line">    <span class="type">uint8_t</span>* read_data;</span><br><span class="line">    <span class="type">uint8_t</span>* write_data;</span><br><span class="line">    sfud_flash* sfud_dev = <span class="literal">NULL</span>;</span><br><span class="line"></span><br><span class="line">    sfud_dev = rt_sfud_flash_find(SPI_FLASH_DEVICE_NAME);</span><br><span class="line">    <span class="comment">// 或者 sfud_dev = rt_sfud_flash_find_by_dev_name(&quot;W25Q128&quot;);</span></span><br><span class="line"></span><br><span class="line">    sfud_erase(sfud_dev, <span class="number">0</span>, <span class="number">4096</span>);</span><br><span class="line"></span><br><span class="line">    write_data = rt_malloc(<span class="number">32</span>);</span><br><span class="line">    rt_memset(write_data, <span class="number">3</span>, <span class="number">32</span>);</span><br><span class="line">    sfud_write(sfud_dev, <span class="number">0</span>, <span class="number">32</span>, write_data);</span><br><span class="line"></span><br><span class="line">    read_data = rt_malloc(<span class="number">32</span>);</span><br><span class="line">    sfud_read(sfud_dev, <span class="number">0</span>, <span class="number">32</span>, read_data);</span><br><span class="line"></span><br><span class="line">    rt_kprintf(<span class="string">&quot;please run cmd to check result\r\n&quot;</span>);</span><br><span class="line">    rt_kprintf(<span class="string">&quot;sf probe %s\r\n&quot;</span>, SPI_FLASH_DEVICE_NAME);</span><br><span class="line">    rt_kprintf(<span class="string">&quot;sf read 0 32\r\n&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">MSH_CMD_EXPORT(w25q128_flash_demo, w25q128_flash_demo);</span><br></pre></td></tr></table></figure>
-
-<h2 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">msh /&gt;list_device</span><br><span class="line">device           <span class="built_in">type</span>         ref count</span><br><span class="line">-------- -------------------- ----------</span><br><span class="line">W25Q128  Block Device         0</span><br><span class="line">spi10    SPI Device           0</span><br><span class="line">e0       Network Interface    0</span><br><span class="line">spi2     SPI Bus              0</span><br><span class="line">uart1    Character Device     2</span><br><span class="line">pin      Miscellaneous Device 0</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">msh /&gt;sf probe spi10</span><br><span class="line">msh /&gt;sf erase 0 10</span><br><span class="line">msh /&gt;sf <span class="built_in">read</span> 0 10</span><br><span class="line">msh /&gt;sf bench <span class="built_in">yes</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h2><p>Flash 先擦后写<br>写入之前请先擦除，这是 flash 特性决定的，因为 flash 的编程原理就是只能将 1 写为 0，而不能将 0 写为 1。擦除动作就是相应的页 &#x2F; 块的所有位变为 1（所有字节均为 0xFF），所以不擦除直接写入会有问题。</p>
-
-      
-    </div>
-
-  </div>
-
-  <div class="article-footer">
-    <div class="article-meta pull-left">
-
-    
-
-    
-    
-
-    <span class="post-tags">
-      <i class="icon-tags"></i>
-        <a href="/tags/stm32/">stm32</a><a href="/tags/rt-thread/">rt-thread</a>
-    </span>
-    
-
-    </div>
-
-    
-  </div>
-</article>
-
-
-
-  <article>
-
-  
-    
-    <h3 class="article-title"><a href="/2025/11/03/rtt-stm32-on-chip-flash/"><span>rt-thread 下，配置 stm32 片上 flash 读写</span></a></h3>
-    
-  
-
-  <div class="article-top-meta">
-    <span class="posted-on">
-      <a href="/2025/11/03/rtt-stm32-on-chip-flash/" rel="bookmark">
-        <time class="entry-date published" datetime="2025-11-03T06:48:02.000Z">
-          2025-11-03
-        </time>
-      </a>
-    </span>
-  </div>
-
-
-  
-
-  <div class="article-content">
-    <div class="entry">
-      
-        <p>片上 flash 读写，这里介绍 FAL 的用法</p>
-<h2 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h2><h3 id="FAL-准备"><a href="#FAL-准备" class="headerlink" title="FAL 准备"></a>FAL 准备</h3><p>board&#x2F;Kconfig 添加</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">config BSP_USING_ON_CHIP_FLASH</span><br><span class="line">    bool <span class="string">&quot;Enable on-chip FLASH&quot;</span></span><br><span class="line">    default n</span><br></pre></td></tr></table></figure>
-
-<p>启用 fal</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">RT-Thread online packages ---&gt;</span><br><span class="line">  system packages ---&gt;</span><br><span class="line">    [*]fal: Flash Abstraction Layer implement. Manage flash device and partition.  ---&gt;</span><br><span class="line">    启用fal，如果只考虑片上flash的话，SFUD不要勾选</span><br></pre></td></tr></table></figure>
-
-<p>on_chip_flash 目录复制到你的 applications 目录</p>
-<p>SConscript 添加如下</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">CPPPATH += [cwd + <span class="string">&#x27;/on_chip_flash&#x27;</span>]</span><br><span class="line"></span><br><span class="line">on_chip_flash/romfs_init.c</span><br><span class="line">on_chip_flash/fal_demo.c</span><br><span class="line">on_chip_flash/lfs_demo.c</span><br><span class="line">on_chip_flash/elm_demo.c</span><br></pre></td></tr></table></figure>
-
-<p>测试命令</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">fal probe xxx</span><br><span class="line">fal <span class="built_in">read</span> 0 10</span><br><span class="line">fal write xxx</span><br></pre></td></tr></table></figure>
-
-<h3 id="lfs-准备"><a href="#lfs-准备" class="headerlink" title="lfs 准备"></a>lfs 准备</h3><p><code>scons --menuconfig</code> 选中</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">RT-Thread Components ---&gt;</span><br><span class="line">  Device virtual file system</span><br><span class="line">  [*] Using device virtual file system</span><br><span class="line">  注意，以下参数，尽量设置大一些：</span><br><span class="line">    the maximal number of mounted file system</span><br><span class="line">    the maximal number of file system <span class="built_in">type</span></span><br><span class="line">    the maximal number of opened files</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">RT-Thread Components ---&gt;</span><br><span class="line">  Device Drivers ---&gt;</span><br><span class="line">    [*] Using MTD Nor Flash device drivers</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">RT-Thread Components ---&gt;</span><br><span class="line">  POSIX layer and C standard library ---&gt;</span><br><span class="line">    [*] Enable libc APIs from toolchain</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">RT-Thread online packages ---&gt;</span><br><span class="line">  system packages ---&gt;</span><br><span class="line">    [*] Littlefs: A high-integrity embedded file system  ----&gt;</span><br><span class="line">  注意:</span><br><span class="line">    disk block size 是扇区大小</span><br><span class="line">    lfs <span class="built_in">enable</span> wear leveling. 0 is <span class="built_in">disable</span>，这个设置为 100，为 0 有时候会崩</span><br></pre></td></tr></table></figure>
-
-<p>需要注意的地方</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">需要根据你需要的大小修改rtt自带驱动里面的`const struct fal_flash_dev stm32_onchip_flash_xxk`</span><br><span class="line">驱动的相对路径为 `libraries/HAL_Drivers/drv_flash/drv_flash_f4.c`</span><br><span class="line">这个结构体里面的blk_size为扇区大小，建议改成 `2048` 或者 `4096`</span><br></pre></td></tr></table></figure>
-
-<h3 id="romfs-准备"><a href="#romfs-准备" class="headerlink" title="romfs 准备"></a>romfs 准备</h3><p>使用场景：如果需要挂载多个 fs，可以使用 romfs 先创建几个文件夹，然后启动以后把几个 fs 分别挂载到不同的目录</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">RT-Thread Components ---&gt;</span><br><span class="line">  Device virtual file system</span><br><span class="line">  [*] Using device virtual file system</span><br><span class="line">    [*] Enable ReadOnly file system on flash</span><br></pre></td></tr></table></figure>
-
-<p>注意，需要使用下面的命令重新生成 romfs 的源码</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python2 ./rt-thread/tools/mkromfs.py 你的文件目录 ./rt-thread/components/dfs/filesystems/romfs/romfs.c</span><br></pre></td></tr></table></figure>
-
-<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><p>elm_demo.c</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;dfs_fs.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;fal.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;rtdbg.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">[I/FAL] ==================== FAL partition table ====================</span></span><br><span class="line"><span class="comment">[I/FAL] | name       | flash_dev        |   offset   |    length  |</span></span><br><span class="line"><span class="comment">[I/FAL] -------------------------------------------------------------</span></span><br><span class="line"><span class="comment">[I/FAL] | elmfs      | onchip_flash_64k | 0x00000000 | 0x00010000 |</span></span><br><span class="line"><span class="comment">[I/FAL] | lfs        | onchip_flash_64k | 0x00010000 | 0x00010000 |</span></span><br><span class="line"><span class="comment">[I/FAL] | fal_onchip | onchip_flash_64k | 0x00020000 | 0x00010000 |</span></span><br><span class="line"><span class="comment">[I/FAL] | filesystem | W25Q128          | 0x00900000 | 0x01000000 |</span></span><br><span class="line"><span class="comment">[I/FAL] =============================================================</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> ELM_FS_MOUNT_POINT      <span class="string">&quot;/&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> ELM_FS_PARTITION_NAME   <span class="string">&quot;elmfs&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// fal_blk_device_create 会创建一个和分区名一样的device</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> FS_DEVICE_NAME          ELM_FS_PARTITION_NAME</span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">elm_demo</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    fal_init();</span><br><span class="line"></span><br><span class="line">    <span class="type">rt_device_t</span> mtd_dev = RT_NULL;</span><br><span class="line">    <span class="keyword">if</span> ( rt_device_find(ELM_FS_PARTITION_NAME) == RT_NULL)&#123;</span><br><span class="line">        mtd_dev = fal_blk_device_create(ELM_FS_PARTITION_NAME);</span><br><span class="line">        <span class="keyword">if</span> (!mtd_dev)&#123;</span><br><span class="line">            LOG_E(<span class="string">&quot;Can&#x27;t create a block device on &#x27;%s&#x27; partition.&quot;</span>, ELM_FS_PARTITION_NAME);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    dfs_unmount(<span class="string">&quot;/&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (dfs_mount(FS_DEVICE_NAME, ELM_FS_MOUNT_POINT, <span class="string">&quot;elm&quot;</span>, <span class="number">0</span>, <span class="number">0</span>) == <span class="number">0</span>)&#123;</span><br><span class="line">        LOG_W(<span class="string">&quot;Filesystem initialized!&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span>&#123;</span><br><span class="line">        LOG_W(<span class="string">&quot;%s not formatted, now formatting&quot;</span>, ELM_FS_PARTITION_NAME);</span><br><span class="line">        dfs_mkfs(<span class="string">&quot;elm&quot;</span>, FS_DEVICE_NAME);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> ( dfs_mount(FS_DEVICE_NAME, ELM_FS_MOUNT_POINT, <span class="string">&quot;elm&quot;</span>, <span class="number">0</span>, <span class="number">0</span>) == <span class="number">0</span> )&#123;</span><br><span class="line">            LOG_W(<span class="string">&quot;Filesystem initialized!&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span>&#123;</span><br><span class="line">            LOG_E(<span class="string">&quot;Failed to initialize filesystem!&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> RT_EOK;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">mkfs -t elm elmfs</span></span><br><span class="line"><span class="comment">最后一个参数为通过 fal_blk_device_create 创建出来的 block device</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line">MSH_CMD_EXPORT(elm_demo, elm_demo);</span><br></pre></td></tr></table></figure>
-
-<p>fal_cfg.h</p>
-<figure class="highlight h"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">ifndef</span> _FAL_CFG_H_</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> _FAL_CFG_H_</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;rtthread.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;board.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 片上flash的编译需要</span></span><br><span class="line"><span class="comment">// 定义分区大小，暂时只看64k</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PARTITION_SIZE 64</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//起始地址</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> STM32_FLASH_START_ADRESS_64K (STM32_FLASH_END_ADDRESS - PARTITION_SIZE*3*1024)</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//分区长度</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> FLASH_SIZE_GRANULARITY_64K 64*3*1024</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 这些必须要定义，否则编译错误</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> STM32_FLASH_START_ADRESS_16K STM32_FLASH_START_ADRESS</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> STM32_FLASH_START_ADRESS_128K STM32_FLASH_START_ADRESS</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> FLASH_SIZE_GRANULARITY_16K 16*1024</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> FLASH_SIZE_GRANULARITY_128K 128*1024</span></span><br><span class="line"><span class="comment">// ---------------------</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// F4系列得用这个64k的</span></span><br><span class="line"><span class="meta">#<span class="keyword">if</span> defined(BSP_USING_ON_CHIP_FLASH)</span></span><br><span class="line"><span class="keyword">extern</span> <span class="type">const</span> <span class="class"><span class="keyword">struct</span> <span class="title">fal_flash_dev</span> <span class="title">stm32_onchip_flash_64k</span>;</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span> <span class="comment">/* BSP_USING_ON_CHIP_FLASH */</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">if</span> defined(BSP_USING_QSPI_FLASH)</span></span><br><span class="line"><span class="keyword">extern</span> <span class="class"><span class="keyword">struct</span> <span class="title">fal_flash_dev</span> <span class="title">nor_flash0</span>;</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span> <span class="comment">/* BSP_USING_QSPI_FLASH */</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">/* ========================= Device Configuration ========================== */</span></span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> BSP_USING_ON_CHIP_FLASH</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> ONCHIP_FLASH_DEV     &amp;stm32_onchip_flash_64k,</span></span><br><span class="line"><span class="meta">#<span class="keyword">else</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> ONCHIP_FLASH_DEV</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span> <span class="comment">/* BSP_USING_ON_CHIP_FLASH */</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> BSP_USING_QSPI_FLASH</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> SPI_FLASH_DEV        &amp;nor_flash0,</span></span><br><span class="line"><span class="meta">#<span class="keyword">else</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> SPI_FLASH_DEV</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span> <span class="comment">/* BSP_USING_QSPI_FLASH */</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">/* flash device table */</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> FAL_FLASH_DEV_TABLE                                          \</span></span><br><span class="line"><span class="meta">&#123;                                                                    \</span></span><br><span class="line"><span class="meta">    ONCHIP_FLASH_DEV                                                 \</span></span><br><span class="line"><span class="meta">    SPI_FLASH_DEV                                                    \</span></span><br><span class="line"><span class="meta">&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/* ====================== Partition Configuration ========================== */</span></span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> FAL_PART_HAS_TABLE_CFG</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 片上flash的设备名onchip_flash_64k是驱动里面定义好的，不能随便改</span></span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> BSP_USING_ON_CHIP_FLASH</span></span><br><span class="line">    <span class="meta">#<span class="keyword">define</span> ONCHIP_FLASH_PATITION      &#123;FAL_PART_MAGIC_WROD, <span class="string">&quot;elmfs&quot;</span>,      <span class="string">&quot;onchip_flash_64k&quot;</span>, 0,         64 * 1024, 0&#125;,      \</span></span><br><span class="line"><span class="meta">                                       &#123;FAL_PART_MAGIC_WROD, <span class="string">&quot;lfs&quot;</span>,        <span class="string">&quot;onchip_flash_64k&quot;</span>, 64* 1024,  64 * 1024, 0&#125;,      \</span></span><br><span class="line"><span class="meta">                                       &#123;FAL_PART_MAGIC_WROD, <span class="string">&quot;fal_onchip&quot;</span>, <span class="string">&quot;onchip_flash_64k&quot;</span>, 128* 1024, 64 * 1024, 0&#125;,</span></span><br><span class="line"><span class="meta">#<span class="keyword">else</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> ONCHIP_FLASH_PATITION</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> BSP_USING_QSPI_FLASH</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> SPI_FLASH_PARTITION            &#123;FAL_PART_MAGIC_WROD, <span class="string">&quot;filesystem&quot;</span>, <span class="string">&quot;W25Q128&quot;</span>, 9 * 1024 * 1024, 16 * 1024 * 1024, 0&#125;,</span></span><br><span class="line"><span class="meta">#<span class="keyword">else</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> SPI_FLASH_PARTITION</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">/* partition table */</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> FAL_PART_TABLE                                               \</span></span><br><span class="line"><span class="meta">&#123;                                                                    \</span></span><br><span class="line"><span class="meta">    ONCHIP_FLASH_PATITION                                            \</span></span><br><span class="line"><span class="meta">    SPI_FLASH_PARTITION                                              \</span></span><br><span class="line"><span class="meta">&#125;</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span> <span class="comment">/* FAL_PART_HAS_TABLE_CFG */</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span> <span class="comment">/* _FAL_CFG_H_ */</span></span></span><br></pre></td></tr></table></figure>
-
-<p>fal_demo.c</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;fal.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;rtdbg.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">[I/FAL] ==================== FAL partition table ====================</span></span><br><span class="line"><span class="comment">[I/FAL] | name       | flash_dev        |   offset   |    length  |</span></span><br><span class="line"><span class="comment">[I/FAL] -------------------------------------------------------------</span></span><br><span class="line"><span class="comment">[I/FAL] | elmfs      | onchip_flash_64k | 0x00000000 | 0x00010000 |</span></span><br><span class="line"><span class="comment">[I/FAL] | lfs        | onchip_flash_64k | 0x00010000 | 0x00010000 |</span></span><br><span class="line"><span class="comment">[I/FAL] | fal_onchip | onchip_flash_64k | 0x00020000 | 0x00010000 |</span></span><br><span class="line"><span class="comment">[I/FAL] | filesystem | W25Q128          | 0x00900000 | 0x01000000 |</span></span><br><span class="line"><span class="comment">[I/FAL] =============================================================</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> DEMO_FLASH_PARTITION_NAME <span class="string">&quot;fal_onchip&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">fal_demo</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    fal_init();</span><br><span class="line"></span><br><span class="line">    <span class="type">const</span> <span class="class"><span class="keyword">struct</span> <span class="title">fal_partition</span>* <span class="title">partition</span> =</span> fal_partition_find(DEMO_FLASH_PARTITION_NAME);</span><br><span class="line"></span><br><span class="line">    fal_partition_erase(partition, <span class="number">0x4</span>, <span class="number">2</span>);</span><br><span class="line"></span><br><span class="line">    <span class="type">char</span> data_to_save[] = &#123;<span class="number">0xa</span>, <span class="number">0xb</span>&#125;;</span><br><span class="line">    fal_partition_write(partition, <span class="number">0x4</span>, data_to_save, <span class="keyword">sizeof</span>(data_to_save));</span><br><span class="line"></span><br><span class="line">    <span class="comment">// char data_to_read[2] = &#123;0&#125;;</span></span><br><span class="line">    <span class="comment">// fal_partition_read(partition, 0x4, data_to_read, sizeof(data_to_read));</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// char hex_str_data_array[2] = &#123;0&#125;;</span></span><br><span class="line">    <span class="comment">// hex_to_str(data_to_read, sizeof(data_to_read), hex_str_data_array);</span></span><br><span class="line">    <span class="comment">// rt_kprintf(&quot;data :%s\n&quot;, hex_str_data_array);</span></span><br><span class="line"></span><br><span class="line">    rt_kprintf(<span class="string">&quot;please run cmd to check result\r\n&quot;</span>);</span><br><span class="line">    rt_kprintf(<span class="string">&quot;fal probe %s\r\n&quot;</span>, DEMO_FLASH_PARTITION_NAME);</span><br><span class="line">    rt_kprintf(<span class="string">&quot;fal read 4 2\r\n&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> RT_EOK;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">MSH_CMD_EXPORT(fal_demo, fal_demo);</span><br></pre></td></tr></table></figure>
-
-<p>lfs_demo.c</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;dfs_fs.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;fal.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;rtdbg.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">[I/FAL] ==================== FAL partition table ====================</span></span><br><span class="line"><span class="comment">[I/FAL] | name       | flash_dev        |   offset   |    length  |</span></span><br><span class="line"><span class="comment">[I/FAL] -------------------------------------------------------------</span></span><br><span class="line"><span class="comment">[I/FAL] | elmfs      | onchip_flash_64k | 0x00000000 | 0x00010000 |</span></span><br><span class="line"><span class="comment">[I/FAL] | lfs        | onchip_flash_64k | 0x00010000 | 0x00010000 |</span></span><br><span class="line"><span class="comment">[I/FAL] | fal_onchip | onchip_flash_64k | 0x00020000 | 0x00010000 |</span></span><br><span class="line"><span class="comment">[I/FAL] | filesystem | W25Q128          | 0x00900000 | 0x01000000 |</span></span><br><span class="line"><span class="comment">[I/FAL] =============================================================</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> LFS_MOUNT_POINT     <span class="string">&quot;/&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> LFS_PARTITION_NAME  <span class="string">&quot;lfs&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> FS_DEVICE_NAME      LFS_PARTITION_NAME</span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">lfs_demo</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    fal_init();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 创建mtd设备，list_device能看到</span></span><br><span class="line">    <span class="type">rt_device_t</span> mtd_dev = RT_NULL;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> ( rt_device_find(LFS_PARTITION_NAME) == RT_NULL)&#123;</span><br><span class="line">        mtd_dev = fal_mtd_nor_device_create(LFS_PARTITION_NAME);</span><br><span class="line">        <span class="keyword">if</span> (!mtd_dev)&#123;</span><br><span class="line">            LOG_E(<span class="string">&quot;Can&#x27;t create a mtd device on &#x27;%s&#x27; partition.&quot;</span>, LFS_PARTITION_NAME);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    dfs_unmount(<span class="string">&quot;/&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (dfs_mount(FS_DEVICE_NAME, LFS_MOUNT_POINT, <span class="string">&quot;lfs&quot;</span>, <span class="number">0</span>, <span class="number">0</span>) == <span class="number">0</span>)&#123;</span><br><span class="line">        LOG_W(<span class="string">&quot;Filesystem initialized!&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span>&#123;</span><br><span class="line">        LOG_W(<span class="string">&quot;%s not formatted, now formatting&quot;</span>, LFS_PARTITION_NAME);</span><br><span class="line">        dfs_mkfs(<span class="string">&quot;lfs&quot;</span>, FS_DEVICE_NAME);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> ( dfs_mount(FS_DEVICE_NAME, LFS_MOUNT_POINT, <span class="string">&quot;lfs&quot;</span>, <span class="number">0</span>, <span class="number">0</span>) == <span class="number">0</span> )&#123;</span><br><span class="line">            LOG_W(<span class="string">&quot;Filesystem initialized!&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span>&#123;</span><br><span class="line">            LOG_E(<span class="string">&quot;Failed to initialize filesystem!&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> RT_EOK;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">mkfs -t lfs lfs</span></span><br><span class="line"><span class="comment">最后一个参数为通过 fal_blk_device_create 创建出来的 block device</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line">MSH_CMD_EXPORT(lfs_demo, lfs_demo);</span><br></pre></td></tr></table></figure>
-
-<p>romfs_init.c</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;dfs_fs.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;rtdbg.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">extern</span> <span class="type">const</span> <span class="class"><span class="keyword">struct</span> <span class="title">romfs_dirent</span> <span class="title">romfs_root</span>;</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> DFS_ROMFS_ROOT          (&amp;romfs_root)</span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">romfs_init</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">/* mount ROMFS as root directory */</span></span><br><span class="line">    <span class="keyword">if</span> (dfs_mount( RT_NULL, <span class="string">&quot;/&quot;</span>, <span class="string">&quot;rom&quot;</span>, <span class="number">0</span>, (<span class="type">const</span> <span class="type">void</span> *)DFS_ROMFS_ROOT) == <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        rt_kprintf(<span class="string">&quot;ROMFS File System initialized!\n&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;</span><br><span class="line">        rt_kprintf(<span class="string">&quot;ROMFS File System initialized Failed!\n&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> RT_EOK;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">INIT_ENV_EXPORT(romfs_init);</span><br></pre></td></tr></table></figure>
-
-<h2 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h2><p>已知的问题：<strong>在某些板子上，fal 和 lfs 不兼容，同时启用以后，会导致 fal 的 erase 挂掉，当然 lfs 的格式化也会挂掉</strong></p>
-<p>elm 貌似格式化会报错，不管了</p>
-
-      
-    </div>
-
-  </div>
-
-  <div class="article-footer">
-    <div class="article-meta pull-left">
-
-    
-
-    
-    
-
-    <span class="post-tags">
-      <i class="icon-tags"></i>
-        <a href="/tags/stm32/">stm32</a><a href="/tags/rt-thread/">rt-thread</a>
-    </span>
-    
-
-    </div>
-
-    
-  </div>
-</article>
-
-
-
-  <article>
-
-  
-    
-    <h3 class="article-title"><a href="/2025/11/02/rtt-stm32-u-disk/"><span>rt-thread 下，配置 stm32 的 u 盘</span></a></h3>
-    
-  
-
-  <div class="article-top-meta">
-    <span class="posted-on">
-      <a href="/2025/11/02/rtt-stm32-u-disk/" rel="bookmark">
-        <time class="entry-date published" datetime="2025-11-02T00:50:24.000Z">
-          2025-11-02
-        </time>
-      </a>
-    </span>
-  </div>
-
-
-  
-
-  <div class="article-content">
-    <div class="entry">
-      
-        <h2 id="当成-u-盘"><a href="#当成-u-盘" class="headerlink" title="当成 u 盘"></a>当成 u 盘</h2><p>单片机作为 u 盘</p>
-<h3 id="打开-usb"><a href="#打开-usb" class="headerlink" title="打开 usb"></a>打开 usb</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">打开 cubeMX，配置 USB_OTG, 使用 host_device 模式，nvic interrupt table 配置 usb on the go fs global interrupt, 生成代码，复制到项目</span><br><span class="line"></span><br><span class="line">cubeMX 里面配置的时候，rcc 需要启用 hse，外部晶震，usb 的时钟需要设置为 48MHZ</span><br><span class="line"></span><br><span class="line">复制 main.c 里面的时钟配置到 board.c</span><br></pre></td></tr></table></figure>
-
-<p>修改 board&#x2F;Kconfig，添加</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">config BSP_USING_USBD</span><br><span class="line">    bool <span class="string">&quot;Enable USB device&quot;</span></span><br><span class="line">    <span class="keyword">select</span> RT_USING_USB_DEVICE</span><br><span class="line">    default n</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">RT-Thread Components ---&gt;</span><br><span class="line">  Device Drivers ---&gt;</span><br><span class="line">    Using USB ---&gt;</span><br><span class="line">      [*] Using USB device</span><br><span class="line">      [*] Enable composite device</span><br><span class="line">      [*] Enable to use device as Mass Storage device</span><br><span class="line">      (自己改名字) msc class disk name</span><br></pre></td></tr></table></figure>
-
-<h3 id="其他配置"><a href="#其他配置" class="headerlink" title="其他配置"></a>其他配置</h3><p>参考 sdio 的配置，即可将 sd 卡插在 stm32 上，在电脑上显示出来</p>
-<p>sd 卡的文件系统用 fat 和 ntfs 都可以</p>
-<h2 id="读写-u-盘"><a href="#读写-u-盘" class="headerlink" title="读写 u 盘"></a>读写 u 盘</h2><p>使用 usb host 读写 u 盘</p>
-<p>参考 <a target="_blank" rel="noopener" href="https://www.rt-thread.org/document/site/application-note/driver/usb/an0046-rtthread-driver-usbh/">这里</a></p>
-<h3 id="usb-host"><a href="#usb-host" class="headerlink" title="usb host"></a>usb host</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">打开 cubeMX，配置 USB_OTG, 使用 host_only 模式，nvic interrupt table 配置 usb on the go fs global interrupt, 生成代码，复制到项目</span><br><span class="line"></span><br><span class="line">cubeMX 里面配置的时候，rcc 需要启用 hse，外部晶震，usb 的时钟需要设置为 48MHZ</span><br><span class="line">复制 main.c 里面的时钟配置到 board.c</span><br></pre></td></tr></table></figure>
-
-<p>修改 board&#x2F;Kconfig，添加</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">config BSP_USING_USBH</span><br><span class="line">    bool <span class="string">&quot;Enable USB host&quot;</span></span><br><span class="line">    <span class="keyword">select</span> RT_USING_USB_HOST</span><br><span class="line">    default n</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">RT-Thread Components ---&gt;</span><br><span class="line">  Device Drivers ---&gt;</span><br><span class="line">    Using USB ---&gt;</span><br><span class="line">      [*] Using USB host</span><br><span class="line">      [*] Enable Udisk Drivers</span><br><span class="line">      (/)   Udisk mount <span class="built_in">dir</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="文件系统"><a href="#文件系统" class="headerlink" title="文件系统"></a>文件系统</h3><p>位置</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">RT-Thread Components ---&gt;</span><br><span class="line">  Device virtual file system ---&gt;</span><br><span class="line">    [*]Using device virtual file system</span><br><span class="line">      [*] Enable elm-chan fatfs</span><br><span class="line">        elm-chan<span class="string">&#x27;s FatFs, Generic FAT Filesystem Module  ---&gt;</span></span><br><span class="line"><span class="string">        (4096) Maximum sector size to be handled.</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="libc"><a href="#libc" class="headerlink" title="libc"></a>libc</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">RT-Thread Components ---&gt;</span><br><span class="line">  POSIX layer and C standard library ---&gt;</span><br><span class="line">    [*] Enable libc APIs from toolchain</span><br></pre></td></tr></table></figure>
-
-<h3 id="复制驱动"><a href="#复制驱动" class="headerlink" title="复制驱动"></a>复制驱动</h3><p>去 gitee 的 rt thread 的 master 分支里面找到 drv_usbh.c 和 drv_usbh.h， 放到项目的 libraries&#x2F;HAL_Drivers 里面</p>
-<p>修改，添加 libraries&#x2F;HAL_Drivers&#x2F;SConscript</p>
-<figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">if GetDepend([&#x27;BSP_USING_USBH&#x27;]):</span><br><span class="line">    src += [&#x27;drv_usbh.c&#x27;]</span><br></pre></td></tr></table></figure>
-
-<h3 id="备注"><a href="#备注" class="headerlink" title="备注"></a>备注</h3><p>u 盘的供电需要 <code>5v</code></p>
-<p>可以修改 usb 调试宏查看日志 RT_DEBUG_USB</p>
-
-      
-    </div>
-
-  </div>
-
-  <div class="article-footer">
-    <div class="article-meta pull-left">
-
-    
-
-    
-    
-
-    <span class="post-tags">
-      <i class="icon-tags"></i>
-        <a href="/tags/stm32/">stm32</a><a href="/tags/rt-thread/">rt-thread</a>
-    </span>
-    
-
-    </div>
-
-    
-  </div>
-</article>
-
-
-
-  <article>
-
-  
-    
-    <h3 class="article-title"><a href="/2025/11/01/rtt-stm32-dev-watchdog/"><span>rt-thread 下，配置 stm32 的 watchdog</span></a></h3>
-    
-  
-
-  <div class="article-top-meta">
-    <span class="posted-on">
-      <a href="/2025/11/01/rtt-stm32-dev-watchdog/" rel="bookmark">
-        <time class="entry-date published" datetime="2025-11-01T02:24:24.000Z">
-          2025-11-01
-        </time>
-      </a>
-    </span>
-  </div>
-
-
-  
-
-  <div class="article-content">
-    <div class="entry">
-      
-        <h2 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h2><p>修改 board&#x2F;Kconfig，添加 watchdog 相关部分，以下为参考</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">config BSP_USING_WDT</span><br><span class="line">    bool <span class="string">&quot;Enable Watchdog Timer&quot;</span></span><br><span class="line">    <span class="keyword">select</span> RT_USING_WDT</span><br><span class="line">    default n</span><br></pre></td></tr></table></figure>
-
-<h2 id="menuconfig"><a href="#menuconfig" class="headerlink" title="menuconfig"></a>menuconfig</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">scons --menuconfig 启用 watchdog</span><br><span class="line">stm32XXxx_hal_conf.h 需要启用 HAL_IWDG_MODULE_ENABLED</span><br></pre></td></tr></table></figure>
 
       
     </div>
