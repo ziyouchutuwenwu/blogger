@@ -71,6 +71,65 @@
 
   
     
+    <h3 class="article-title"><a href="/2025/10/31/rtt-stm32-dev-sensor/"><span>rt-thread 下，配置 stm32 的 sensor</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/10/31/rtt-stm32-dev-sensor/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-10-31T00:40:57.000Z">
+          2025-10-31
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <p>以 aht10 为例</p>
+<p>用法见 <a target="_blank" rel="noopener" href="https://github.com/RT-Thread-packages/aht10#readme">这里</a></p>
+<p>注意, 由于 aht 为温湿度传感器，因此，sensor 框架会抽象出 温度和湿度两个设备</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rt_hw_aht10_init(<span class="string">&quot;aaa&quot;</span>, &amp;cfg);</span><br></pre></td></tr></table></figure>
+
+<p>list_device 查看结果</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">device           <span class="built_in">type</span>         ref count</span><br><span class="line">-------- -------------------- ----------</span><br><span class="line">humi_aaa Sensor Device        0</span><br><span class="line">temp_aaa Sensor Device        0</span><br><span class="line">i2c1     I2C Bus              0</span><br><span class="line">uart1    Character Device     2</span><br><span class="line">pin      Miscellaneous Device 0</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/stm32/">stm32</a><a href="/tags/rt-thread/">rt-thread</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
     <h3 class="article-title"><a href="/2025/10/30/rtt-stm32-dev-rtc/"><span>rt-thread 下，配置 stm32 的 rtc</span></a></h3>
     
   
@@ -616,67 +675,6 @@
 
 <p>标准 shell 格式</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/sh -e</span></span><br><span class="line"></span><br><span class="line">. /etc/profile</span><br><span class="line"></span><br><span class="line"><span class="comment"># nohup xxx &gt; /dev/null 2&gt;&amp;1 &amp;</span></span><br><span class="line"><span class="comment"># screen -dm xxx</span></span><br><span class="line"></span><br><span class="line">/opt/demo/_build/prod/rel/demo/bin/demo daemon</span><br><span class="line"></span><br><span class="line"><span class="built_in">exit</span> 0</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-
-  </div>
-
-  <div class="article-footer">
-    <div class="article-meta pull-left">
-
-    
-
-    
-    
-
-    <span class="post-tags">
-      <i class="icon-tags"></i>
-        <a href="/tags/freebsd/">freebsd</a>
-    </span>
-    
-
-    </div>
-
-    
-  </div>
-</article>
-
-
-
-  <article>
-
-  
-    
-    <h3 class="article-title"><a href="/2025/10/24/freebsd-rc-conf/"><span>freebsd 开机启动配置文件</span></a></h3>
-    
-  
-
-  <div class="article-top-meta">
-    <span class="posted-on">
-      <a href="/2025/10/24/freebsd-rc-conf/" rel="bookmark">
-        <time class="entry-date published" datetime="2025-10-24T02:48:53.000Z">
-          2025-10-24
-        </time>
-      </a>
-    </span>
-  </div>
-
-
-  
-
-  <div class="article-content">
-    <div class="entry">
-      
-        <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>里面有一些 xxx_enable 字段</p>
-<p>都可以用类似如下的方式修改</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sysrc -f /etc/rc.conf kld_list=<span class="string">&quot;i915kms&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p>加载顺序如下</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">/etc/rc.conf</span><br><span class="line"></span><br><span class="line"><span class="comment"># 自己的全局配置，覆盖默认</span></span><br><span class="line">/etc/rc.conf.local</span><br><span class="line"><span class="comment"># 拆分出来的配置</span></span><br><span class="line">/usr/local/etc/rc.conf.d/</span><br></pre></td></tr></table></figure>
-
-<p>这些字段在如下两个目录内的脚本内搜索</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">/etc/rc.d/</span><br><span class="line">/usr/local/etc/rc.d/</span><br></pre></td></tr></table></figure>
 
       
     </div>

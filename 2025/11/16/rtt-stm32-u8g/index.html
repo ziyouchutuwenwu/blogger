@@ -1,0 +1,157 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8" />
+  
+  <title>rt-thread 下，配置 stm32 的 u8g | 独钓寒江雪</title>
+
+  
+  <meta name="author" content="John Doe" />
+   
+  <meta
+    name="description"
+    content="配置menuconfig1234RT-Thread online packages -&amp;gt;  peripheral libraries and drivers ---&amp;gt;    U8G2: a monochrome graphic library ---&amp;gt;      Version (" />
+    
+  <meta name="keywords" content="stm32,rt-thread"> 
+
+  <meta
+    id="viewport"
+    name="viewport"
+    content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+
+  
+  <meta property="og:title" content="rt-thread 下，配置 stm32 的 u8g" />
+  
+
+  <meta property="og:site_name" content="独钓寒江雪" />
+
+  
+  <meta property="og:image" content="/favicon.ico" />
+  
+
+  <link href="/favicon.ico" rel="icon" />
+  <link
+    rel="alternate"
+    href="/atom.xml"
+    title="独钓寒江雪"
+    type="application/atom+xml" />
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css" />
+
+  <script
+    async
+    src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9313450459437229"
+    crossorigin="anonymous"></script>
+<meta name="generator" content="Hexo 8.0.0"></head>
+
+
+<body>
+<div class="blog">
+  <div class="content">
+
+    <header>
+  <div class="site-branding">
+    <h1 class="site-title">
+      <a href="/">独钓寒江雪</a>
+    </h1>
+    <p class="site-description"></p>
+  </div>
+  <nav class="site-navigation">
+    <ul>
+      
+        <li><a href="/">首页</a></li>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/tags">标签</a></li>
+      
+        <li><a href="/about">关于</a></li>
+      
+    </ul>
+  </nav>
+</header>
+
+    <main class="site-main posts-loop">
+    <article>
+
+  
+    
+    <h3 class="article-title"><span>rt-thread 下，配置 stm32 的 u8g</span></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/11/16/rtt-stm32-u8g/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-11-16T01:26:39.000Z">
+          2025-11-16
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><h3 id="menuconfig"><a href="#menuconfig" class="headerlink" title="menuconfig"></a>menuconfig</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">RT-Thread online packages -&gt;</span><br><span class="line">  peripheral libraries and drivers ---&gt;</span><br><span class="line">    U8G2: a monochrome graphic library ---&gt;</span><br><span class="line">      Version (c-latest)</span><br></pre></td></tr></table></figure>
+
+<p>字体选用 <code>u8g2_font_wqy12_t_gb2312</code> 可以完整显示中文</p>
+<h3 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">u8g2_SetFont(&amp;u8g2, u8g2_font_wqy12_t_gb2312);</span><br><span class="line">u8g2_DrawUTF8(&amp;u8g2, <span class="number">1</span>, <span class="number">18</span>, <span class="string">&quot;我拿起那40米的大砍刀&quot;</span>);</span><br><span class="line">u8g2_DrawUTF8(&amp;u8g2, <span class="number">5</span>, <span class="number">40</span>, <span class="string">&quot;削你那15米的铅笔&quot;</span>);</span><br><span class="line">u8g2_SendBuffer(&amp;u8g2);</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/stm32/">stm32</a><a href="/tags/rt-thread/">rt-thread</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+  
+
+
+
+
+
+
+
+
+
+    </main>
+
+    <footer class="site-footer">
+  <p class="site-info">
+    Proudly powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and
+    Theme by <a href="https://github.com/CodeDaraW/Hacker" target="_blank">Hacker</a>
+    </br>
+    
+    &copy; 2025 John Doe
+    
+  </p>
+</footer>
+    
+    
+  </div>
+</div>
+</body>
+</html>
