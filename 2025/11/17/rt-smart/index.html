@@ -1,0 +1,193 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8" />
+  
+  <title>rt-smart | 独钓寒江雪</title>
+
+  
+  <meta name="author" content="John Doe" />
+   
+  <meta
+    name="description"
+    content="说明整理流程很像 linux, 先 load 内核，再加载 rootfs
+配置以 qemu-virt64-aarch64 为例
+用户态工具链需要通过编译用户态程序才能导出，有点奇怪
+123git clone --depth 1 https://github.com/RT-Thread/userapp" />
+    
+  <meta name="keywords" content="stm32,rt-thread"> 
+
+  <meta
+    id="viewport"
+    name="viewport"
+    content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+
+  
+  <meta property="og:title" content="rt-smart" />
+  
+
+  <meta property="og:site_name" content="独钓寒江雪" />
+
+  
+  <meta property="og:image" content="/favicon.ico" />
+  
+
+  <link href="/favicon.ico" rel="icon" />
+  <link
+    rel="alternate"
+    href="/atom.xml"
+    title="独钓寒江雪"
+    type="application/atom+xml" />
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css" />
+
+  <script
+    async
+    src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9313450459437229"
+    crossorigin="anonymous"></script>
+<meta name="generator" content="Hexo 8.0.0"></head>
+
+
+<body>
+<div class="blog">
+  <div class="content">
+
+    <header>
+  <div class="site-branding">
+    <h1 class="site-title">
+      <a href="/">独钓寒江雪</a>
+    </h1>
+    <p class="site-description"></p>
+  </div>
+  <nav class="site-navigation">
+    <ul>
+      
+        <li><a href="/">首页</a></li>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/tags">标签</a></li>
+      
+        <li><a href="/about">关于</a></li>
+      
+    </ul>
+  </nav>
+</header>
+
+    <main class="site-main posts-loop">
+    <article>
+
+  
+    
+    <h3 class="article-title"><span>rt-smart</span></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/11/17/rt-smart/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-11-17T08:11:48.000Z">
+          2025-11-17
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>整理流程很像 linux, 先 load 内核，再加载 rootfs</p>
+<h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><p>以 qemu-virt64-aarch64 为例</p>
+<h3 id="用户态"><a href="#用户态" class="headerlink" title="用户态"></a>用户态</h3><p>工具链需要通过编译用户态程序才能导出，有点奇怪</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> --depth 1 https://github.com/RT-Thread/userapps.git</span><br><span class="line"><span class="built_in">cd</span> userapps; <span class="built_in">source</span> env.sh</span><br><span class="line"><span class="built_in">cd</span> apps</span><br></pre></td></tr></table></figure>
+
+<p>下载工具链</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xmake config --<span class="built_in">arch</span>=aarch64 -y</span><br></pre></td></tr></table></figure>
+
+<p>导出 toolchain 需要先编译</p>
+<p>每次修改完应用程序，都需要 xmake 一下</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xmake</span><br></pre></td></tr></table></figure>
+
+<p>toolchain 在 <code>apps/build/packages</code> 下</p>
+<p>sdk 在<code>apps/build/sdk</code> 下</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xmake smart-rootfs --<span class="built_in">export</span>=all</span><br></pre></td></tr></table></figure>
+
+<p>生成 rootfs，执行以后，在 <code>apps/build/</code> 下</p>
+<p>如果需要把 zig 编译的程序放进去，可以放在这个里面, 实际测试，运行会崩溃</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xmake smart-rootfs</span><br></pre></td></tr></table></figure>
+
+<p>生成磁盘镜像</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xmake smart-image -f ext4</span><br></pre></td></tr></table></figure>
+
+<h3 id="内核"><a href="#内核" class="headerlink" title="内核"></a>内核</h3><p>toolchain 在 <code>userapps/apps/build/packages</code> 里面，复制出来</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> RTT_CC=<span class="string">&quot;gcc&quot;</span></span><br><span class="line"><span class="built_in">export</span> RTT_EXEC_PATH=<span class="string">&quot;./toolchain/bin/&quot;</span></span><br><span class="line"><span class="built_in">export</span> RTT_CC_PREFIX=<span class="string">&quot;aarch64-linux-musleabi-&quot;</span></span><br><span class="line"><span class="built_in">export</span> PATH=<span class="string">&quot;<span class="variable">$RTT_EXEC_PATH</span>:<span class="variable">$PATH</span>&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>编译内核</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> --depth 1 https://github.com/RT-Thread/rt-thread</span><br><span class="line"><span class="built_in">cd</span> rt-thread/bsp/qemu-virt64-aarch64/</span><br><span class="line">scons --menuconfig</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">RT-Thread Kernel ---&gt;</span><br><span class="line">  [*] Enable RT-Thread Smart (microkernel on kernel/userland)</span><br><span class="line"></span><br><span class="line">RT-Thread online packages  ---&gt;</span><br><span class="line">  system packages  ---&gt;</span><br><span class="line">    [*] lwext4: an excellent choice of ext2/3/4 filesystem <span class="keyword">for</span> microcontrol</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">source</span> ~/.env/env.sh</span><br><span class="line">pkgs --update</span><br><span class="line"></span><br><span class="line">scons -c; scons</span><br><span class="line"><span class="comment"># scons --dist</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="运行"><a href="#运行" class="headerlink" title="运行"></a>运行</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cp</span> ext4.img ../../../rt-thread/bsp/qemu-virt64-aarch64/</span><br></pre></td></tr></table></figure>
+
+<p>修改 qemu.sh 里面的 sd.bin 为 ext4.img</p>
+<p>参考<a target="_blank" rel="noopener" href="https://github.com/RT-Thread/userapps">这里</a>最后生成 prebuilt 的部分里面的 run.sh</p>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/stm32/">stm32</a><a href="/tags/rt-thread/">rt-thread</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+  
+
+
+
+
+
+
+
+
+
+    </main>
+
+    <footer class="site-footer">
+  <p class="site-info">
+    Proudly powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and
+    Theme by <a href="https://github.com/CodeDaraW/Hacker" target="_blank">Hacker</a>
+    </br>
+    
+    &copy; 2025 John Doe
+    
+  </p>
+</footer>
+    
+    
+  </div>
+</div>
+</body>
+</html>
