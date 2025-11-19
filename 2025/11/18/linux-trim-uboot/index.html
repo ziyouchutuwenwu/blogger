@@ -1,0 +1,176 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8" />
+  
+  <title>linux 内核裁剪之 uboot | 独钓寒江雪</title>
+
+  
+  <meta name="author" content="John Doe" />
+   
+  <meta
+    name="description"
+    content="步骤准备工作下载地址
+1https://ftp.denx.de/pub/u-boot/u-boot-2023.04.tar.bz2
+
+编译12make vexpress_ca9x4_defconfigmake -j$(nproc)
+
+测试qemu 加载 uboot 需要用 elf 的格式
+bin 格" />
+    
+  <meta name="keywords" content="linux,kernel,uboot"> 
+
+  <meta
+    id="viewport"
+    name="viewport"
+    content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+
+  
+  <meta property="og:title" content="linux 内核裁剪之 uboot" />
+  
+
+  <meta property="og:site_name" content="独钓寒江雪" />
+
+  
+  <meta property="og:image" content="/favicon.ico" />
+  
+
+  <link href="/favicon.ico" rel="icon" />
+  <link
+    rel="alternate"
+    href="/atom.xml"
+    title="独钓寒江雪"
+    type="application/atom+xml" />
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css" />
+
+  <script
+    async
+    src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9313450459437229"
+    crossorigin="anonymous"></script>
+<meta name="generator" content="Hexo 8.0.0"></head>
+
+
+<body>
+<div class="blog">
+  <div class="content">
+
+    <header>
+  <div class="site-branding">
+    <h1 class="site-title">
+      <a href="/">独钓寒江雪</a>
+    </h1>
+    <p class="site-description"></p>
+  </div>
+  <nav class="site-navigation">
+    <ul>
+      
+        <li><a href="/">首页</a></li>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/tags">标签</a></li>
+      
+        <li><a href="/about">关于</a></li>
+      
+    </ul>
+  </nav>
+</header>
+
+    <main class="site-main posts-loop">
+    <article>
+
+  
+    
+    <h3 class="article-title"><span>linux 内核裁剪之 uboot</span></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/11/18/linux-trim-uboot/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-11-18T10:36:03.000Z">
+          2025-11-18
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h2 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h2><h3 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h3><p>下载地址</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://ftp.denx.de/pub/u-boot/u-boot-2023.04.tar.bz2</span><br></pre></td></tr></table></figure>
+
+<h3 id="编译"><a href="#编译" class="headerlink" title="编译"></a>编译</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">make vexpress_ca9x4_defconfig</span><br><span class="line">make -j$(<span class="built_in">nproc</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h3><p>qemu 加载 uboot 需要用 elf 的格式</p>
+<p>bin 格式的没有入口点，适合烧录到板子上</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">qemu-system-arm \</span><br><span class="line">  -M vexpress-a9 \</span><br><span class="line">  -m 512M \</span><br><span class="line">  -kernel ~/downloads/u-boot-2023.04/output/u-boot \</span><br><span class="line">  -nographic</span><br></pre></td></tr></table></figure>
+
+<h3 id="调试"><a href="#调试" class="headerlink" title="调试"></a>调试</h3><p>查看变量</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">printenv</span> xxx</span><br></pre></td></tr></table></figure>
+
+<p>手动执行，比如你定义了 bootcmd</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">run bootcmd</span><br></pre></td></tr></table></figure>
+
+<p>重启</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">reset</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/linux/">linux</a><a href="/tags/kernel/">kernel</a><a href="/tags/uboot/">uboot</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+  
+
+
+
+
+
+
+
+
+
+    </main>
+
+    <footer class="site-footer">
+  <p class="site-info">
+    Proudly powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and
+    Theme by <a href="https://github.com/CodeDaraW/Hacker" target="_blank">Hacker</a>
+    </br>
+    
+    &copy; 2025 John Doe
+    
+  </p>
+</footer>
+    
+    
+  </div>
+</div>
+</body>
+</html>

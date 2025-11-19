@@ -1,0 +1,174 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8" />
+  
+  <title>linux 内核裁剪之 rootfs | 独钓寒江雪</title>
+
+  
+  <meta name="author" content="John Doe" />
+   
+  <meta
+    name="description"
+    content="说明编译成功以后，貌似需要做很多其它的工作
+步骤源码1https://busybox.net/downloads/busybox-1.36.1.tar.bz2
+
+menuconfig1234mkdir outputmake defconfigmake menuconfig
+
+配置静态编译
+123# " />
+    
+  <meta name="keywords" content="linux,kernel,rootfs"> 
+
+  <meta
+    id="viewport"
+    name="viewport"
+    content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+
+  
+  <meta property="og:title" content="linux 内核裁剪之 rootfs" />
+  
+
+  <meta property="og:site_name" content="独钓寒江雪" />
+
+  
+  <meta property="og:image" content="/favicon.ico" />
+  
+
+  <link href="/favicon.ico" rel="icon" />
+  <link
+    rel="alternate"
+    href="/atom.xml"
+    title="独钓寒江雪"
+    type="application/atom+xml" />
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css" />
+
+  <script
+    async
+    src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9313450459437229"
+    crossorigin="anonymous"></script>
+<meta name="generator" content="Hexo 8.0.0"></head>
+
+
+<body>
+<div class="blog">
+  <div class="content">
+
+    <header>
+  <div class="site-branding">
+    <h1 class="site-title">
+      <a href="/">独钓寒江雪</a>
+    </h1>
+    <p class="site-description"></p>
+  </div>
+  <nav class="site-navigation">
+    <ul>
+      
+        <li><a href="/">首页</a></li>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/tags">标签</a></li>
+      
+        <li><a href="/about">关于</a></li>
+      
+    </ul>
+  </nav>
+</header>
+
+    <main class="site-main posts-loop">
+    <article>
+
+  
+    
+    <h3 class="article-title"><span>linux 内核裁剪之 rootfs</span></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/11/19/linux-trim-rootfs/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-11-19T07:19:13.000Z">
+          2025-11-19
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>编译成功以后，貌似需要做很多其它的工作</p>
+<h2 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h2><h3 id="源码"><a href="#源码" class="headerlink" title="源码"></a>源码</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://busybox.net/downloads/busybox-1.36.1.tar.bz2</span><br></pre></td></tr></table></figure>
+
+<h3 id="menuconfig"><a href="#menuconfig" class="headerlink" title="menuconfig"></a>menuconfig</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">mkdir</span> output</span><br><span class="line"></span><br><span class="line">make defconfig</span><br><span class="line">make menuconfig</span><br></pre></td></tr></table></figure>
+
+<p>配置静态编译</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 不然会提示找不到 working dir</span></span><br><span class="line">Settings  ---&gt;</span><br><span class="line">  [*] Build static binary (no shared libs)</span><br></pre></td></tr></table></figure>
+
+<h3 id="编译"><a href="#编译" class="headerlink" title="编译"></a>编译</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make -j$(<span class="built_in">nproc</span>) CONFIG_PREFIX=$(<span class="built_in">pwd</span>)/../rootfs/ install</span><br></pre></td></tr></table></figure>
+
+<h3 id="自定义脚本"><a href="#自定义脚本" class="headerlink" title="自定义脚本"></a>自定义脚本</h3><p>patch_fs.sh</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> [ <span class="string">&quot;<span class="subst">$(id -u)</span>&quot;</span> -ne 0 ]; <span class="keyword">then</span></span><br><span class="line">  <span class="built_in">echo</span> <span class="string">&quot;需要 root 权限。&quot;</span> &gt;&amp;2</span><br><span class="line">  <span class="built_in">exit</span> 1</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line">TTY_NAME=<span class="string">&quot;ttyAMA0&quot;</span></span><br><span class="line">HOST_NAME=<span class="string">&quot;xxx&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 123456</span></span><br><span class="line">ROOT_PASSWORD_HASH=<span class="string">&#x27;$1$B3A6v4ws$ydvwSpAz0PYhYss1WOxOy1&#x27;</span></span><br><span class="line"></span><br><span class="line">BUSYBOX_SRC_DIR=<span class="string">&quot;<span class="subst">$(pwd)</span>/busybox-1.36.1&quot;</span></span><br><span class="line">WORK_DIR=<span class="string">&quot;<span class="subst">$(pwd)</span>/&quot;</span></span><br><span class="line">ROOTFS_DIR=<span class="string">&quot;<span class="subst">$(pwd)</span>/rootfs&quot;</span></span><br><span class="line">IMAGE_NAME=<span class="string">&quot;rootfs.ext4&quot;</span></span><br><span class="line">IMAGE_SIZE_MB=32</span><br><span class="line">TEMP_MOUNT_DIR=<span class="string">&quot;<span class="variable">$&#123;WORK_DIR&#125;</span>/fs_mnt_tmp&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">cleanup</span></span>() &#123;</span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;清理临时挂载点（如果存在）...&quot;</span></span><br><span class="line">    <span class="keyword">if</span> mountpoint -q <span class="string">&quot;<span class="variable">$&#123;TEMP_MOUNT_DIR&#125;</span>&quot;</span>; <span class="keyword">then</span></span><br><span class="line">        umount <span class="string">&quot;<span class="variable">$&#123;TEMP_MOUNT_DIR&#125;</span>&quot;</span></span><br><span class="line">    <span class="keyword">fi</span></span><br><span class="line">    <span class="built_in">rm</span> -rf <span class="string">&quot;<span class="variable">$&#123;TEMP_MOUNT_DIR&#125;</span>&quot;</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;清理完成。&quot;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;开始执行 BusyBox rootfs 准备脚本 (以 root 权限运行)...&quot;</span></span><br><span class="line"><span class="built_in">set</span> -e</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> [ ! -d <span class="string">&quot;<span class="variable">$&#123;BUSYBOX_SRC_DIR&#125;</span>&quot;</span> ]; <span class="keyword">then</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;错误：BusyBox 源码目录 <span class="variable">$&#123;BUSYBOX_SRC_DIR&#125;</span> 未找到！&quot;</span></span><br><span class="line">    <span class="built_in">exit</span> 1</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">mkdir</span> -p <span class="string">&quot;<span class="variable">$&#123;ROOTFS_DIR&#125;</span>&quot;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;Rootfs 目录: <span class="variable">$&#123;ROOTFS_DIR&#125;</span>&quot;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;输出镜像文件: <span class="variable">$&#123;WORK_DIR&#125;</span>/<span class="variable">$&#123;IMAGE_NAME&#125;</span>&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;--- 检查 BusyBox 安装 ---&quot;</span></span><br><span class="line">BUSYBOX_EXEC_PATH=<span class="string">&quot;<span class="variable">$&#123;ROOTFS_DIR&#125;</span>/bin/busybox&quot;</span></span><br><span class="line"><span class="keyword">if</span> [ ! -x <span class="string">&quot;<span class="variable">$&#123;BUSYBOX_EXEC_PATH&#125;</span>&quot;</span> ]; <span class="keyword">then</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;错误：<span class="variable">$&#123;BUSYBOX_EXEC_PATH&#125;</span> 不存在或不可执行！&quot;</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;请提前准备好 BusyBox 安装到 <span class="variable">$&#123;ROOTFS_DIR&#125;</span> 目录。&quot;</span></span><br><span class="line">    <span class="built_in">exit</span> 1</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;BusyBox 主程序 (<span class="variable">$&#123;BUSYBOX_EXEC_PATH&#125;</span>) 存在且可执行。&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;使用 &#x27;file&#x27; 命令检查 BusyBox 可执行文件类型：&quot;</span></span><br><span class="line">file <span class="string">&quot;<span class="variable">$&#123;BUSYBOX_EXEC_PATH&#125;</span>&quot;</span></span><br><span class="line"></span><br><span class="line">INIT_PATH_FOUND=<span class="string">&quot;&quot;</span></span><br><span class="line"><span class="keyword">if</span> [ -L <span class="string">&quot;<span class="variable">$&#123;ROOTFS_DIR&#125;</span>/sbin/init&quot;</span> ] &amp;&amp; [ <span class="string">&quot;<span class="subst">$(readlink -f <span class="string">&quot;<span class="variable">$&#123;ROOTFS_DIR&#125;</span>/sbin/init&quot;</span>)</span>&quot;</span> = <span class="string">&quot;<span class="variable">$&#123;BUSYBOX_EXEC_PATH&#125;</span>&quot;</span> ]; <span class="keyword">then</span></span><br><span class="line">    INIT_PATH_FOUND=<span class="string">&quot;<span class="variable">$&#123;ROOTFS_DIR&#125;</span>/sbin/init&quot;</span></span><br><span class="line"><span class="keyword">elif</span> [ -L <span class="string">&quot;<span class="variable">$&#123;ROOTFS_DIR&#125;</span>/bin/init&quot;</span> ] &amp;&amp; [ <span class="string">&quot;<span class="subst">$(readlink -f <span class="string">&quot;<span class="variable">$&#123;ROOTFS_DIR&#125;</span>/bin/init&quot;</span>)</span>&quot;</span> = <span class="string">&quot;<span class="variable">$&#123;BUSYBOX_EXEC_PATH&#125;</span>&quot;</span> ]; <span class="keyword">then</span></span><br><span class="line">    INIT_PATH_FOUND=<span class="string">&quot;<span class="variable">$&#123;ROOTFS_DIR&#125;</span>/bin/init&quot;</span></span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> [ -z <span class="string">&quot;<span class="variable">$&#123;INIT_PATH_FOUND&#125;</span>&quot;</span> ]; <span class="keyword">then</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;错误：未找到指向 busybox 的 init 符号链接！&quot;</span></span><br><span class="line">    <span class="built_in">exit</span> 1</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;init 程序 (<span class="variable">$&#123;INIT_PATH_FOUND&#125;</span>) 存在且正确链接到 busybox。&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> ! ([ -L <span class="string">&quot;<span class="variable">$&#123;ROOTFS_DIR&#125;</span>/bin/sh&quot;</span> ] &amp;&amp; [ <span class="string">&quot;<span class="subst">$(readlink -f <span class="string">&quot;<span class="variable">$&#123;ROOTFS_DIR&#125;</span>/bin/sh&quot;</span>)</span>&quot;</span> = <span class="string">&quot;<span class="variable">$&#123;BUSYBOX_EXEC_PATH&#125;</span>&quot;</span> ]); <span class="keyword">then</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;错误：<span class="variable">$&#123;ROOTFS_DIR&#125;</span>/bin/sh 未正确链接到 busybox！&quot;</span></span><br><span class="line">    <span class="built_in">exit</span> 1</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;sh 程序 (<span class="variable">$&#123;ROOTFS_DIR&#125;</span>/bin/sh) 存在且正确链接到 busybox。&quot;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;BusyBox 安装验证通过。&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">cd</span> <span class="string">&quot;<span class="variable">$&#123;ROOTFS_DIR&#125;</span>&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建必需目录</span></span><br><span class="line"><span class="built_in">mkdir</span> -p dev dev/pts dev/shm etc lib usr/bin usr/sbin usr/lib var/log var/run var/tmp home root mnt proc sys tmp</span><br><span class="line"></span><br><span class="line"><span class="comment"># 建立 usr -&gt; bin, sbin, lib 软连接（如果不存在）</span></span><br><span class="line"><span class="keyword">if</span> [ -d usr/bin ] &amp;&amp; [ ! -e bin ]; <span class="keyword">then</span> <span class="built_in">ln</span> -sf usr/bin bin; <span class="keyword">fi</span></span><br><span class="line"><span class="keyword">if</span> [ -d usr/sbin ] &amp;&amp; [ ! -e sbin ]; <span class="keyword">then</span> <span class="built_in">ln</span> -sf usr/sbin sbin; <span class="keyword">fi</span></span><br><span class="line"><span class="keyword">if</span> [ -d usr/lib ] &amp;&amp; [ ! -e lib ]; <span class="keyword">then</span> <span class="built_in">ln</span> -sf usr/lib lib; <span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;--- 创建配置文件 ---&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">cat</span> &gt; etc/profile &lt;&lt; <span class="string">EOF</span></span><br><span class="line"><span class="string">PATH=/bin:/sbin:/usr/bin:/usr/sbin</span></span><br><span class="line"><span class="string">export LD_LIBRARY_PATH=/lib:/usr/lib</span></span><br><span class="line"><span class="string">/bin/hostname $&#123;HOST_NAME&#125;</span></span><br><span class="line"><span class="string">USER=root</span></span><br><span class="line"><span class="string">LOGNAME=\$USER</span></span><br><span class="line"><span class="string">HOSTNAME=\$(/bin/hostname)</span></span><br><span class="line"><span class="string">PS1=&#x27;[\u@\h \W]\\# &#x27;</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">cat</span> &gt; etc/inittab &lt;&lt; <span class="string">EOF</span></span><br><span class="line"><span class="string">::sysinit:/etc/init.d/rcS</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">#$&#123;TTY_NAME&#125;::respawn:/sbin/getty -L $&#123;TTY_NAME&#125; 115200 vt100</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"># 免密</span></span><br><span class="line"><span class="string">$&#123;TTY_NAME&#125;::respawn:/bin/sh &lt;/dev/$&#123;TTY_NAME&#125; &gt;/dev/$&#123;TTY_NAME&#125; 2&gt;&amp;1</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">::restart:/sbin/init</span></span><br><span class="line"><span class="string">::ctrlaltdel:/sbin/reboot</span></span><br><span class="line"><span class="string">::shutdown:/bin/umount -a -r</span></span><br><span class="line"><span class="string">::shutdown:/sbin/swapoff -a</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">cat</span> &gt; etc/fstab &lt;&lt; <span class="string">EOF</span></span><br><span class="line"><span class="string">proc            /proc           proc      defaults          0       0</span></span><br><span class="line"><span class="string">sysfs           /sys            sysfs     defaults          0       0</span></span><br><span class="line"><span class="string">devtmpfs        /dev            devtmpfs  mode=0755,nosuid  0       0</span></span><br><span class="line"><span class="string">tmpfs           /tmp            tmpfs     defaults          0       0</span></span><br><span class="line"><span class="string">tmpfs           /dev/shm        tmpfs     defaults          0       0</span></span><br><span class="line"><span class="string">none            /var            ramfs     defaults          0       0</span></span><br><span class="line"><span class="string">devpts          /dev/pts        devpts    gid=5,mode=0620   0       0</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;<span class="variable">$&#123;HOST_NAME&#125;</span>&quot;</span> &gt; etc/hostname</span><br><span class="line"></span><br><span class="line"><span class="built_in">cat</span> &gt; etc/passwd &lt;&lt; <span class="string">EOF</span></span><br><span class="line"><span class="string">root:x:0:0:root:/root:/bin/sh</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"><span class="built_in">chmod</span> 644 etc/passwd</span><br><span class="line"></span><br><span class="line"><span class="built_in">cat</span> &gt; etc/group &lt;&lt; <span class="string">EOF</span></span><br><span class="line"><span class="string">root:x:0:</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"><span class="built_in">chmod</span> 644 etc/group</span><br><span class="line"></span><br><span class="line"><span class="built_in">cat</span> &gt; etc/shadow &lt;&lt; <span class="string">EOF</span></span><br><span class="line"><span class="string">root:$&#123;ROOT_PASSWORD_HASH&#125;:10933:0:99999:7:::</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"><span class="built_in">chmod</span> 600 etc/shadow</span><br><span class="line"></span><br><span class="line"><span class="built_in">mkdir</span> -p etc/init.d</span><br><span class="line"><span class="built_in">cat</span> &gt; etc/init.d/rcS &lt;&lt; <span class="string">EOF</span></span><br><span class="line"><span class="string">#!/bin/sh</span></span><br><span class="line"><span class="string">mkdir -p /tmp</span></span><br><span class="line"><span class="string">mkdir -p /dev/pts</span></span><br><span class="line"><span class="string">mkdir -p /dev/shm</span></span><br><span class="line"><span class="string">/bin/mount -a</span></span><br><span class="line"><span class="string">if [ -f /etc/hostname ]; then</span></span><br><span class="line"><span class="string">    /bin/hostname -F /etc/hostname</span></span><br><span class="line"><span class="string">fi</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"><span class="built_in">chmod</span> +x etc/init.d/rcS</span><br><span class="line"></span><br><span class="line"><span class="built_in">cd</span> <span class="string">&quot;<span class="variable">$&#123;WORK_DIR&#125;</span>&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;--- 创建并填充磁盘镜像 <span class="variable">$&#123;WORK_DIR&#125;</span>/<span class="variable">$&#123;IMAGE_NAME&#125;</span> ---&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">rm</span> -f <span class="string">&quot;<span class="variable">$&#123;WORK_DIR&#125;</span>/<span class="variable">$&#123;IMAGE_NAME&#125;</span>&quot;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;正在创建空磁盘镜像 (<span class="variable">$&#123;IMAGE_SIZE_MB&#125;</span>MB)...&quot;</span></span><br><span class="line"><span class="built_in">dd</span> <span class="keyword">if</span>=/dev/zero of=<span class="string">&quot;<span class="variable">$&#123;WORK_DIR&#125;</span>/<span class="variable">$&#123;IMAGE_NAME&#125;</span>&quot;</span> bs=1M count=<span class="variable">$&#123;IMAGE_SIZE_MB&#125;</span> status=progress</span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;正在将磁盘镜像格式化为 ext4...&quot;</span></span><br><span class="line">mkfs.ext4 -F <span class="string">&quot;<span class="variable">$&#123;WORK_DIR&#125;</span>/<span class="variable">$&#123;IMAGE_NAME&#125;</span>&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">mkdir</span> -p <span class="string">&quot;<span class="variable">$&#123;TEMP_MOUNT_DIR&#125;</span>&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;正在将loop设备挂载到 <span class="variable">$&#123;TEMP_MOUNT_DIR&#125;</span>...&quot;</span></span><br><span class="line">mount -o loop <span class="string">&quot;<span class="variable">$&#123;WORK_DIR&#125;</span>/<span class="variable">$&#123;IMAGE_NAME&#125;</span>&quot;</span> <span class="string">&quot;<span class="variable">$&#123;TEMP_MOUNT_DIR&#125;</span>&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;正在从 <span class="variable">$&#123;ROOTFS_DIR&#125;</span> 复制 rootfs 内容到镜像...&quot;</span></span><br><span class="line">rsync -a --delete <span class="string">&quot;<span class="variable">$&#123;ROOTFS_DIR&#125;</span>/&quot;</span> <span class="string">&quot;<span class="variable">$&#123;TEMP_MOUNT_DIR&#125;</span>/&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;正在卸载 loop 设备...&quot;</span></span><br><span class="line">umount <span class="string">&quot;<span class="variable">$&#123;TEMP_MOUNT_DIR&#125;</span>&quot;</span></span><br><span class="line"><span class="built_in">rmdir</span> <span class="string">&quot;<span class="variable">$&#123;TEMP_MOUNT_DIR&#125;</span>&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;--- Rootfs 镜像已创建: <span class="variable">$&#123;WORK_DIR&#125;</span>/<span class="variable">$&#123;IMAGE_NAME&#125;</span> ---&quot;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;Rootfs 内容也保留在: <span class="variable">$&#123;ROOTFS_DIR&#125;</span>&quot;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;&quot;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;构建过程完成！&quot;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;您现在可以将 <span class="variable">$&#123;WORK_DIR&#125;</span>/<span class="variable">$&#123;IMAGE_NAME&#125;</span> 用于 QEMU 或其他目标系统。&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">exit</span> 0</span><br></pre></td></tr></table></figure>
+
+<h3 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h3><p>append 后面的 root 不能缺</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">qemu-system-arm \</span><br><span class="line">  -M vexpress-a9 \</span><br><span class="line">  -m 512M \</span><br><span class="line">  -kernel ~/downloads/linux-5.10.191/output/arch/arm/boot/zImage \</span><br><span class="line">  -dtb ~/downloads/linux-5.10.191/output/arch/arm/boot/dts/vexpress-v2p-ca9.dtb \</span><br><span class="line">  -nographic \</span><br><span class="line">  -append <span class="string">&quot;root=/dev/mmcblk0 rw console=ttyAMA0&quot;</span> \</span><br><span class="line">  -sd ~/downloads/rootfs.ext4</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/linux/">linux</a><a href="/tags/kernel/">kernel</a><a href="/tags/rootfs/">rootfs</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+  
+
+
+
+
+
+
+
+
+
+    </main>
+
+    <footer class="site-footer">
+  <p class="site-info">
+    Proudly powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and
+    Theme by <a href="https://github.com/CodeDaraW/Hacker" target="_blank">Hacker</a>
+    </br>
+    
+    &copy; 2025 John Doe
+    
+  </p>
+</footer>
+    
+    
+  </div>
+</div>
+</body>
+</html>
