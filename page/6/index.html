@@ -71,6 +71,207 @@
 
   
     
+    <h3 class="article-title"><a href="/2025/10/09/docker/"><span>docker</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/10/09/docker/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-10-09T01:11:41.000Z">
+          2025-10-09
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h3 id="基本用法"><a href="#基本用法" class="headerlink" title="基本用法"></a>基本用法</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">docker run -it xxx /bin/bash</span><br><span class="line">docker run --<span class="built_in">rm</span> xxx</span><br><span class="line">docker rmi xxx --force</span><br></pre></td></tr></table></figure>
+
+<p>自动重启</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run --restart=always xxxx</span><br></pre></td></tr></table></figure>
+
+<p>环境变量</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run xxxx -e TZ=Asia/Shanghai</span><br></pre></td></tr></table></figure>
+
+<p>以某个用户名启动</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -u root</span><br></pre></td></tr></table></figure>
+
+<p>指定用户进入 shell</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it -u root xxx bash</span><br></pre></td></tr></table></figure>
+
+<p>默认是 root, 有时候希望不是</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -it --user $(<span class="built_in">id</span> -u <span class="variable">$&#123;USER&#125;</span>):$(<span class="built_in">id</span> -g <span class="variable">$&#123;USER&#125;</span>) xxx</span><br></pre></td></tr></table></figure>
+
+<p>默认 root 有些权限用不了</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -it --privileged xxx</span><br></pre></td></tr></table></figure>
+
+<p>清理</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">truncate</span> -s 0 /var/lib/docker/containers/*/*.<span class="built_in">log</span></span><br></pre></td></tr></table></figure>
+
+<p>查看资源</p>
+<p>查看 cpu，内存等等</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker stats</span><br></pre></td></tr></table></figure>
+
+<h3 id="构建"><a href="#构建" class="headerlink" title="构建"></a>构建</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker build -t xxx ./ --no-cache</span><br></pre></td></tr></table></figure>
+
+<p>构建时使用变量</p>
+<p>多阶段构建,需要在每个阶段都写一遍</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ARG MIX_ENV</span><br><span class="line">ENV MIX_ENV=<span class="variable">$&#123;MIX_ENV&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>例子</p>
+<p>Dockerfile</p>
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 构建阶段</span></span><br><span class="line"><span class="keyword">FROM</span> debian:<span class="number">12.5</span> as builder</span><br><span class="line"></span><br><span class="line"><span class="keyword">ARG</span> MIX_ENV</span><br><span class="line"><span class="keyword">ENV</span> MIX_ENV=$&#123;MIX_ENV&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">WORKDIR</span><span class="language-bash"> /build</span></span><br><span class="line"><span class="keyword">COPY</span><span class="language-bash"> . .</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">ADD</span><span class="language-bash"> ./deploy/ustc.list /etc/apt/sources.list</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 运行阶段</span></span><br><span class="line"><span class="keyword">FROM</span> debian:<span class="number">12.5</span> as runner</span><br><span class="line"></span><br><span class="line"><span class="keyword">WORKDIR</span><span class="language-bash"> /app</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">ARG</span> MIX_ENV</span><br><span class="line"><span class="keyword">ENV</span> MIX_ENV=$&#123;MIX_ENV&#125;</span><br></pre></td></tr></table></figure>
+
+<p>构建</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker build --build-arg MIX_ENV=<span class="built_in">test</span> -t demo ../ --no-cache</span><br></pre></td></tr></table></figure>
+
+<h3 id="同步时区"><a href="#同步时区" class="headerlink" title="同步时区"></a>同步时区</h3><p>构建时</p>
+<p>DockerFile</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">RUN <span class="built_in">rm</span> -f /etc/localtime \</span><br><span class="line">&amp;&amp; <span class="built_in">ln</span> -sv /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \</span><br><span class="line">&amp;&amp; <span class="built_in">echo</span> <span class="string">&quot;Asia/Shanghai&quot;</span> &gt; /etc/timezone</span><br></pre></td></tr></table></figure>
+
+<p>运行时</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run xxx -v /etc/localtime:/etc/localtime -e TZ=Asia/Shanghai</span><br></pre></td></tr></table></figure>
+
+<p>或者</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run xxx -v /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime -e TZ=Asia/Shanghai</span><br></pre></td></tr></table></figure>
+
+<h3 id="自定义存储路径"><a href="#自定义存储路径" class="headerlink" title="自定义存储路径"></a>自定义存储路径</h3><p>ntfs 分区不支持</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/etc/docker/daemon.json</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;data-root&quot;</span><span class="punctuation">:</span> <span class="string">&quot;/mnt/vdb/docker&quot;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="导入导出"><a href="#导入导出" class="headerlink" title="导入导出"></a>导入导出</h3><p>容器保存为 tar，比 save 保存的文件小很多</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker <span class="built_in">export</span> <span class="variable">$&#123;CONTAINER_ID&#125;</span> &gt; xxx.tar</span><br></pre></td></tr></table></figure>
+
+<p>从容器 tar 还原为 image</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker import xxx.tar image_name:tag</span><br></pre></td></tr></table></figure>
+
+<p>当前容器直接保存为 image</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker commit <span class="variable">$&#123;CONTAINER_ID&#125;</span> image_name:tag</span><br></pre></td></tr></table></figure>
+
+<p>保存 image 为 tar 包，使用 tag 保存，不然 load 的时候，会显示 <code>&lt;none&gt;</code></p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker save -o xxx.tar redis:5.0.0</span><br></pre></td></tr></table></figure>
+
+<p>tar 包还原为 image，不可以重命名，这里的 tar 是指<code>docker images</code>保存出的 tar</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker load -i xxx.tar</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/docker/">docker</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
+    <h3 class="article-title"><a href="/2025/10/08/linux-user/"><span>linux 的用户相关的东西</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/10/08/linux-user/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-10-08T06:13:35.000Z">
+          2025-10-08
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h3 id="查看信息"><a href="#查看信息" class="headerlink" title="查看信息"></a>查看信息</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">getent passwd postgres</span><br></pre></td></tr></table></figure>
+
+<h3 id="用户组"><a href="#用户组" class="headerlink" title="用户组"></a>用户组</h3><p>查看</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> /etc/group</span><br></pre></td></tr></table></figure>
+
+<p>添加组</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">groupadd <span class="variable">$GROUP</span></span><br></pre></td></tr></table></figure>
+
+<p>删除组</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">groupdel <span class="variable">$GROUP</span></span><br></pre></td></tr></table></figure>
+
+<p>添加用户到用户组</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gpasswd -a <span class="variable">$USER</span> <span class="variable">$GROUP</span></span><br></pre></td></tr></table></figure>
+
+<p>用户组里面删除用户</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gpasswd -d <span class="variable">$USER</span> <span class="variable">$GROUP</span></span><br></pre></td></tr></table></figure>
+
+<p>目录权限</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">chown</span> -R <span class="variable">$USER</span> <span class="variable">$DIR</span></span><br><span class="line"><span class="built_in">chgrp</span> -R <span class="variable">$GROUP</span> <span class="variable">$DIR</span></span><br></pre></td></tr></table></figure>
+
+<p>用户组赋予读写执行权限</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">chmod</span> -R ug+w <span class="variable">$DIR</span></span><br><span class="line"><span class="built_in">chmod</span> -R g=rwx <span class="variable">$DIR</span></span><br><span class="line"><span class="built_in">chmod</span> -R ugo=rwx <span class="variable">$DIR</span></span><br></pre></td></tr></table></figure>
+
+<p>修改 id</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">usermod -u <span class="variable">$UID</span> <span class="variable">$USER</span></span><br><span class="line">groupmod -g <span class="variable">$GID</span> <span class="variable">$GROUP</span></span><br></pre></td></tr></table></figure>
+
+<p>修改完以后, 尤其是改完 uid</p>
+<p><strong>一定要</strong> 修改 <strong>被修改 id 的用户</strong> 目录下的文件权限，否则无法登录</p>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/linux/">linux</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
     <h3 class="article-title"><a href="/2025/10/07/zig-wasm/"><span>zig 编译 wasm</span></a></h3>
     
   
