@@ -1,0 +1,226 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8" />
+  
+  <title>buildroot 辅助用法 | 独钓寒江雪</title>
+
+  
+  <meta name="author" content="John Doe" />
+   
+  <meta
+    name="description"
+    content="文件打包output/target 目录先做好备份
+方法方法 11make O=output menuconfig
+
+设置为 overlay_fs
+12System configuration  ---&amp;gt;  (overlay_fs)  Root filesystem overlay direc" />
+    
+  <meta name="keywords" content="linux,kernel"> 
+
+  <meta
+    id="viewport"
+    name="viewport"
+    content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+
+  
+  <meta property="og:title" content="buildroot 辅助用法" />
+  
+
+  <meta property="og:site_name" content="独钓寒江雪" />
+
+  
+  <meta property="og:image" content="/favicon.ico" />
+  
+
+  <link href="/favicon.ico" rel="icon" />
+  <link
+    rel="alternate"
+    href="/atom.xml"
+    title="独钓寒江雪"
+    type="application/atom+xml" />
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css" />
+
+  <script
+    async
+    src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9313450459437229"
+    crossorigin="anonymous"></script>
+<meta name="generator" content="Hexo 8.0.0"></head>
+
+
+<body>
+<div class="blog">
+  <div class="content">
+
+    <header>
+  <div class="site-branding">
+    <h1 class="site-title">
+      <a href="/">独钓寒江雪</a>
+    </h1>
+    <p class="site-description"></p>
+  </div>
+  <nav class="site-navigation">
+    <ul>
+      
+        <li><a href="/">首页</a></li>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/tags">标签</a></li>
+      
+        <li><a href="/about">关于</a></li>
+      
+    </ul>
+  </nav>
+</header>
+
+    <main class="site-main posts-loop">
+    <article>
+
+  
+    
+    <h3 class="article-title"><span>buildroot 辅助用法</span></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/11/24/buildroot-extra/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-11-24T01:02:49.000Z">
+          2025-11-24
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h2 id="文件打包"><a href="#文件打包" class="headerlink" title="文件打包"></a>文件打包</h2><p><code>output/target</code> 目录先做好备份</p>
+<h3 id="方法"><a href="#方法" class="headerlink" title="方法"></a>方法</h3><h4 id="方法-1"><a href="#方法-1" class="headerlink" title="方法 1"></a>方法 1</h4><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make O=output menuconfig</span><br></pre></td></tr></table></figure>
+
+<p>设置为 overlay_fs</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">System configuration  ---&gt;</span><br><span class="line">  (overlay_fs)  Root filesystem overlay directories</span><br></pre></td></tr></table></figure>
+
+<p>目录结构如下</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">overlay_fs</span><br><span class="line">└── usr</span><br><span class="line">    └── <span class="built_in">local</span></span><br><span class="line">        └── bin</span><br><span class="line">            └── demo</span><br></pre></td></tr></table></figure>
+
+<p>编译</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 这个会处理 output/target 目录，但是不会生成 ext2 文件</span></span><br><span class="line">make O=output target-finalize -j$(<span class="built_in">nproc</span>)</span><br><span class="line"><span class="comment"># 生成 etx2</span></span><br><span class="line">make O=output rootfs-ext2 -j$(<span class="built_in">nproc</span>)</span><br></pre></td></tr></table></figure>
+
+<p>或者</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">make O=output -j$(<span class="built_in">nproc</span>)</span><br><span class="line">make O=output all -j$(<span class="built_in">nproc</span>)</span><br></pre></td></tr></table></figure>
+
+<h4 id="方法-2"><a href="#方法-2" class="headerlink" title="方法 2"></a>方法 2</h4><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make O=output menuconfig</span><br></pre></td></tr></table></figure>
+
+<p>设置为 overlay_fs</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">System configuration  ---&gt;</span><br><span class="line">  (custom_fs/post.sh)  Custom scripts to run before creating filesystem images</span><br></pre></td></tr></table></figure>
+
+<p>目录结构如下</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">custom_fs</span><br><span class="line">├── files</span><br><span class="line">│   └── demo</span><br><span class="line">└── post.sh</span><br></pre></td></tr></table></figure>
+
+<p>post.sh</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/sh</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># output/target</span></span><br><span class="line">TARGET_DIR=<span class="variable">$1</span></span><br><span class="line">CURRENT_DIR=$(<span class="built_in">cd</span> <span class="string">&quot;<span class="subst">$(dirname <span class="string">&quot;<span class="variable">$0</span>&quot;</span>)</span>&quot;</span>;<span class="built_in">pwd</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">mkdir</span> -p <span class="variable">$&#123;TARGET_DIR&#125;</span>/usr/local/bin</span><br><span class="line"><span class="built_in">cp</span> -rf <span class="variable">$&#123;CURRENT_DIR&#125;</span>/files/* <span class="variable">$&#123;TARGET_DIR&#125;</span>/usr/local/bin/</span><br><span class="line"></span><br><span class="line"><span class="built_in">chmod</span> a+x <span class="variable">$&#123;TARGET_DIR&#125;</span>/usr/local/bin/*</span><br></pre></td></tr></table></figure>
+
+<p>编译</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 这个会处理 output/target 目录，但是不会生成 ext2 文件</span></span><br><span class="line">make O=output target-finalize -j$(<span class="built_in">nproc</span>)</span><br><span class="line"><span class="comment"># 生成 etx2</span></span><br><span class="line">make O=output rootfs-ext2 -j$(<span class="built_in">nproc</span>)</span><br></pre></td></tr></table></figure>
+
+<p>或者</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">make O=output -j$(<span class="built_in">nproc</span>)</span><br><span class="line">make O=output all -j$(<span class="built_in">nproc</span>)</span><br></pre></td></tr></table></figure>
+
+<h2 id="make-用法"><a href="#make-用法" class="headerlink" title="make 用法"></a>make 用法</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># uboot</span></span><br><span class="line">make O=output uboot-dirclean</span><br><span class="line">make O=output uboot-rebuild -j$(<span class="built_in">nproc</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 内核</span></span><br><span class="line">make O=output linux-dirclean</span><br><span class="line">make O=output linux-rebuild -j$(<span class="built_in">nproc</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 文件系统</span></span><br><span class="line">make O=output busybox-dirclean</span><br><span class="line">make O=output busybox-rebuild -j$(<span class="built_in">nproc</span>)</span><br></pre></td></tr></table></figure>
+
+<p>清理</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 清理特定包，不删除下载的源码</span></span><br><span class="line">make O=output xxx-dirclean</span><br><span class="line"></span><br><span class="line"><span class="comment"># 保留下载的源码</span></span><br><span class="line">make O=output clean</span><br><span class="line"></span><br><span class="line"><span class="comment"># 删除下载的源码</span></span><br><span class="line">make O=output distclean</span><br></pre></td></tr></table></figure>
+
+<h2 id="nfs"><a href="#nfs" class="headerlink" title="nfs"></a>nfs</h2><p>配置好网络, tftp, nfs 等服务</p>
+<h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h3><h4 id="内核"><a href="#内核" class="headerlink" title="内核"></a>内核</h4><p>启用 nfs，默认已经开启了</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make O=output linux-menuconfig</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">File systems  ---&gt;</span><br><span class="line">  [*] Network File Systems  ---&gt;</span><br><span class="line">    &lt;*&gt; NFS client support</span><br><span class="line">    &lt;*&gt; NFS client support <span class="keyword">for</span> NFS version 3</span><br><span class="line">    [*] Root file system on NFS</span><br></pre></td></tr></table></figure>
+
+<h4 id="uboot"><a href="#uboot" class="headerlink" title="uboot"></a>uboot</h4><p>核心已经支持, 就算不选中, nfs 也可以加载</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make O=output uboot-menuconfig</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Command line interface  ---&gt;</span><br><span class="line">  [*] nfs</span><br></pre></td></tr></table></figure>
+
+<h4 id="整体"><a href="#整体" class="headerlink" title="整体"></a>整体</h4><p>启用 uImage, 设置加载地址</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make O=output menuconfig</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Kernel  ---&gt;</span><br><span class="line">  [*] Linux Kernel</span><br><span class="line">    Kernel binary format (uImage)</span><br><span class="line">    (0x60010000) load address (<span class="keyword">for</span> 3.7+ multi-platform image)</span><br></pre></td></tr></table></figure>
+
+<p>打包 rootfs</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Filesystem images  ---&gt;</span><br><span class="line">  [*] tar the root filesystem</span><br></pre></td></tr></table></figure>
+
+<p>uboot 配置环境变量</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Bootloaders  ---&gt;</span><br><span class="line">  (uboot.env) Text file with default environment</span><br></pre></td></tr></table></figure>
+
+<p>uboot.env</p>
+<p>内存地址一定要注意，否则可能会无法启动</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">ipaddr=10.0.2.222</span><br><span class="line"><span class="comment"># ttfp 服务器 ip</span></span><br><span class="line">serverip=10.0.2.1</span><br><span class="line"><span class="comment"># 最后的 ip 不能缺</span></span><br><span class="line">root=/dev/nfs rw nfsroot=10.0.2.1:/mnt/nfs/rootfs,nfsvers=3 init=/linuxrc console=ttyAMA0 ip=10.0.2.222</span><br><span class="line"><span class="comment"># bootm 中间的 - 不能缺</span></span><br><span class="line">bootcmd=tftp 0x60010000 uImage; tftp 0x61000000 vexpress-v2p-ca9.dtb; bootm 0x60010000 - 0x61000000</span><br></pre></td></tr></table></figure>
+
+<h4 id="编译"><a href="#编译" class="headerlink" title="编译"></a>编译</h4><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make O=output -j$(<span class="built_in">nproc</span>)</span><br></pre></td></tr></table></figure>
+
+<h4 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h4><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> qemu-system-arm \</span><br><span class="line">  -M vexpress-a9 \</span><br><span class="line">  -m 512M \</span><br><span class="line">  -kernel ~/downloads/buildroot-2025.02.3/output/images/u-boot \</span><br><span class="line">  -nographic \</span><br><span class="line">  -netdev bridge,<span class="built_in">id</span>=net0,br=virbr0 \</span><br><span class="line">  -net nic,netdev=net0</span><br></pre></td></tr></table></figure>
+
+<p>手动，支持变量展开，需要用双引号，单引号不支持</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">setenv ipaddr 10.0.2.222</span><br><span class="line">setenv serverip 10.0.2.1</span><br><span class="line">setenv bootargs <span class="string">&quot;root=/dev/nfs rw nfsroot=<span class="variable">$&#123;serverip&#125;</span>:/mnt/nfs/rootfs,nfsvers=3 init=/linuxrc console=ttyAMA0 ip=<span class="variable">$&#123;ipaddr&#125;</span>&quot;</span></span><br><span class="line">setenv bootcmd <span class="string">&#x27;tftp 0x60010000 uImage; tftp 0x61000000 vexpress-v2p-ca9.dtb; bootm 0x60010000 - 0x61000000&#x27;</span></span><br><span class="line">saveenv</span><br><span class="line"></span><br><span class="line">run bootcmd</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/linux/">linux</a><a href="/tags/kernel/">kernel</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+  
+
+
+
+
+
+
+
+
+
+    </main>
+
+    <footer class="site-footer">
+  <p class="site-info">
+    Proudly powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and
+    Theme by <a href="https://github.com/CodeDaraW/Hacker" target="_blank">Hacker</a>
+    </br>
+    
+    &copy; 2025 John Doe
+    
+  </p>
+</footer>
+    
+    
+  </div>
+</div>
+</body>
+</html>

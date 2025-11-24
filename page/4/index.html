@@ -71,6 +71,132 @@
 
   
     
+    <h3 class="article-title"><a href="/2025/10/29/rtt-stm32-dev-pulse-encoder/"><span>rt-thread 下，配置 stm32 的脉冲编码器</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/10/29/rtt-stm32-dev-pulse-encoder/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-10-29T01:02:51.000Z">
+          2025-10-29
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <p>cubeMX 里面配置，选某定时器 TIM ,比如 TIM3，Combined Channels 里面，选择 Encoder Mode，记住下面 gpio 部分的两个引脚</p>
+<h2 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h2><p>修改 board&#x2F;Kconfig，添加 pulse encoder 相关部分</p>
+<p>以下为参考</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">menuconfig BSP_USING_PULSE_ENCODER</span><br><span class="line">    bool <span class="string">&quot;enable pulse encoder&quot;</span></span><br><span class="line">    default n</span><br><span class="line">    <span class="keyword">select</span> RT_USING_PULSE_ENCODER</span><br><span class="line">    <span class="keyword">if</span> BSP_USING_PULSE_ENCODER</span><br><span class="line">        config BSP_USING_PULSE_ENCODER3</span><br><span class="line">            bool <span class="string">&quot;enable pulse encoder3&quot;</span></span><br><span class="line">            default n</span><br><span class="line">    endif</span><br></pre></td></tr></table></figure>
+
+<p>如果启用的 pulse encoder 不自带，需要手工修改</p>
+<p>修改<code>libraries/HAL_Drivers/config/f4/pulse_encoder_config.h</code></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">ifdef</span> BSP_USING_PULSE_ENCODER3</span></span><br><span class="line"><span class="meta">#<span class="keyword">ifndef</span> PULSE_ENCODER3_CONFIG</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PULSE_ENCODER3_CONFIG                          \</span></span><br><span class="line"><span class="meta">    &#123;                                                  \</span></span><br><span class="line"><span class="meta">       .tim_handler.Instance    = TIM3,                \</span></span><br><span class="line"><span class="meta">       .encoder_irqn            = TIM3_IRQn,           \</span></span><br><span class="line"><span class="meta">       .name                    = <span class="string">&quot;pulse3&quot;</span>             \</span></span><br><span class="line"><span class="meta">    &#125;</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br></pre></td></tr></table></figure>
+
+<h2 id="menuconfig"><a href="#menuconfig" class="headerlink" title="menuconfig"></a>menuconfig</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">scons --menuconfig 启用 pulse encoder</span><br><span class="line">stm32XXxx_hal_conf.h 需要启用 HAL_TIM_MODULE_ENABLED</span><br></pre></td></tr></table></figure>
+
+<h2 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h2><p>如果发现旋转过程中突然产生了很大的数，需要改一下驱动</p>
+<p><code>libraries/HAL_Drivers/drv_pulse_encoder.c</code>, <code>，pulse_encoder_init</code>方法内, <code>sConfig.IC1Filter</code> 和 <code>sConfig.IC2Filter</code> 都改成最大 15</p>
+<p>但是不能根本解决，根本上解决的话，需要滤波电容。</p>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/stm32/">stm32</a><a href="/tags/rt-thread/">rt-thread</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
+    <h3 class="article-title"><a href="/2025/10/28/rtt-stm32-dev-i2c/"><span>rt-thread 下，配置 stm32 的 i2c</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/10/28/rtt-stm32-dev-i2c/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-10-28T00:35:48.000Z">
+          2025-10-28
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <p>修改 board&#x2F;Kconfig，添加 i2c 的配置部分，以下为参考</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">menuconfig BSP_USING_I2C1</span><br><span class="line">    bool <span class="string">&quot;Enable I2C1 BUS (software simulation)&quot;</span></span><br><span class="line">    default n</span><br><span class="line">    <span class="keyword">select</span> RT_USING_I2C</span><br><span class="line">    <span class="keyword">select</span> RT_USING_I2C_BITOPS</span><br><span class="line">    <span class="keyword">select</span> RT_USING_PIN</span><br><span class="line">    <span class="keyword">if</span> BSP_USING_I2C1</span><br><span class="line">        config BSP_I2C1_SCL_PIN</span><br><span class="line">            int <span class="string">&quot;i2c1 scl pin number&quot;</span></span><br><span class="line">            range 1 216</span><br><span class="line">            default 22</span><br><span class="line">        config BSP_I2C1_SDA_PIN</span><br><span class="line">            int <span class="string">&quot;I2C1 sda pin number&quot;</span></span><br><span class="line">            range 1 216</span><br><span class="line">            default 23</span><br><span class="line">    endif</span><br></pre></td></tr></table></figure>
+
+<h2 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">scons --menuconfig 启用 i2c</span><br><span class="line">stm32XXxx_hal_conf.h 需要启用 HAL_I2C_MODULE_ENABLED</span><br><span class="line">i2c 需要从机的地址，可以看手册，也可以通过 i2c-tools</span><br></pre></td></tr></table></figure>
+
+<h2 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">目前 i2c 均为软件模拟 i2c</span><br><span class="line">不需要在 cubeMX 里面的引脚配置</span><br><span class="line">直接 Kconfig 里面配置即可</span><br></pre></td></tr></table></figure>
+
+<h2 id="测试命令"><a href="#测试命令" class="headerlink" title="测试命令"></a>测试命令</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">i2c scan</span><br><span class="line">i2c <span class="built_in">read</span></span><br><span class="line">i2c write</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/stm32/">stm32</a><a href="/tags/rt-thread/">rt-thread</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
     <h3 class="article-title"><a href="/2025/10/27/rtt-stm32-dev-dac/"><span>rt-thread 下，配置 stm32 的 dac</span></a></h3>
     
   
@@ -645,162 +771,6 @@
     <span class="post-tags">
       <i class="icon-tags"></i>
         <a href="/tags/freebsd/">freebsd</a>
-    </span>
-    
-
-    </div>
-
-    
-  </div>
-</article>
-
-
-
-  <article>
-
-  
-    
-    <h3 class="article-title"><a href="/2025/10/21/erl-genserver-exit/"><span>erlang 下 genserver 的 exit</span></a></h3>
-    
-  
-
-  <div class="article-top-meta">
-    <span class="posted-on">
-      <a href="/2025/10/21/erl-genserver-exit/" rel="bookmark">
-        <time class="entry-date published" datetime="2025-10-21T01:12:29.000Z">
-          2025-10-21
-        </time>
-      </a>
-    </span>
-  </div>
-
-
-  
-
-  <div class="article-content">
-    <div class="entry">
-      
-        <p>本质和普通进程一样</p>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ul>
-<li>内部 crash</li>
-<li>设置 <code>trap_exit</code>, 并且 <code>gen_server</code> 内部处理 <code>{&#39;EXIT&#39;, From , Reason}</code> 消息</li>
-</ul>
-<table>
-<thead>
-<tr>
-<th>gen_server 退出原因</th>
-<th>trap_exit</th>
-<th>terminate</th>
-<th>备注</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>内部 crash</td>
-<td>true&#x2F;false</td>
-<td>执行</td>
-<td>普通业务情况下，保证都能被捕获</td>
-</tr>
-<tr>
-<td>exit(Pid,kill)</td>
-<td>true&#x2F;false</td>
-<td>不执行</td>
-<td>kill 杀进程是 vm 的保留手段</td>
-</tr>
-<tr>
-<td>exit(Pid,Reason)</td>
-<td>true</td>
-<td>如果内部处理了<code>{&#39;EXIT&#39;, From , Reason}</code>消息，则执行</td>
-<td>转换为 handle_info 消息</td>
-</tr>
-<tr>
-<td>exit(Pid,Reason)</td>
-<td>false</td>
-<td>不执行</td>
-<td>同普通 process 一样</td>
-</tr>
-</tbody></table>
-<h2 id="演示代码"><a href="#演示代码" class="headerlink" title="演示代码"></a>演示代码</h2><figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">stop</span><span class="params">(Reason)</span> -&gt;</span></span><br><span class="line">  io:format(<span class="string">&quot;call bbb stop func ~p ~n&quot;</span>, [Reason]),</span><br><span class="line">  gen_server:call(bbb, &#123;stop, Reason&#125;).</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">handle_call</span><span class="params">(&#123;stop, Reason&#125;, _From, State)</span> -&gt;</span></span><br><span class="line">  io:format(<span class="string">&quot;on handle_call stop by ~p ~n&quot;</span>, [Reason]),</span><br><span class="line">  &#123;stop, Reason, ok, State&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">handle_info</span><span class="params">(&#123;&#x27;EXIT&#x27;, From , Reason&#125;, State)</span> -&gt;</span></span><br><span class="line">  io:format(<span class="string">&quot;on handle_info &#x27;EXIT&#x27; ~p ~p~n&quot;</span>, [From, Reason]),</span><br><span class="line">  &#123;stop, Reason, State&#125;;</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-
-  </div>
-
-  <div class="article-footer">
-    <div class="article-meta pull-left">
-
-    
-
-    
-    
-
-    <span class="post-tags">
-      <i class="icon-tags"></i>
-        <a href="/tags/erlang/">erlang</a>
-    </span>
-    
-
-    </div>
-
-    
-  </div>
-</article>
-
-
-
-  <article>
-
-  
-    
-    <h3 class="article-title"><a href="/2025/10/20/erl-proc-exit/"><span>erlang 的 trap_exit</span></a></h3>
-    
-  
-
-  <div class="article-top-meta">
-    <span class="posted-on">
-      <a href="/2025/10/20/erl-proc-exit/" rel="bookmark">
-        <time class="entry-date published" datetime="2025-10-20T03:19:50.000Z">
-          2025-10-20
-        </time>
-      </a>
-    </span>
-  </div>
-
-
-  
-
-  <div class="article-content">
-    <div class="entry">
-      
-        <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>exit(Pid, Msg)</p>
-<p>未设置 trap_exit</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">不给进程发 Exit 消息, 只执行默认的行为</span><br><span class="line">normal 返回 <span class="literal">true</span></span><br><span class="line">shutdown 模式下，进程退出，返回 <span class="literal">true</span></span><br><span class="line"><span class="built_in">kill</span> 模式下，进程退出，返回 <span class="literal">true</span></span><br><span class="line">其它模式下，进程退出，返回 <span class="literal">true</span></span><br></pre></td></tr></table></figure>
-
-<p>设置 process_flag(trap_exit, true)</p>
-<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">执行默认的行为的同时，给进程发 Exit 消息</span><br><span class="line">normal 返回 <span class="literal">true</span>，发 &#123;&#x27;EXIT&#x27;, _From, normal&#125; 消息, 进程是否退出，看消息处理部分</span><br><span class="line">shutdown 返回 <span class="literal">true</span>，发 &#123;&#x27;EXIT&#x27;, _From, shutdown&#125; 消息, 进程是否退出，看消息处理部分</span><br><span class="line">其它模式下，返回 <span class="literal">true</span>, 发 &#123;&#x27;EXIT&#x27;, _From, _Msg&#125; 消息, 进程是否退出，看消息处理部分</span><br><span class="line">kill 模式下，返回 <span class="literal">true</span>, 不会收到消息，进程直接被系统杀死</span><br></pre></td></tr></table></figure>
-
-<h2 id="演示代码"><a href="#演示代码" class="headerlink" title="演示代码"></a>演示代码</h2><p>dist_proc.erl</p>
-<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">-module</span><span class="params">(dist_proc)</span>.</span><br><span class="line"></span><br><span class="line"><span class="keyword">-export</span><span class="params">([start/<span class="number">0</span>])</span>.</span><br><span class="line"><span class="keyword">-export</span><span class="params">([init/<span class="number">0</span>])</span>.</span><br><span class="line"><span class="keyword">-export</span><span class="params">([loop/<span class="number">0</span>])</span>.</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">start</span><span class="params">()</span> -&gt;</span></span><br><span class="line">  Pid = spawn(?MODULE,init,[]),</span><br><span class="line">  register(?MODULE, Pid),</span><br><span class="line">  &#123;ok, Pid&#125;.</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">init</span><span class="params">()</span> -&gt;</span></span><br><span class="line">  io:format(<span class="string">&quot;on ~p init ~n&quot;</span>, [?MODULE]),</span><br><span class="line">  process_flag(trap_exit, true),</span><br><span class="line">  loop().</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">loop</span><span class="params">()</span> -&gt;</span></span><br><span class="line">  <span class="keyword">receive</span></span><br><span class="line">    &#123;&#x27;EXIT&#x27;, From, Reason&#125; -&gt;</span><br><span class="line">      io:format(<span class="string">&quot;~p got exit msg ~p ~p~n&quot;</span>, [?MODULE, From, Reason]),</span><br><span class="line">      loop();</span><br><span class="line">    Msg -&gt;</span><br><span class="line">      io:format(<span class="string">&quot;~p got other msg ~p~n&quot;</span>, [?MODULE, Msg]),</span><br><span class="line">      loop()</span><br><span class="line">  <span class="keyword">end</span>.</span><br></pre></td></tr></table></figure>
-
-<p>测试</p>
-<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">dist_proc:start().</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">exit</span><span class="params">(whereis(dist_proc), normal)</span>.</span></span><br><span class="line"><span class="function"><span class="title">exit</span><span class="params">(whereis(dist_proc), shutdown)</span>.</span></span><br><span class="line"><span class="function"><span class="title">exit</span><span class="params">(whereis(dist_proc), xxx)</span>.</span></span><br><span class="line"><span class="function"><span class="title">exit</span><span class="params">(whereis(dist_proc), kill)</span>.</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="title">whereis</span><span class="params">(dist_proc)</span> ! &#123;<span class="title">&#x27;EXIT&#x27;</span>, <span class="title">self</span><span class="params">()</span>, <span class="title">normal</span>&#125;.</span></span><br><span class="line"><span class="function"><span class="title">whereis</span><span class="params">(dist_proc)</span> ! &#123;<span class="title">&#x27;EXIT&#x27;</span>, <span class="title">self</span><span class="params">()</span>, <span class="title">xxx</span>&#125;.</span></span><br><span class="line"><span class="function"><span class="title">whereis</span><span class="params">(dist_proc)</span> ! &#123;<span class="title">&#x27;EXIT&#x27;</span>, <span class="title">self</span><span class="params">()</span>, <span class="title">kill</span>&#125;.</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="title">whereis</span><span class="params">(dist_proc)</span>.</span></span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-
-  </div>
-
-  <div class="article-footer">
-    <div class="article-meta pull-left">
-
-    
-
-    
-    
-
-    <span class="post-tags">
-      <i class="icon-tags"></i>
-        <a href="/tags/erlang/">erlang</a>
     </span>
     
 

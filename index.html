@@ -71,6 +71,204 @@
 
   
     
+    <h3 class="article-title"><a href="/2025/11/24/buildroot-extra/"><span>buildroot 辅助用法</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/11/24/buildroot-extra/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-11-24T01:02:49.000Z">
+          2025-11-24
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h2 id="文件打包"><a href="#文件打包" class="headerlink" title="文件打包"></a>文件打包</h2><p><code>output/target</code> 目录先做好备份</p>
+<h3 id="方法"><a href="#方法" class="headerlink" title="方法"></a>方法</h3><h4 id="方法-1"><a href="#方法-1" class="headerlink" title="方法 1"></a>方法 1</h4><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make O=output menuconfig</span><br></pre></td></tr></table></figure>
+
+<p>设置为 overlay_fs</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">System configuration  ---&gt;</span><br><span class="line">  (overlay_fs)  Root filesystem overlay directories</span><br></pre></td></tr></table></figure>
+
+<p>目录结构如下</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">overlay_fs</span><br><span class="line">└── usr</span><br><span class="line">    └── <span class="built_in">local</span></span><br><span class="line">        └── bin</span><br><span class="line">            └── demo</span><br></pre></td></tr></table></figure>
+
+<p>编译</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 这个会处理 output/target 目录，但是不会生成 ext2 文件</span></span><br><span class="line">make O=output target-finalize -j$(<span class="built_in">nproc</span>)</span><br><span class="line"><span class="comment"># 生成 etx2</span></span><br><span class="line">make O=output rootfs-ext2 -j$(<span class="built_in">nproc</span>)</span><br></pre></td></tr></table></figure>
+
+<p>或者</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">make O=output -j$(<span class="built_in">nproc</span>)</span><br><span class="line">make O=output all -j$(<span class="built_in">nproc</span>)</span><br></pre></td></tr></table></figure>
+
+<h4 id="方法-2"><a href="#方法-2" class="headerlink" title="方法 2"></a>方法 2</h4><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make O=output menuconfig</span><br></pre></td></tr></table></figure>
+
+<p>设置为 overlay_fs</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">System configuration  ---&gt;</span><br><span class="line">  (custom_fs/post.sh)  Custom scripts to run before creating filesystem images</span><br></pre></td></tr></table></figure>
+
+<p>目录结构如下</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">custom_fs</span><br><span class="line">├── files</span><br><span class="line">│   └── demo</span><br><span class="line">└── post.sh</span><br></pre></td></tr></table></figure>
+
+<p>post.sh</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/sh</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># output/target</span></span><br><span class="line">TARGET_DIR=<span class="variable">$1</span></span><br><span class="line">CURRENT_DIR=$(<span class="built_in">cd</span> <span class="string">&quot;<span class="subst">$(dirname <span class="string">&quot;<span class="variable">$0</span>&quot;</span>)</span>&quot;</span>;<span class="built_in">pwd</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">mkdir</span> -p <span class="variable">$&#123;TARGET_DIR&#125;</span>/usr/local/bin</span><br><span class="line"><span class="built_in">cp</span> -rf <span class="variable">$&#123;CURRENT_DIR&#125;</span>/files/* <span class="variable">$&#123;TARGET_DIR&#125;</span>/usr/local/bin/</span><br><span class="line"></span><br><span class="line"><span class="built_in">chmod</span> a+x <span class="variable">$&#123;TARGET_DIR&#125;</span>/usr/local/bin/*</span><br></pre></td></tr></table></figure>
+
+<p>编译</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 这个会处理 output/target 目录，但是不会生成 ext2 文件</span></span><br><span class="line">make O=output target-finalize -j$(<span class="built_in">nproc</span>)</span><br><span class="line"><span class="comment"># 生成 etx2</span></span><br><span class="line">make O=output rootfs-ext2 -j$(<span class="built_in">nproc</span>)</span><br></pre></td></tr></table></figure>
+
+<p>或者</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">make O=output -j$(<span class="built_in">nproc</span>)</span><br><span class="line">make O=output all -j$(<span class="built_in">nproc</span>)</span><br></pre></td></tr></table></figure>
+
+<h2 id="make-用法"><a href="#make-用法" class="headerlink" title="make 用法"></a>make 用法</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># uboot</span></span><br><span class="line">make O=output uboot-dirclean</span><br><span class="line">make O=output uboot-rebuild -j$(<span class="built_in">nproc</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 内核</span></span><br><span class="line">make O=output linux-dirclean</span><br><span class="line">make O=output linux-rebuild -j$(<span class="built_in">nproc</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 文件系统</span></span><br><span class="line">make O=output busybox-dirclean</span><br><span class="line">make O=output busybox-rebuild -j$(<span class="built_in">nproc</span>)</span><br></pre></td></tr></table></figure>
+
+<p>清理</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 清理特定包，不删除下载的源码</span></span><br><span class="line">make O=output xxx-dirclean</span><br><span class="line"></span><br><span class="line"><span class="comment"># 保留下载的源码</span></span><br><span class="line">make O=output clean</span><br><span class="line"></span><br><span class="line"><span class="comment"># 删除下载的源码</span></span><br><span class="line">make O=output distclean</span><br></pre></td></tr></table></figure>
+
+<h2 id="nfs"><a href="#nfs" class="headerlink" title="nfs"></a>nfs</h2><p>配置好网络, tftp, nfs 等服务</p>
+<h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h3><h4 id="内核"><a href="#内核" class="headerlink" title="内核"></a>内核</h4><p>启用 nfs，默认已经开启了</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make O=output linux-menuconfig</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">File systems  ---&gt;</span><br><span class="line">  [*] Network File Systems  ---&gt;</span><br><span class="line">    &lt;*&gt; NFS client support</span><br><span class="line">    &lt;*&gt; NFS client support <span class="keyword">for</span> NFS version 3</span><br><span class="line">    [*] Root file system on NFS</span><br></pre></td></tr></table></figure>
+
+<h4 id="uboot"><a href="#uboot" class="headerlink" title="uboot"></a>uboot</h4><p>核心已经支持, 就算不选中, nfs 也可以加载</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make O=output uboot-menuconfig</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Command line interface  ---&gt;</span><br><span class="line">  [*] nfs</span><br></pre></td></tr></table></figure>
+
+<h4 id="整体"><a href="#整体" class="headerlink" title="整体"></a>整体</h4><p>启用 uImage, 设置加载地址</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make O=output menuconfig</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Kernel  ---&gt;</span><br><span class="line">  [*] Linux Kernel</span><br><span class="line">    Kernel binary format (uImage)</span><br><span class="line">    (0x60010000) load address (<span class="keyword">for</span> 3.7+ multi-platform image)</span><br></pre></td></tr></table></figure>
+
+<p>打包 rootfs</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Filesystem images  ---&gt;</span><br><span class="line">  [*] tar the root filesystem</span><br></pre></td></tr></table></figure>
+
+<p>uboot 配置环境变量</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Bootloaders  ---&gt;</span><br><span class="line">  (uboot.env) Text file with default environment</span><br></pre></td></tr></table></figure>
+
+<p>uboot.env</p>
+<p>内存地址一定要注意，否则可能会无法启动</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">ipaddr=10.0.2.222</span><br><span class="line"><span class="comment"># ttfp 服务器 ip</span></span><br><span class="line">serverip=10.0.2.1</span><br><span class="line"><span class="comment"># 最后的 ip 不能缺</span></span><br><span class="line">root=/dev/nfs rw nfsroot=10.0.2.1:/mnt/nfs/rootfs,nfsvers=3 init=/linuxrc console=ttyAMA0 ip=10.0.2.222</span><br><span class="line"><span class="comment"># bootm 中间的 - 不能缺</span></span><br><span class="line">bootcmd=tftp 0x60010000 uImage; tftp 0x61000000 vexpress-v2p-ca9.dtb; bootm 0x60010000 - 0x61000000</span><br></pre></td></tr></table></figure>
+
+<h4 id="编译"><a href="#编译" class="headerlink" title="编译"></a>编译</h4><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make O=output -j$(<span class="built_in">nproc</span>)</span><br></pre></td></tr></table></figure>
+
+<h4 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h4><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> qemu-system-arm \</span><br><span class="line">  -M vexpress-a9 \</span><br><span class="line">  -m 512M \</span><br><span class="line">  -kernel ~/downloads/buildroot-2025.02.3/output/images/u-boot \</span><br><span class="line">  -nographic \</span><br><span class="line">  -netdev bridge,<span class="built_in">id</span>=net0,br=virbr0 \</span><br><span class="line">  -net nic,netdev=net0</span><br></pre></td></tr></table></figure>
+
+<p>手动，支持变量展开，需要用双引号，单引号不支持</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">setenv ipaddr 10.0.2.222</span><br><span class="line">setenv serverip 10.0.2.1</span><br><span class="line">setenv bootargs <span class="string">&quot;root=/dev/nfs rw nfsroot=<span class="variable">$&#123;serverip&#125;</span>:/mnt/nfs/rootfs,nfsvers=3 init=/linuxrc console=ttyAMA0 ip=<span class="variable">$&#123;ipaddr&#125;</span>&quot;</span></span><br><span class="line">setenv bootcmd <span class="string">&#x27;tftp 0x60010000 uImage; tftp 0x61000000 vexpress-v2p-ca9.dtb; bootm 0x60010000 - 0x61000000&#x27;</span></span><br><span class="line">saveenv</span><br><span class="line"></span><br><span class="line">run bootcmd</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/linux/">linux</a><a href="/tags/kernel/">kernel</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
+    <h3 class="article-title"><a href="/2025/11/22/linux-trim-tftp/"><span>linux 内核裁剪之 tftp</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/11/22/linux-trim-tftp/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-11-22T04:30:01.000Z">
+          2025-11-22
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>用来加载内核</p>
+<h2 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h2><h3 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h3><p>启动 tftp 服务</p>
+<h3 id="编译内核"><a href="#编译内核" class="headerlink" title="编译内核"></a>编译内核</h3><p>内核需要 uImage 格式，才能被 uboot 加载</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make LOADADDR=0x60003000 uImage -j$(<span class="built_in">nproc</span>)</span><br></pre></td></tr></table></figure>
+
+<p>把 <code>output/arch/arm/boot/uImage</code> 和 <code>dts</code> 放到 <code>tftp</code> 的目录</p>
+<h3 id="uboot"><a href="#uboot" class="headerlink" title="uboot"></a>uboot</h3><h4 id="手动测试"><a href="#手动测试" class="headerlink" title="手动测试"></a>手动测试</h4><p>进入 uboot 后中断</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> qemu-system-arm \</span><br><span class="line">  -M vexpress-a9 \</span><br><span class="line">  -m 512M \</span><br><span class="line">  -kernel ~/downloads/u-boot-2023.04/output/u-boot \</span><br><span class="line">  -nographic \</span><br><span class="line">  -netdev bridge,<span class="built_in">id</span>=net0,br=virbr0 \</span><br><span class="line">  -net nic,netdev=net0</span><br></pre></td></tr></table></figure>
+
+<p>手动设置变量</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># qemu 虚拟机 ip</span></span><br><span class="line">setenv ipaddr 10.0.2.222</span><br><span class="line"></span><br><span class="line"><span class="comment"># tftp 服务器 ip</span></span><br><span class="line">setenv serverip 10.0.2.1</span><br><span class="line">ping 10.0.2.1</span><br></pre></td></tr></table></figure>
+
+<p>下载内核，设备树，启动</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">tftp 0x60003000 uImage</span><br><span class="line">tftp 0x60500000 vexpress-v2p-ca9.dtb</span><br><span class="line">bootm 0x60003000 - 0x60500000</span><br></pre></td></tr></table></figure>
+
+<h4 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h4><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make menuconfig</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Environment  ---&gt;</span><br><span class="line">  [*] Create default environment from file</span><br><span class="line">  (uboot.env)  Path to default environment file (NEW)</span><br></pre></td></tr></table></figure>
+
+<p>uboot.env</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ipaddr=10.0.2.222</span><br><span class="line">serverip=10.0.2.1</span><br><span class="line">bootargs=root=/dev/mmcblk0 rw init=/linuxrc ip=10.0.2.222 console=ttyAMA0</span><br><span class="line">bootcmd=tftp 0x60003000 uImage; tftp 0x60500000 vexpress-v2p-ca9.dtb; bootm 0x60003000 - 0x60500000</span><br></pre></td></tr></table></figure>
+
+<h4 id="编译"><a href="#编译" class="headerlink" title="编译"></a>编译</h4><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make -j$(<span class="built_in">nproc</span>)</span><br></pre></td></tr></table></figure>
+
+<h4 id="运行"><a href="#运行" class="headerlink" title="运行"></a>运行</h4><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> qemu-system-arm \</span><br><span class="line">  -M vexpress-a9 \</span><br><span class="line">  -m 512M \</span><br><span class="line">  -kernel ~/downloads/u-boot-2023.04/output/u-boot \</span><br><span class="line">  -nographic \</span><br><span class="line">  -netdev bridge,<span class="built_in">id</span>=net0,br=virbr0 \</span><br><span class="line">  -net nic,netdev=net0</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/linux/">linux</a><a href="/tags/kernel/">kernel</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
     <h3 class="article-title"><a href="/2025/11/21/linux-trim-nfs/"><span>linux 内核裁剪之 nfs</span></a></h3>
     
   
@@ -263,7 +461,7 @@
 
     <span class="post-tags">
       <i class="icon-tags"></i>
-        <a href="/tags/linux/">linux</a><a href="/tags/kernel/">kernel</a><a href="/tags/rootfs/">rootfs</a>
+        <a href="/tags/linux/">linux</a><a href="/tags/kernel/">kernel</a>
     </span>
     
 
@@ -582,137 +780,6 @@
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;rtthread.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;rtdevice.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PWM_DEV_NAME        <span class="string">&quot;pwm1&quot;</span>      <span class="comment">// 硬件定时器设备名</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PWM_CHANNEL1        1           <span class="comment">// 通道1</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PWM_CHANNEL2        2           <span class="comment">// 通道2</span></span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">rt_device_pwm</span> *<span class="title">pwm_dev</span>;</span></span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="type">int</span> <span class="title function_">pwm_demo</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv[])</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">rt_uint32_t</span> period, pulse1, pulse2;</span><br><span class="line"></span><br><span class="line">    pwm_dev = (<span class="keyword">struct</span> rt_device_pwm *)rt_device_find(PWM_DEV_NAME);</span><br><span class="line">    <span class="keyword">if</span> (pwm_dev == RT_NULL)</span><br><span class="line">    &#123;</span><br><span class="line">        rt_kprintf(<span class="string">&quot;can&#x27;t find %s device!\n&quot;</span>, PWM_DEV_NAME);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 2. 设置周期和脉宽（单位：纳秒）</span></span><br><span class="line">    period = <span class="number">50000</span>;      <span class="comment">// 20kHz = 1s/20000 = 50,000ns</span></span><br><span class="line">    pulse1 = period * <span class="number">30</span> / <span class="number">100</span>; <span class="comment">// 30% 占空比</span></span><br><span class="line">    pulse2 = period * <span class="number">60</span> / <span class="number">100</span>; <span class="comment">// 60% 占空比</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 3. 配置 PWM 通道1</span></span><br><span class="line">    rt_pwm_set(pwm_dev, PWM_CHANNEL1, period, pulse1);</span><br><span class="line">    rt_pwm_enable(pwm_dev, PWM_CHANNEL1);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 4. 配置 PWM 通道2</span></span><br><span class="line">    rt_pwm_set(pwm_dev, PWM_CHANNEL2, period, pulse2);</span><br><span class="line">    rt_pwm_enable(pwm_dev, PWM_CHANNEL2);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">MSH_CMD_EXPORT(pwm_demo, pwm demo);</span><br></pre></td></tr></table></figure>
 
 <h2 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h2><p>逻辑分析仪的 gnd 一定要接，不然数据会不准</p>
-
-      
-    </div>
-
-  </div>
-
-  <div class="article-footer">
-    <div class="article-meta pull-left">
-
-    
-
-    
-    
-
-    <span class="post-tags">
-      <i class="icon-tags"></i>
-        <a href="/tags/stm32/">stm32</a><a href="/tags/rt-thread/">rt-thread</a>
-    </span>
-    
-
-    </div>
-
-    
-  </div>
-</article>
-
-
-
-  <article>
-
-  
-    
-    <h3 class="article-title"><a href="/2025/11/14/rtt-stm32-pulse-encoder/"><span>rt-thread 下，配置 stm32 的 pulse-encoder</span></a></h3>
-    
-  
-
-  <div class="article-top-meta">
-    <span class="posted-on">
-      <a href="/2025/11/14/rtt-stm32-pulse-encoder/" rel="bookmark">
-        <time class="entry-date published" datetime="2025-11-14T00:05:51.000Z">
-          2025-11-14
-        </time>
-      </a>
-    </span>
-  </div>
-
-
-  
-
-  <div class="article-content">
-    <div class="entry">
-      
-        <p>脉冲编码器</p>
-<h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><h3 id="cubemx"><a href="#cubemx" class="headerlink" title="cubemx"></a>cubemx</h3><p>选一个定时器,设置 Combined Channels 为 <code>Encoder Mode</code></p>
-<h3 id="接线"><a href="#接线" class="headerlink" title="接线"></a>接线</h3><p>定时器对应的 channel 接 DT 和 CLK,正反接都可以</p>
-<h3 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h3><p>pulse_encoder_demo.c</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;rtthread.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;rtdevice.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PULSE_ENCODER_DEV_NAME    <span class="string">&quot;pulse3&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="type">int</span> <span class="title function_">pulse_encoder_demo</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv[])</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">rt_err_t</span> ret = RT_EOK;</span><br><span class="line">    <span class="type">rt_device_t</span> pulse_encoder_dev = RT_NULL;</span><br><span class="line"></span><br><span class="line">    <span class="type">rt_int32_t</span> count;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* 查找脉冲编码器设备 */</span></span><br><span class="line">    pulse_encoder_dev = rt_device_find(PULSE_ENCODER_DEV_NAME);</span><br><span class="line">    <span class="keyword">if</span> (pulse_encoder_dev == RT_NULL)</span><br><span class="line">    &#123;</span><br><span class="line">        rt_kprintf(<span class="string">&quot;pulse encoder sample run failed! can&#x27;t find %s device!\n&quot;</span>, PULSE_ENCODER_DEV_NAME);</span><br><span class="line">        <span class="keyword">return</span> RT_ERROR;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* 以只读方式打开设备 */</span></span><br><span class="line">    ret = rt_device_open(pulse_encoder_dev, RT_DEVICE_OFLAG_RDONLY);</span><br><span class="line">    <span class="keyword">if</span> (ret != RT_EOK)</span><br><span class="line">    &#123;</span><br><span class="line">        rt_kprintf(<span class="string">&quot;open %s device failed!\n&quot;</span>, PULSE_ENCODER_DEV_NAME);</span><br><span class="line">        <span class="keyword">return</span> ret;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span>(<span class="type">rt_uint32_t</span> i = <span class="number">0</span>; i &lt;= <span class="number">10000</span>; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        rt_thread_mdelay(<span class="number">500</span>);</span><br><span class="line"></span><br><span class="line">        rt_device_read(pulse_encoder_dev, <span class="number">0</span>, &amp;count, <span class="number">1</span>);</span><br><span class="line">        rt_device_control(pulse_encoder_dev, PULSE_ENCODER_CMD_CLEAR_COUNT, RT_NULL);</span><br><span class="line">        rt_kprintf(<span class="string">&quot;get count %d\n&quot;</span>,count);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    rt_device_close(pulse_encoder_dev);</span><br><span class="line">    <span class="keyword">return</span> ret;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">MSH_CMD_EXPORT(pulse_encoder_demo, pulse_encoder_demo);</span><br></pre></td></tr></table></figure>
-
-<h2 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h2><p>同一个定时器,如果某通道发了脉冲,其他通道不能再用来读取脉冲编码器了,会冲突</p>
-
-      
-    </div>
-
-  </div>
-
-  <div class="article-footer">
-    <div class="article-meta pull-left">
-
-    
-
-    
-    
-
-    <span class="post-tags">
-      <i class="icon-tags"></i>
-        <a href="/tags/stm32/">stm32</a><a href="/tags/rt-thread/">rt-thread</a>
-    </span>
-    
-
-    </div>
-
-    
-  </div>
-</article>
-
-
-
-  <article>
-
-  
-    
-    <h3 class="article-title"><a href="/2025/11/13/rtt-stm32-mqtt/"><span>rt-thread 下，配置 stm32 的 mqtt</span></a></h3>
-    
-  
-
-  <div class="article-top-meta">
-    <span class="posted-on">
-      <a href="/2025/11/13/rtt-stm32-mqtt/" rel="bookmark">
-        <time class="entry-date published" datetime="2025-11-13T01:35:08.000Z">
-          2025-11-13
-        </time>
-      </a>
-    </span>
-  </div>
-
-
-  
-
-  <div class="article-content">
-    <div class="entry">
-      
-        <p>目前使用的是 kawaii-mqtt</p>
-<h2 id="服务器"><a href="#服务器" class="headerlink" title="服务器"></a>服务器</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run --<span class="built_in">rm</span> -d --name emqx -p 1883:1883 -p 8083:8083 -p 8883:8883 -p 8084:8084 -p 18083:18083 emqx/emqx:v3.1.1</span><br></pre></td></tr></table></figure>
-
-<p>说明：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">1883 MQTT 端口</span><br><span class="line">8883 MQTT / SSL 端口</span><br><span class="line">8083 MQTT / WebSocket 端口</span><br><span class="line">8084 MQTT / WebSocket / SSL 端口</span><br><span class="line">8080 HTTP 管理 API 端口</span><br><span class="line">18083 Web 仪表板端口</span><br></pre></td></tr></table></figure>
-
-<p>管理后台</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">http://127.0.0.1:18083</span><br><span class="line">admin</span><br><span class="line">public</span><br></pre></td></tr></table></figure>
-
-<h2 id="rtthread"><a href="#rtthread" class="headerlink" title="rtthread"></a>rtthread</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">RT-Thread online packages &gt;</span><br><span class="line">  IoT - internet of things</span><br><span class="line">    [*] kawaii-mqtt: a mqtt client based on the socket API, support QoS2, mbedtls</span><br><span class="line">    [*] using SAL</span><br><span class="line"></span><br><span class="line">RT-Thread Components &gt;</span><br><span class="line">  Network &gt; Socket abstraction layer</span><br><span class="line">    [*] Enable BSD socket operated by file system API</span><br></pre></td></tr></table></figure>
-
-<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><p>demo.py</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -*-coding:utf-8-*-</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># Import paho-mqtt Client class:</span></span><br><span class="line"><span class="keyword">import</span> paho.mqtt.client <span class="keyword">as</span> mqtt</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line">unacked_sub = []  <span class="comment"># a list for unacknowledged subscription</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Define the callback to handle CONNACK from the broker, if the connection created normal, the value of rc is 0</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">on_connect</span>(<span class="params">client, userdata, flags, rc</span>):</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Connection returned with result code:&quot;</span> + <span class="built_in">str</span>(rc))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># Define the callback to hande publish from broker, here we simply print out the topic and payload of the received message</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">on_message</span>(<span class="params">client, userdata, msg</span>):</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Received message, topic: &quot;</span> + msg.topic + <span class="string">&quot; payload: &quot;</span> + <span class="built_in">str</span>(msg.payload))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># Callback handles disconnection, print the rc value</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">on_disconnect</span>(<span class="params">client, userdata, rc</span>):</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Disconnection returned result: &quot;</span> + <span class="built_in">str</span>(rc))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># Remove the message id from the list for unacknowledged subscription</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">on_subscribe</span>(<span class="params">client, userdata, mid, granted_qos</span>):</span><br><span class="line">    unacked_sub.remove(mid)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># Create an instance of `Client`</span></span><br><span class="line">client = mqtt.Client()</span><br><span class="line">client.on_connect = on_connect</span><br><span class="line">client.on_disconnect = on_disconnect</span><br><span class="line">client.on_message = on_message</span><br><span class="line">client.on_subscribe = on_subscribe</span><br><span class="line"></span><br><span class="line"><span class="comment"># Connect to broker</span></span><br><span class="line"><span class="comment"># connect() is blocking, it returns when the connection is successful or failed. If you want client connects in a non-blocking way, you may use connect_async() instead</span></span><br><span class="line">client.connect(<span class="string">&quot;127.0.0.1&quot;</span>, <span class="number">1883</span>, <span class="number">60</span>)</span><br><span class="line"></span><br><span class="line">client.loop_start()</span><br><span class="line"></span><br><span class="line"><span class="comment"># Subscribe to a single topic</span></span><br><span class="line">result, mid = client.subscribe(<span class="string">&quot;demo_topic&quot;</span>, <span class="number">0</span>)</span><br><span class="line">unacked_sub.append(mid)</span><br><span class="line"><span class="comment"># Subscribe to multiple topics</span></span><br><span class="line">result, mid = client.subscribe([(<span class="string">&quot;temperature&quot;</span>, <span class="number">0</span>), (<span class="string">&quot;humidity&quot;</span>, <span class="number">0</span>)])</span><br><span class="line">unacked_sub.append(mid)</span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span> <span class="built_in">len</span>(unacked_sub) != <span class="number">0</span>:</span><br><span class="line">    time.sleep(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">client.publish(<span class="string">&quot;demo_topic&quot;</span>, payload=<span class="string">&quot;Hello world!&quot;</span>)</span><br><span class="line">client.publish(<span class="string">&quot;temperature&quot;</span>, payload=<span class="string">&quot;24.0&quot;</span>)</span><br><span class="line">client.publish(<span class="string">&quot;humidity&quot;</span>, payload=<span class="string">&quot;65%&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Disconnection</span></span><br><span class="line">time.sleep(<span class="number">5</span>)</span><br><span class="line">client.loop_stop()</span><br><span class="line">client.disconnect()</span><br></pre></td></tr></table></figure>
-
-<p>demo_mqtt.c</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdint.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;mqttclient.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="type">void</span> <span class="title function_">on_message_receive</span><span class="params">(<span class="type">void</span>* client, <span class="type">message_data_t</span>* msg)</span></span><br><span class="line">&#123;</span><br><span class="line">    (<span class="type">void</span>) client;</span><br><span class="line">    rt_kprintf(<span class="string">&quot;-----------------------------------------------------------------------------------&quot;</span>);</span><br><span class="line">    rt_kprintf(<span class="string">&quot;%s:%d %s()...\ntopic: %s\nmessage:%s&quot;</span>, __FILE__, __LINE__, __FUNCTION__, msg-&gt;topic_name, (<span class="type">char</span>*)msg-&gt;message-&gt;payload);</span><br><span class="line">    rt_kprintf(<span class="string">&quot;-----------------------------------------------------------------------------------&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="type">int</span> <span class="title function_">mqtt_say_hello</span><span class="params">(<span class="type">mqtt_client_t</span> *client)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">mqtt_message_t</span> msg;</span><br><span class="line">    <span class="built_in">memset</span>(&amp;msg, <span class="number">0</span>, <span class="keyword">sizeof</span>(msg));</span><br><span class="line"></span><br><span class="line">    msg.qos = <span class="number">0</span>;</span><br><span class="line">    msg.payload = (<span class="type">void</span> *) <span class="string">&quot;payload to sent&quot;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> mqtt_publish(client, <span class="string">&quot;demo_topic&quot;</span>, &amp;msg);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">mqtt_demo</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">mqtt_client_t</span> *client = <span class="literal">NULL</span>;</span><br><span class="line"></span><br><span class="line">    mqtt_log_init();</span><br><span class="line"></span><br><span class="line">    client = mqtt_lease();</span><br><span class="line"></span><br><span class="line">    mqtt_set_host(client, <span class="string">&quot;192.168.88.234&quot;</span>);</span><br><span class="line">    mqtt_set_port(client, <span class="string">&quot;1883&quot;</span>);</span><br><span class="line">    mqtt_set_clean_session(client, <span class="number">1</span>);</span><br><span class="line">    mqtt_set_keep_alive_interval(client, <span class="number">10</span>);</span><br><span class="line"></span><br><span class="line">    mqtt_connect(client);</span><br><span class="line">    mqtt_subscribe(client, <span class="string">&quot;demo_topic&quot;</span>, QOS0, on_message_receive);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> (<span class="number">1</span>) &#123;</span><br><span class="line">        mqtt_say_hello(client);</span><br><span class="line">        mqtt_sleep_ms(<span class="number">4</span> * <span class="number">1000</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">MSH_CMD_EXPORT(mqtt_demo, mqtt_demo);</span><br></pre></td></tr></table></figure>
-
-<h2 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h2><p>esp8266 可以连</p>
-<p>LAN8720A 很稳定</p>
-<p>目前 w5500 各种连不上</p>
 
       
     </div>
