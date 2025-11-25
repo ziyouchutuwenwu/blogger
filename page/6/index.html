@@ -71,6 +71,68 @@
 
   
     
+    <h3 class="article-title"><a href="/2025/10/12/erl-multi-env/"><span>erlang 多环境发布</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/10/12/erl-multi-env/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-10-12T06:51:01.000Z">
+          2025-10-12
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <p><a target="_blank" rel="noopener" href="https://rebar3.org/docs/deployment/releases/">参考链接</a></p>
+<h2 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h2><h3 id="创建项目"><a href="#创建项目" class="headerlink" title="创建项目"></a>创建项目</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">rebar3 new release demo</span><br><span class="line"><span class="built_in">cd</span> demo/apps/</span><br><span class="line">rebar3 new app demo1</span><br><span class="line">rebar3 new app demo2</span><br></pre></td></tr></table></figure>
+
+<h3 id="rebar-配置"><a href="#rebar-配置" class="headerlink" title="rebar 配置"></a>rebar 配置</h3><p>demo1, demo2 等为自动启动的 application</p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">% 编译时配置</span></span><br><span class="line">&#123;erl_opts, [debug_info]&#125;.</span><br><span class="line">&#123;deps, []&#125;.</span><br><span class="line"></span><br><span class="line"><span class="comment">% 发布时配置</span></span><br><span class="line"><span class="comment">% 默认配置</span></span><br><span class="line"><span class="comment">% release 需要在这里统一配置</span></span><br><span class="line">&#123;relx, [</span><br><span class="line">    &#123;release, &#123;demo, <span class="string">&quot;0.1.0&quot;</span>&#125;, [</span><br><span class="line">        sasl,</span><br><span class="line">        demo1,</span><br><span class="line">        demo2</span><br><span class="line">    ]&#125;,</span><br><span class="line"></span><br><span class="line">    &#123;mode, dev&#125;</span><br><span class="line">]&#125;.</span><br><span class="line"></span><br><span class="line"><span class="comment">% 特定模式的配置，缺乏的从默认发布时配置里面拿</span></span><br><span class="line">&#123;profiles, [</span><br><span class="line">  &#123;dev,</span><br><span class="line">    [</span><br><span class="line">      &#123;erl_opts, [native, &#123;hipe, [verbose]&#125;, debug_info]&#125;,</span><br><span class="line">      &#123;relx, [</span><br><span class="line">        &#123;mode, dev&#125;,</span><br><span class="line">        &#123;vm_args_src,    <span class="string">&quot;config/dev/vm.args.src&quot;</span>&#125;,</span><br><span class="line">        &#123;sys_config_src, <span class="string">&quot;config/dev/sys.config.src&quot;</span>&#125;]</span><br><span class="line">      &#125;</span><br><span class="line">    ]</span><br><span class="line">  &#125;,</span><br><span class="line">  &#123;prod,</span><br><span class="line">    [</span><br><span class="line">      <span class="comment">% 编译时就需要 key 文件</span></span><br><span class="line">      <span class="comment">% &#123;erl_opts, [encrypt_debug_info]&#125;,</span></span><br><span class="line">      <span class="comment">% 反编译时才需要 key 文件</span></span><br><span class="line">      <span class="comment">% &#123;erl_opts, [debug_info,&#123;debug_info_key,&#123;des3_cbc,&quot;12345&quot;&#125;&#125;]&#125;,</span></span><br><span class="line">      &#123;erl_opts, [no_debug_info]&#125;,</span><br><span class="line">      &#123;relx, [</span><br><span class="line">        <span class="comment">% 这个参数自动设置 include_erts</span></span><br><span class="line">        &#123;mode, prod&#125;,</span><br><span class="line">        &#123;vm_args_src,    <span class="string">&quot;config/prod/vm.args.src&quot;</span>&#125;,</span><br><span class="line">        &#123;sys_config_src, <span class="string">&quot;config/prod/sys.config.src&quot;</span>&#125;]</span><br><span class="line">      &#125;</span><br><span class="line">    ]</span><br><span class="line">  &#125;,</span><br><span class="line">  &#123;test,</span><br><span class="line">    [</span><br><span class="line">      &#123;erl_opts, [&#123;native, o3&#125;]&#125;,</span><br><span class="line">      &#123;relx, [</span><br><span class="line">        &#123;dev_mode,      false&#125;,</span><br><span class="line">        &#123;include_erts,  false&#125;,</span><br><span class="line">        &#123;include_src,   false&#125;,</span><br><span class="line">        &#123;vm_args_src,    <span class="string">&quot;config/test/vm.args.src&quot;</span>&#125;,</span><br><span class="line">        &#123;sys_config_src, <span class="string">&quot;config/test/sys.config.src&quot;</span>&#125;]</span><br><span class="line">      &#125;</span><br><span class="line">    ]</span><br><span class="line">  &#125;</span><br><span class="line">]&#125;.</span><br></pre></td></tr></table></figure>
+
+<h3 id="发布"><a href="#发布" class="headerlink" title="发布"></a>发布</h3><p>生成 release 目录</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">REBAR_PROFILE=prod rebar3 release -o ~/downloads</span><br><span class="line">rebar3 as prod release -o ~/downloads</span><br></pre></td></tr></table></figure>
+
+<h3 id="打包"><a href="#打包" class="headerlink" title="打包"></a>打包</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">REBAR_PROFILE=prod rebar3 tar -o ~/downloads</span><br><span class="line">rebar3 as prod tar -o ~/downloads</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/erlang/">erlang</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
     <h3 class="article-title"><a href="/2025/10/11/ng-seo-title/"><span>angular 动态修改 title description</span></a></h3>
     
   
@@ -899,76 +961,6 @@
     <span class="post-tags">
       <i class="icon-tags"></i>
         <a href="/tags/vm/">vm</a>
-    </span>
-    
-
-    </div>
-
-    
-  </div>
-</article>
-
-
-
-  <article>
-
-  
-    
-    <h3 class="article-title"><a href="/2025/10/03/remote-desktop/"><span>远程桌面</span></a></h3>
-    
-  
-
-  <div class="article-top-meta">
-    <span class="posted-on">
-      <a href="/2025/10/03/remote-desktop/" rel="bookmark">
-        <time class="entry-date published" datetime="2025-10-03T10:39:38.000Z">
-          2025-10-03
-        </time>
-      </a>
-    </span>
-  </div>
-
-
-  
-
-  <div class="article-content">
-    <div class="entry">
-      
-        <h2 id="win-远程-linux"><a href="#win-远程-linux" class="headerlink" title="win 远程 linux"></a>win 远程 linux</h2><h3 id="rdp"><a href="#rdp" class="headerlink" title="rdp"></a>rdp</h3><p>linux 上配置，使用微软的远程工具连接</p>
-<p>以 manjaro 为例</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">&quot;Updating system...&quot;</span></span><br><span class="line"><span class="built_in">sudo</span> pacman -Syu</span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;Installing xrdp and xorgxrdp-git...&quot;</span></span><br><span class="line"><span class="built_in">sudo</span> pacman -Sy yay base-devel xorg-xserver-devel</span><br><span class="line">yay -S xrdp xorgxrdp</span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;Configuring Xwrapper...&quot;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;allowed_users=anybody&quot;</span> | <span class="built_in">sudo</span> <span class="built_in">tee</span> -a /etc/X11/Xwrapper.config</span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;Configuring .xinitrc...&quot;</span></span><br><span class="line">sed -i <span class="string">&#x27;s/^\(SESSION=$&#123;1:-xfce-session&#125;\)$/#\1 # original\nSESSION=$&#123;1:-xfce4-session&#125;/&#x27;</span> ~/.xinitrc</span><br><span class="line">sed -i <span class="string">&#x27;s/^\s*\(local dbus_args=(--sh-syntax --exit-with-session)\)$/#\1 # original\nlocal dbus_args=(--sh-syntax)/&#x27;</span> ~/.xinitrc</span><br><span class="line">sed -i <span class="string">&#x27;s/^\(exec $(get_session &quot;$1&quot;)\)$/#\1 # original\nexec $(get_session &quot;$SESSION&quot;)/&#x27;</span> ~/.xinitrc</span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;Enabling xrdp service...&quot;</span></span><br><span class="line"><span class="built_in">sudo</span> systemctl <span class="built_in">enable</span> --now xrdp.service</span><br></pre></td></tr></table></figure>
-
-<h3 id="vnc"><a href="#vnc" class="headerlink" title="vnc"></a>vnc</h3><p>windows 用 vnc 客户端</p>
-<p>安装</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> pacman -S x11vnc</span><br><span class="line"><span class="built_in">sudo</span> apt install x11vnc -y</span><br></pre></td></tr></table></figure>
-
-<p>服务</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/usr/local/lib/systemd/system/vnc.service</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">[Unit]</span></span><br><span class="line"><span class="attr">Description</span>=vnc</span><br><span class="line"><span class="attr">After</span>=multi-user.target</span><br><span class="line"></span><br><span class="line"><span class="section">[Service]</span></span><br><span class="line"><span class="attr">Type</span>=simple</span><br><span class="line"><span class="comment"># ExecStart=x11vnc -auth guess -forever -loop -noxdamage -scale 0.9x0.9 -passwd 90909090 -repeat -shared -o /var/log/x11vnc.log</span></span><br><span class="line"><span class="attr">ExecStart</span>=x11vnc -auth guess -forever -noxdamage -scale <span class="number">0.9</span>x0.<span class="number">9</span> -passwd <span class="number">90909090</span></span><br><span class="line"></span><br><span class="line"><span class="section">[Install]</span></span><br><span class="line"><span class="attr">WantedBy</span>=multi-user.target</span><br></pre></td></tr></table></figure>
-
-<p>开机启动</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl <span class="built_in">enable</span> vnc --now</span><br></pre></td></tr></table></figure>
-
-<h2 id="linux-远程-win"><a href="#linux-远程-win" class="headerlink" title="linux 远程 win"></a>linux 远程 win</h2><p>一句话</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rdesktop xx.xx.xx.xx:3389</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-
-  </div>
-
-  <div class="article-footer">
-    <div class="article-meta pull-left">
-
-    
-
-    
-    
-
-    <span class="post-tags">
-      <i class="icon-tags"></i>
-        <a href="/tags/linux/">linux</a>
     </span>
     
 

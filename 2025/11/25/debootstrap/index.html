@@ -1,0 +1,196 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8" />
+  
+  <title>debootstrap | 独钓寒江雪</title>
+
+  
+  <meta name="author" content="John Doe" />
+   
+  <meta
+    name="description"
+    content="说明用来生成 rootfs
+步骤准备debian
+1sudo apt install qemu-user-static debootstrap binfmt-support
+
+manjaro
+1sudo pacman -S qemu-user-static debootstrap qemu-user" />
+    
+  <meta name="keywords" content="linux,kernel"> 
+
+  <meta
+    id="viewport"
+    name="viewport"
+    content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+
+  
+  <meta property="og:title" content="debootstrap" />
+  
+
+  <meta property="og:site_name" content="独钓寒江雪" />
+
+  
+  <meta property="og:image" content="/favicon.ico" />
+  
+
+  <link href="/favicon.ico" rel="icon" />
+  <link
+    rel="alternate"
+    href="/atom.xml"
+    title="独钓寒江雪"
+    type="application/atom+xml" />
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css" />
+
+  <script
+    async
+    src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9313450459437229"
+    crossorigin="anonymous"></script>
+<meta name="generator" content="Hexo 8.0.0"></head>
+
+
+<body>
+<div class="blog">
+  <div class="content">
+
+    <header>
+  <div class="site-branding">
+    <h1 class="site-title">
+      <a href="/">独钓寒江雪</a>
+    </h1>
+    <p class="site-description"></p>
+  </div>
+  <nav class="site-navigation">
+    <ul>
+      
+        <li><a href="/">首页</a></li>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/tags">标签</a></li>
+      
+        <li><a href="/about">关于</a></li>
+      
+    </ul>
+  </nav>
+</header>
+
+    <main class="site-main posts-loop">
+    <article>
+
+  
+    
+    <h3 class="article-title"><span>debootstrap</span></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/11/25/debootstrap/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-11-25T00:06:21.000Z">
+          2025-11-25
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>用来生成 rootfs</p>
+<h2 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h2><h3 id="准备"><a href="#准备" class="headerlink" title="准备"></a>准备</h3><p>debian</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt install qemu-user-static debootstrap binfmt-support</span><br></pre></td></tr></table></figure>
+
+<p>manjaro</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> pacman -S qemu-user-static debootstrap qemu-user-static-binfmt</span><br></pre></td></tr></table></figure>
+
+<h3 id="创建"><a href="#创建" class="headerlink" title="创建"></a>创建</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 用 https 的源</span></span><br><span class="line"><span class="built_in">sudo</span> debootstrap --<span class="built_in">arch</span> armhf --foreign --no-check-gpg bookworm deb_fs https://mirrors.ustc.edu.cn/debian</span><br></pre></td></tr></table></figure>
+
+<h3 id="基础配置"><a href="#基础配置" class="headerlink" title="基础配置"></a>基础配置</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> <span class="built_in">cp</span> /usr/bin/qemu-arm-static ./deb_fs/usr/bin/</span><br><span class="line"></span><br><span class="line"><span class="comment"># chroot 需要手动 mount 一大堆</span></span><br><span class="line"><span class="built_in">sudo</span> systemd-nspawn -D ./deb_fs</span><br></pre></td></tr></table></figure>
+
+<p>或者</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> bwrap \</span><br><span class="line">  --<span class="built_in">bind</span> ./deb_fs / \</span><br><span class="line">  --dev /dev \</span><br><span class="line">  --dev-bind /dev/pts /dev/pts \</span><br><span class="line">  --dev-bind /dev/null /dev/null \</span><br><span class="line">  --dev-bind /dev/zero /dev/zero \</span><br><span class="line">  --dev-bind /dev/random /dev/random \</span><br><span class="line">  --dev-bind /dev/urandom /dev/urandom \</span><br><span class="line">  --proc /proc \</span><br><span class="line">  --ro-bind /sys /sys \</span><br><span class="line">  --tmpfs /tmp \</span><br><span class="line">  --setenv HOME /root \</span><br><span class="line">  --setenv PATH /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin \</span><br><span class="line">  /bin/bash</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/debootstrap/debootstrap --second-stage</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">apt install -y neovim</span><br></pre></td></tr></table></figure>
+
+<h3 id="profile"><a href="#profile" class="headerlink" title="profile"></a>profile</h3><p>&#x2F;etc&#x2F;profile.d&#x2F;path.sh</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin</span><br></pre></td></tr></table></figure>
+
+<p>&#x2F;etc&#x2F;profile.d&#x2F;ls.sh</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">alias</span> ll=<span class="string">&#x27;ls -la --color=auto&#x27;</span> 2&gt;/dev/null</span><br><span class="line"><span class="built_in">alias</span> l.=<span class="string">&#x27;ls --color=auto -d .*&#x27;</span> 2&gt;/dev/null</span><br><span class="line"><span class="built_in">alias</span> <span class="built_in">ls</span>=<span class="string">&#x27;ls --color=auto&#x27;</span> 2&gt;/dev/null</span><br></pre></td></tr></table></figure>
+
+<p>&#x2F;etc&#x2F;profile.d&#x2F;proxy.sh</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">alias</span> pon=<span class="string">&quot;export HTTP_PROXY=http://127.0.0.1:8118 HTTPS_PROXY=http://127.0.0.1:8118 ALL_PROXY=socks5://127.0.0.1:1080 NO_PROXY=localhost,127.0.0.1,10.0.2.1&quot;</span></span><br><span class="line"><span class="built_in">alias</span> poff=<span class="string">&quot;unset HTTP_PROXY HTTPS_PROXY ALL_PROXY NO_PROXY&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>&#x2F;etc&#x2F;profile.d&#x2F;python.sh</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> PYTHONPYCACHEPREFIX=/dev/null</span><br><span class="line"><span class="built_in">export</span> UV_INDEX=<span class="string">&quot;https://mirrors.aliyun.com/pypi/simple&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>~&#x2F;.bashrc</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[[ -f /etc/profile ]] &amp;&amp; <span class="built_in">source</span> /etc/profile</span><br></pre></td></tr></table></figure>
+
+<h3 id="必备工具"><a href="#必备工具" class="headerlink" title="必备工具"></a>必备工具</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">source</span> /etc/profile</span><br><span class="line">apt install -y iputils-ping net-tools ncat file</span><br></pre></td></tr></table></figure>
+
+<h2 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h2><h3 id="制作镜像"><a href="#制作镜像" class="headerlink" title="制作镜像"></a>制作镜像</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># dd if=/dev/zero of=rootfs.ext4 bs=1M count=512</span></span><br><span class="line"><span class="built_in">dd</span> <span class="keyword">if</span>=/dev/zero of=rootfs.ext4 bs=1G count=1</span><br><span class="line"><span class="built_in">sudo</span> mkfs.ext4 rootfs.ext4</span><br><span class="line"></span><br><span class="line"><span class="built_in">mkdir</span> mnt_fs</span><br><span class="line"><span class="built_in">sudo</span> mount -o loop rootfs.ext4 mnt_fs</span><br><span class="line"></span><br><span class="line"><span class="built_in">sudo</span> <span class="built_in">cp</span> -rf ./deb_fs/* ./mnt_fs/</span><br><span class="line"></span><br><span class="line"><span class="built_in">sudo</span> umount mnt_fs</span><br><span class="line"><span class="built_in">rm</span> -rf mnt_fs</span><br></pre></td></tr></table></figure>
+
+<h3 id="qemu"><a href="#qemu" class="headerlink" title="qemu"></a>qemu</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">qemu-system-arm \</span><br><span class="line">  -M vexpress-a9 \</span><br><span class="line">  -m 512M \</span><br><span class="line">  -kernel ~/downloads/linux-5.10.191/output/arch/arm/boot/zImage \</span><br><span class="line">  -dtb ~/downloads/linux-5.10.191/output/arch/arm/boot/dts/vexpress-v2p-ca9.dtb \</span><br><span class="line">  -nographic \</span><br><span class="line">  -append <span class="string">&quot;root=/dev/mmcblk0 rw console=ttyAMA0&quot;</span> \</span><br><span class="line">  -sd ~/downloads/rootfs.ext4</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/linux/">linux</a><a href="/tags/kernel/">kernel</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+  
+
+
+
+
+
+
+
+
+
+    </main>
+
+    <footer class="site-footer">
+  <p class="site-info">
+    Proudly powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and
+    Theme by <a href="https://github.com/CodeDaraW/Hacker" target="_blank">Hacker</a>
+    </br>
+    
+    &copy; 2025 John Doe
+    
+  </p>
+</footer>
+    
+    
+  </div>
+</div>
+</body>
+</html>
