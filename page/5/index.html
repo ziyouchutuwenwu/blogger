@@ -71,6 +71,134 @@
 
   
     
+    <h3 class="article-title"><a href="/2025/10/23/zfs/"><span>zfs 用法</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/10/23/zfs/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-10-23T01:52:31.000Z">
+          2025-10-23
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <p>每 1tb 的储存空间对应 1gb 的 ram</p>
+<h2 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">pool</span><br><span class="line">  虚拟设备</span><br><span class="line">    磁盘设备</span><br></pre></td></tr></table></figure>
+
+<h2 id="添加硬盘"><a href="#添加硬盘" class="headerlink" title="添加硬盘"></a>添加硬盘</h2><p>查看磁盘</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> bsdconfig</span><br></pre></td></tr></table></figure>
+
+<h2 id="pool"><a href="#pool" class="headerlink" title="pool"></a>pool</h2><p>如果创建带虚拟设备的 pool,每个虚拟设备的子设备数量需要一致</p>
+<h3 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h3><p>创建成功，会自动 mount，如果修改了 mountpoint,开机以后也会自动 mount</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>stripe</td>
+<td>1 块即可, 类似 raid0</td>
+</tr>
+<tr>
+<td>mirror</td>
+<td>至少 2 块, 允许坏掉一个硬盘，类似 raid1</td>
+</tr>
+<tr>
+<td>raid10</td>
+<td>至少 4 块</td>
+</tr>
+<tr>
+<td>raidz1</td>
+<td>至少 2+1 块，允许坏掉一个硬盘，类似 raid5</td>
+</tr>
+<tr>
+<td>raidz2</td>
+<td>至少 2+2 块，允许坏掉两个硬盘，类似 raid6</td>
+</tr>
+<tr>
+<td>raidz3</td>
+<td>至少 2+3 块，允许坏掉三个硬盘，类似 raid7</td>
+</tr>
+</tbody></table>
+<h3 id="查看-pool"><a href="#查看-pool" class="headerlink" title="查看 pool"></a>查看 pool</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">zpool list</span><br><span class="line">zpool status -v demo</span><br></pre></td></tr></table></figure>
+
+<h3 id="创建-pool"><a href="#创建-pool" class="headerlink" title="创建 pool"></a>创建 pool</h3><p>创建没有 mirror 的 pool</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">zpool create -m /mount_demo demo nvd0 nvd1 nvd2</span><br></pre></td></tr></table></figure>
+
+<p>带两组 mirror 的 pool， mirror 即为虚拟设备</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">zpool create demo mirror nvd0 nvd1 mirror nvd2 nvd3</span><br></pre></td></tr></table></figure>
+
+<p>创建 raidz 的 pool</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">zpool create demo raidz1 nvd0 nvd1 nvd2</span><br></pre></td></tr></table></figure>
+
+<h3 id="删除-pool"><a href="#删除-pool" class="headerlink" title="删除 pool"></a>删除 pool</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">zpool destroy demo</span><br></pre></td></tr></table></figure>
+
+<h2 id="虚拟设备"><a href="#虚拟设备" class="headerlink" title="虚拟设备"></a>虚拟设备</h2><h3 id="增加虚拟设备"><a href="#增加虚拟设备" class="headerlink" title="增加虚拟设备"></a>增加虚拟设备</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">zpool add demo raidz nvd3 nvd4 nvd5</span><br></pre></td></tr></table></figure>
+
+<h3 id="删除虚拟设备"><a href="#删除虚拟设备" class="headerlink" title="删除虚拟设备"></a>删除虚拟设备</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">只有<span class="built_in">log</span> device, cache device 和 mirror device 支持删除， raidz不支持删除</span><br></pre></td></tr></table></figure>
+
+<h2 id="添加-删除磁盘"><a href="#添加-删除磁盘" class="headerlink" title="添加&#x2F;删除磁盘"></a>添加&#x2F;删除磁盘</h2><h3 id="添加磁盘"><a href="#添加磁盘" class="headerlink" title="添加磁盘"></a>添加磁盘</h3><p>支持 mirror 虚拟设备和非虚拟设备的 pool</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">zpool create demo nvd0</span><br><span class="line">zpool attach demo nvd0 nvd1</span><br></pre></td></tr></table></figure>
+
+<h3 id="删除磁盘"><a href="#删除磁盘" class="headerlink" title="删除磁盘"></a>删除磁盘</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">zpool detach demo nvd1</span><br></pre></td></tr></table></figure>
+
+<h2 id="在线替换"><a href="#在线替换" class="headerlink" title="在线替换"></a>在线替换</h2><p>在线替换，支持 raidz, 新盘内不需要放东西</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">zpool replace demo nvd3 nvd4</span><br></pre></td></tr></table></figure>
+
+<h2 id="添加修改-mount-盘"><a href="#添加修改-mount-盘" class="headerlink" title="添加修改 mount 盘"></a>添加修改 mount 盘</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> zpool add demo ada2</span><br><span class="line"><span class="built_in">sudo</span> zpool remove demo ada1</span><br><span class="line"><span class="built_in">sudo</span> zpool replace demo nvd3 nvd4</span><br></pre></td></tr></table></figure>
+
+<h2 id="修改挂载点"><a href="#修改挂载点" class="headerlink" title="修改挂载点"></a>修改挂载点</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">zfs mount</span><br><span class="line">zfs umount -f /mount_demo</span><br><span class="line"><span class="built_in">mkdir</span> -p /mount_demo1</span><br><span class="line">zfs <span class="built_in">set</span> mountpoint=/mount_demo1 demo</span><br><span class="line">zfs mount</span><br></pre></td></tr></table></figure>
+
+<h2 id="快照"><a href="#快照" class="headerlink" title="快照"></a>快照</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">zfs snapshot -r demo@2019-1-6</span><br><span class="line">zfs list -t snapshot</span><br><span class="line">zfs rollback -r demo@2019-1-6</span><br><span class="line">zfs destroy demo@2019-1-6</span><br></pre></td></tr></table></figure>
+
+<h2 id="备份恢复"><a href="#备份恢复" class="headerlink" title="备份恢复"></a>备份恢复</h2><h3 id="到文件"><a href="#到文件" class="headerlink" title="到文件"></a>到文件</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">zfs send demo@aaa &gt; xxxx</span><br></pre></td></tr></table></figure>
+
+<h3 id="本机"><a href="#本机" class="headerlink" title="本机"></a>本机</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">zfs send demo1@aaa | zfs recv demo2@bbb</span><br></pre></td></tr></table></figure>
+
+<h3 id="远程"><a href="#远程" class="headerlink" title="远程"></a>远程</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">nc -w 120 -l 8023 | zfs receive -F demo2</span><br><span class="line">zfs send demo1@aaa | nc -w 120 127.0.0.1 8023</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/freebsd/">freebsd</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
     <h3 class="article-title"><a href="/2025/10/22/freebsd-jail/"><span>freebsd 下 jail 用法</span></a></h3>
     
   
@@ -691,83 +819,6 @@
     <span class="post-tags">
       <i class="icon-tags"></i>
         <a href="/tags/angular/">angular</a>
-    </span>
-    
-
-    </div>
-
-    
-  </div>
-</article>
-
-
-
-  <article>
-
-  
-    
-    <h3 class="article-title"><a href="/2025/10/13/erl-hot-upgrade/"><span>erlang 热更新</span></a></h3>
-    
-  
-
-  <div class="article-top-meta">
-    <span class="posted-on">
-      <a href="/2025/10/13/erl-hot-upgrade/" rel="bookmark">
-        <time class="entry-date published" datetime="2025-10-13T06:28:19.000Z">
-          2025-10-13
-        </time>
-      </a>
-    </span>
-  </div>
-
-
-  
-
-  <div class="article-content">
-    <div class="entry">
-      
-        <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>依赖于 rebar3 的 appup 插件</p>
-<h2 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h2><h3 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h3><p>创建项目</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rebar3 new release demo</span><br></pre></td></tr></table></figure>
-
-<p>rebar.config</p>
-<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">% 编译时配置</span></span><br><span class="line">&#123;erl_opts, [debug_info]&#125;.</span><br><span class="line">&#123;deps, []&#125;.</span><br><span class="line"></span><br><span class="line"><span class="comment">% 热更新的插件</span></span><br><span class="line">&#123;plugins, [rebar3_appup_plugin]&#125;.</span><br><span class="line"></span><br><span class="line">&#123;provider_hooks, [</span><br><span class="line">  &#123;pre, [&#123;tar, &#123;appup, tar&#125;&#125;]&#125;,</span><br><span class="line">  &#123;post, [</span><br><span class="line">    &#123;compile, &#123;appup, compile&#125;&#125;,</span><br><span class="line">    &#123;clean, &#123;appup, clean&#125;&#125;]&#125;</span><br><span class="line">]&#125;.</span><br><span class="line"></span><br><span class="line"><span class="comment">% 发布时配置</span></span><br><span class="line"><span class="comment">% 默认模式的配置</span></span><br><span class="line">&#123;relx, [</span><br><span class="line">    &#123;release, &#123;demo, <span class="string">&quot;1.0.0&quot;</span>&#125;, [</span><br><span class="line">        demo,</span><br><span class="line">        sasl</span><br><span class="line">    ]&#125;,</span><br><span class="line"></span><br><span class="line">    &#123;mode, dev&#125;,</span><br><span class="line">    &#123;sys_config, <span class="string">&quot;./config/sys.config&quot;</span>&#125;,</span><br><span class="line">    &#123;vm_args, <span class="string">&quot;./config/vm.args&quot;</span>&#125;</span><br><span class="line">]&#125;.</span><br><span class="line"></span><br><span class="line"><span class="comment">% prod 模式下的特殊配置，其它的配置，从上面的默认模式里面拿</span></span><br><span class="line">&#123;profiles, [</span><br><span class="line">    &#123;prod, [</span><br><span class="line">        &#123;relx, [</span><br><span class="line">            &#123;mode, prod&#125;</span><br><span class="line">        ]&#125;</span><br><span class="line">    ]&#125;</span><br><span class="line">]&#125;.</span><br></pre></td></tr></table></figure>
-
-<p>初始版本</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">rebar3 as prod release</span><br><span class="line">rebar3 as prod tar</span><br></pre></td></tr></table></figure>
-
-<p>修改版本号</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">rebar.config 里面的 release 版本号</span><br><span class="line">多个 .app.src 里面的 vsn 版本号</span><br></pre></td></tr></table></figure>
-
-<p>构建新版本</p>
-<p>原来 build 过的老的 release 不能删除，这个升级插件至少需要两个版本的 release</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">rebar3 as prod release</span><br><span class="line"></span><br><span class="line"><span class="comment"># 生成 appup 文件</span></span><br><span class="line">rebar3 as prod appup generate</span><br><span class="line">rebar3 as prod relup -n demo -v 2.0.0</span><br><span class="line">rebar3 as prod tar</span><br></pre></td></tr></table></figure>
-
-<h3 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h3><p>1.0.0 的压缩包先解压，然后运行</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bin/demo console</span><br></pre></td></tr></table></figure>
-
-<p>一定要注意，新版本的存放目录</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cp</span> ../demo-2.0.0.tar.gz ./releases/</span><br><span class="line">bin/demo upgrade 2.0.0</span><br><span class="line">bin/demo versions</span><br><span class="line">bin/demo attach</span><br><span class="line">application:which_applications().</span><br></pre></td></tr></table></figure>
-
-<p>降级</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">bin/demo downgrade 1.0.0</span><br><span class="line">bin/demo uninstall 2.0.0</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-
-  </div>
-
-  <div class="article-footer">
-    <div class="article-meta pull-left">
-
-    
-
-    
-    
-
-    <span class="post-tags">
-      <i class="icon-tags"></i>
-        <a href="/tags/erlang/">erlang</a>
     </span>
     
 
