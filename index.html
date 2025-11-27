@@ -71,6 +71,122 @@
 
   
     
+    <h3 class="article-title"><a href="/2025/11/27/elixir-protocol/"><span>elixir 之 protocol</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/11/27/elixir-protocol/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-11-27T03:06:50.000Z">
+          2025-11-27
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>为不同的数据类型定义通用的行为</p>
+<h2 id="场景"><a href="#场景" class="headerlink" title="场景"></a>场景</h2><p>给一些类型增加功能，而不修改原有模块</p>
+<h2 id="用法"><a href="#用法" class="headerlink" title="用法"></a>用法</h2><figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">defmodule</span> <span class="title">DemoStruct1</span></span> <span class="keyword">do</span></span><br><span class="line">  <span class="keyword">defstruct</span> [<span class="symbol">:aaa</span>, <span class="symbol">:bbb</span>]</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">new</span></span>(aaa, bbb) <span class="keyword">do</span></span><br><span class="line">    %<span class="title class_">DemoStruct1</span>&#123;<span class="symbol">aaa:</span> aaa, <span class="symbol">bbb:</span> bbb&#125;</span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">defmodule</span> <span class="title">DemoStruct2</span></span> <span class="keyword">do</span></span><br><span class="line">  <span class="keyword">defstruct</span> [<span class="symbol">:ccc</span>, <span class="symbol">:ddd</span>]</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">new</span></span>(ccc, ddd) <span class="keyword">do</span></span><br><span class="line">    %<span class="title class_">DemoStruct2</span>&#123;<span class="symbol">ccc:</span> ccc, <span class="symbol">ddd:</span> ddd&#125;</span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">defprotocol</span> <span class="title">DemoProtocol</span></span> <span class="keyword">do</span></span><br><span class="line">  <span class="variable">@fallback_to_any</span> <span class="literal">true</span></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">xxx</span></span>(struct_obj, source, dest)</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">defimpl</span> <span class="title">DemoProtocol</span></span>, <span class="symbol">for:</span> <span class="title class_">DemoStruct1</span> <span class="keyword">do</span></span><br><span class="line">  <span class="keyword">require</span> <span class="title class_">Logger</span></span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">xxx</span></span>(%<span class="title class_">DemoStruct1</span>&#123;<span class="symbol">aaa:</span> aaa, <span class="symbol">bbb:</span> bbb&#125;, source, dest) <span class="keyword">do</span></span><br><span class="line">    info = <span class="string">&quot;第一个 <span class="subst">#&#123;inspect(aaa)&#125;</span> <span class="subst">#&#123;inspect(bbb)&#125;</span> <span class="subst">#&#123;inspect(source)&#125;</span> <span class="subst">#&#123;inspect(dest)&#125;</span>&quot;</span></span><br><span class="line">    <span class="title class_">Logger</span>.debug(info)</span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">defimpl</span> <span class="title">DemoProtocol</span></span>, <span class="symbol">for:</span> <span class="title class_">DemoStruct2</span> <span class="keyword">do</span></span><br><span class="line">  <span class="keyword">require</span> <span class="title class_">Logger</span></span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">xxx</span></span>(%<span class="title class_">DemoStruct2</span>&#123;<span class="symbol">ccc:</span> ccc, <span class="symbol">ddd:</span> ddd&#125;, source, dest) <span class="keyword">do</span></span><br><span class="line">    info = <span class="string">&quot;另外一个 <span class="subst">#&#123;inspect(ccc)&#125;</span> <span class="subst">#&#123;inspect(ddd)&#125;</span> <span class="subst">#&#123;inspect(source)&#125;</span> <span class="subst">#&#123;inspect(dest)&#125;</span>&quot;</span></span><br><span class="line">    <span class="title class_">Logger</span>.debug(info)</span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">defimpl</span> <span class="title">DemoProtocol</span></span>, <span class="symbol">for:</span> <span class="title class_">Any</span> <span class="keyword">do</span></span><br><span class="line">  <span class="keyword">require</span> <span class="title class_">Logger</span></span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">xxx</span></span>(object, source, dest) <span class="keyword">do</span></span><br><span class="line">    info = <span class="string">&quot;any 类型 <span class="subst">#&#123;inspect(object)&#125;</span> <span class="subst">#&#123;inspect(source)&#125;</span> <span class="subst">#&#123;inspect(dest)&#125;</span>&quot;</span></span><br><span class="line">    <span class="title class_">Logger</span>.debug(info)</span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">defmodule</span> <span class="title">Demo</span></span> <span class="keyword">do</span></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">demo</span></span> <span class="keyword">do</span></span><br><span class="line">    obj1 = <span class="title class_">DemoStruct1</span>.new(<span class="number">111</span>, <span class="number">222</span>)</span><br><span class="line">    <span class="title class_">DemoProtocol</span>.xxx(obj1, <span class="string">&quot;aaaaaa&quot;</span>, <span class="string">&quot;bbbbbbbb&quot;</span>)</span><br><span class="line"></span><br><span class="line">    obj2 = <span class="title class_">DemoStruct2</span>.new(<span class="number">333</span>, <span class="number">444</span>)</span><br><span class="line">    <span class="title class_">DemoProtocol</span>.xxx(obj2, <span class="string">&quot;yyyyyyyyy&quot;</span>, <span class="string">&quot;zzzzzzzzzzzz&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="title class_">DemoProtocol</span>.xxx(<span class="number">111</span>, <span class="string">&quot;11111&quot;</span>, <span class="string">&quot;22222&quot;</span>)</span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/elixir/">elixir</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
+    <h3 class="article-title"><a href="/2025/11/27/elixir-behavior/"><span>elixir 之 behavior</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/11/27/elixir-behavior/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-11-27T03:06:44.000Z">
+          2025-11-27
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>类似面向对象的接口</p>
+<h2 id="例子"><a href="#例子" class="headerlink" title="例子"></a>例子</h2><figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">defmodule</span> <span class="title">Demo</span></span> <span class="keyword">do</span></span><br><span class="line">  <span class="class"><span class="keyword">defmodule</span> <span class="title">IDemoBehaviour</span></span> <span class="keyword">do</span></span><br><span class="line">    <span class="variable">@callback</span> say_hello(name :: <span class="title class_">String</span>.<span class="title class_">Chars</span>.t()) :: atom()</span><br><span class="line">    <span class="variable">@callback</span> say_bye(name :: <span class="title class_">String</span>.<span class="title class_">Chars</span>.t()) :: atom()</span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">defmodule</span> <span class="title">Demo1</span></span> <span class="keyword">do</span></span><br><span class="line">  <span class="variable">@behaviour</span> <span class="title class_">Demo</span>.<span class="title class_">IDemoBehaviour</span></span><br><span class="line">  <span class="keyword">require</span> <span class="title class_">Logger</span></span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">say_hello</span></span>(name) <span class="keyword">do</span></span><br><span class="line">    <span class="title class_">Logger</span>.debug(<span class="string">&quot;say_hello in demo1 &quot;</span> &lt;&gt; name)</span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">say_bye</span></span>(name) <span class="keyword">do</span></span><br><span class="line">    <span class="title class_">Logger</span>.debug(<span class="string">&quot;say_bye in demo1 &quot;</span> &lt;&gt; name)</span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">defmodule</span> <span class="title">Demo2</span></span> <span class="keyword">do</span></span><br><span class="line">  <span class="variable">@behaviour</span> <span class="title class_">Demo</span>.<span class="title class_">IDemoBehaviour</span></span><br><span class="line">  <span class="keyword">require</span> <span class="title class_">Logger</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># @impl true 主要用于静态分析器</span></span><br><span class="line">  <span class="comment"># 其修饰的方法必须在 behaviour 里面存在，否则会警告</span></span><br><span class="line">  <span class="variable">@impl</span> <span class="literal">true</span></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">say_hello</span></span>(name) <span class="keyword">do</span></span><br><span class="line">    <span class="title class_">Logger</span>.debug<span class="string">&quot;say_hello in demo2 &quot;</span> &lt;&gt; name)</span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># 一个方法用 @impl 修饰了，其它的也必须用 @impl 修饰，否则会警告</span></span><br><span class="line">  <span class="variable">@impl</span> <span class="title class_">Demo</span>.<span class="title class_">IDemoBehaviour</span></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">say_bye</span></span>(name) <span class="keyword">do</span></span><br><span class="line">    <span class="title class_">Logger</span>.debug(<span class="string">&quot;say_bye in demo2 &quot;</span> &lt;&gt; name)</span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
+<p>测试</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="title class_">Demo1</span>.say_hello(<span class="string">&quot;root&quot;</span>)</span><br><span class="line"><span class="title class_">Demo1</span>.say_bye(<span class="string">&quot;root&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="title class_">Demo2</span>.say_hello(<span class="string">&quot;root&quot;</span>)</span><br><span class="line"><span class="title class_">Demo2</span>.say_bye(<span class="string">&quot;root&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/elixir/">elixir</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
     <h3 class="article-title"><a href="/2025/11/26/elixir-callback/"><span>elixir 通过函数回调</span></a></h3>
     
   
@@ -691,151 +807,6 @@
     <span class="post-tags">
       <i class="icon-tags"></i>
         <a href="/tags/linux/">linux</a><a href="/tags/kernel/">kernel</a><a href="/tags/uboot/">uboot</a>
-    </span>
-    
-
-    </div>
-
-    
-  </div>
-</article>
-
-
-
-  <article>
-
-  
-    
-    <h3 class="article-title"><a href="/2025/11/17/rt-smart/"><span>rt-smart</span></a></h3>
-    
-  
-
-  <div class="article-top-meta">
-    <span class="posted-on">
-      <a href="/2025/11/17/rt-smart/" rel="bookmark">
-        <time class="entry-date published" datetime="2025-11-17T08:11:48.000Z">
-          2025-11-17
-        </time>
-      </a>
-    </span>
-  </div>
-
-
-  
-
-  <div class="article-content">
-    <div class="entry">
-      
-        <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>整理流程很像 linux, 先 load 内核，再加载 rootfs</p>
-<h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><p>以 qemu-virt64-aarch64 为例</p>
-<h3 id="用户态"><a href="#用户态" class="headerlink" title="用户态"></a>用户态</h3><p>工具链需要通过编译用户态程序才能导出，有点奇怪</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> --depth 1 https://github.com/RT-Thread/userapps.git</span><br><span class="line"><span class="built_in">cd</span> userapps; <span class="built_in">source</span> env.sh</span><br><span class="line"><span class="built_in">cd</span> apps</span><br></pre></td></tr></table></figure>
-
-<p>下载工具链</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xmake config --<span class="built_in">arch</span>=aarch64 -y</span><br></pre></td></tr></table></figure>
-
-<p>导出 toolchain 需要先编译</p>
-<p>每次修改完应用程序，都需要 xmake 一下</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xmake</span><br></pre></td></tr></table></figure>
-
-<p>toolchain 在 <code>apps/build/packages</code> 下</p>
-<p>sdk 在<code>apps/build/sdk</code> 下</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xmake smart-rootfs --<span class="built_in">export</span>=all</span><br></pre></td></tr></table></figure>
-
-<p>生成 rootfs，执行以后，在 <code>apps/build/</code> 下</p>
-<p>如果需要把 zig 编译的程序放进去，可以放在这个里面, 实际测试，运行会崩溃</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xmake smart-rootfs</span><br></pre></td></tr></table></figure>
-
-<p>生成磁盘镜像</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xmake smart-image -f ext4</span><br></pre></td></tr></table></figure>
-
-<h3 id="内核"><a href="#内核" class="headerlink" title="内核"></a>内核</h3><p>toolchain 在 <code>userapps/apps/build/packages</code> 里面，复制出来</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> RTT_CC=<span class="string">&quot;gcc&quot;</span></span><br><span class="line"><span class="built_in">export</span> RTT_EXEC_PATH=<span class="string">&quot;./toolchain/bin/&quot;</span></span><br><span class="line"><span class="built_in">export</span> RTT_CC_PREFIX=<span class="string">&quot;aarch64-linux-musleabi-&quot;</span></span><br><span class="line"><span class="built_in">export</span> PATH=<span class="string">&quot;<span class="variable">$RTT_EXEC_PATH</span>:<span class="variable">$PATH</span>&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p>编译内核</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> --depth 1 https://github.com/RT-Thread/rt-thread</span><br><span class="line"><span class="built_in">cd</span> rt-thread/bsp/qemu-virt64-aarch64/</span><br><span class="line">scons --menuconfig</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">RT-Thread Kernel ---&gt;</span><br><span class="line">  [*] Enable RT-Thread Smart (microkernel on kernel/userland)</span><br><span class="line"></span><br><span class="line">RT-Thread online packages  ---&gt;</span><br><span class="line">  system packages  ---&gt;</span><br><span class="line">    [*] lwext4: an excellent choice of ext2/3/4 filesystem <span class="keyword">for</span> microcontrol</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">source</span> ~/.env/env.sh</span><br><span class="line">pkgs --update</span><br><span class="line"></span><br><span class="line">scons -c; scons</span><br><span class="line"><span class="comment"># scons --dist</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="运行"><a href="#运行" class="headerlink" title="运行"></a>运行</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cp</span> ext4.img ../../../rt-thread/bsp/qemu-virt64-aarch64/</span><br></pre></td></tr></table></figure>
-
-<p>修改 qemu.sh 里面的 sd.bin 为 ext4.img</p>
-<p>参考<a target="_blank" rel="noopener" href="https://github.com/RT-Thread/userapps">这里</a>最后生成 prebuilt 的部分里面的 run.sh</p>
-
-      
-    </div>
-
-  </div>
-
-  <div class="article-footer">
-    <div class="article-meta pull-left">
-
-    
-
-    
-    
-
-    <span class="post-tags">
-      <i class="icon-tags"></i>
-        <a href="/tags/stm32/">stm32</a><a href="/tags/rt-thread/">rt-thread</a>
-    </span>
-    
-
-    </div>
-
-    
-  </div>
-</article>
-
-
-
-  <article>
-
-  
-    
-    <h3 class="article-title"><a href="/2025/11/16/rtt-stm32-u8g/"><span>rt-thread 下，配置 stm32 的 u8g</span></a></h3>
-    
-  
-
-  <div class="article-top-meta">
-    <span class="posted-on">
-      <a href="/2025/11/16/rtt-stm32-u8g/" rel="bookmark">
-        <time class="entry-date published" datetime="2025-11-16T01:26:39.000Z">
-          2025-11-16
-        </time>
-      </a>
-    </span>
-  </div>
-
-
-  
-
-  <div class="article-content">
-    <div class="entry">
-      
-        <h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><h3 id="menuconfig"><a href="#menuconfig" class="headerlink" title="menuconfig"></a>menuconfig</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">RT-Thread online packages -&gt;</span><br><span class="line">  peripheral libraries and drivers ---&gt;</span><br><span class="line">    U8G2: a monochrome graphic library ---&gt;</span><br><span class="line">      Version (c-latest)</span><br></pre></td></tr></table></figure>
-
-<p>字体选用 <code>u8g2_font_wqy12_t_gb2312</code> 可以完整显示中文</p>
-<h3 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">u8g2_SetFont(&amp;u8g2, u8g2_font_wqy12_t_gb2312);</span><br><span class="line">u8g2_DrawUTF8(&amp;u8g2, <span class="number">1</span>, <span class="number">18</span>, <span class="string">&quot;我拿起那40米的大砍刀&quot;</span>);</span><br><span class="line">u8g2_DrawUTF8(&amp;u8g2, <span class="number">5</span>, <span class="number">40</span>, <span class="string">&quot;削你那15米的铅笔&quot;</span>);</span><br><span class="line">u8g2_SendBuffer(&amp;u8g2);</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-
-  </div>
-
-  <div class="article-footer">
-    <div class="article-meta pull-left">
-
-    
-
-    
-    
-
-    <span class="post-tags">
-      <i class="icon-tags"></i>
-        <a href="/tags/stm32/">stm32</a><a href="/tags/rt-thread/">rt-thread</a>
     </span>
     
 

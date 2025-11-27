@@ -71,6 +71,151 @@
 
   
     
+    <h3 class="article-title"><a href="/2025/11/17/rt-smart/"><span>rt-smart</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/11/17/rt-smart/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-11-17T08:11:48.000Z">
+          2025-11-17
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>整理流程很像 linux, 先 load 内核，再加载 rootfs</p>
+<h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><p>以 qemu-virt64-aarch64 为例</p>
+<h3 id="用户态"><a href="#用户态" class="headerlink" title="用户态"></a>用户态</h3><p>工具链需要通过编译用户态程序才能导出，有点奇怪</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> --depth 1 https://github.com/RT-Thread/userapps.git</span><br><span class="line"><span class="built_in">cd</span> userapps; <span class="built_in">source</span> env.sh</span><br><span class="line"><span class="built_in">cd</span> apps</span><br></pre></td></tr></table></figure>
+
+<p>下载工具链</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xmake config --<span class="built_in">arch</span>=aarch64 -y</span><br></pre></td></tr></table></figure>
+
+<p>导出 toolchain 需要先编译</p>
+<p>每次修改完应用程序，都需要 xmake 一下</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xmake</span><br></pre></td></tr></table></figure>
+
+<p>toolchain 在 <code>apps/build/packages</code> 下</p>
+<p>sdk 在<code>apps/build/sdk</code> 下</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xmake smart-rootfs --<span class="built_in">export</span>=all</span><br></pre></td></tr></table></figure>
+
+<p>生成 rootfs，执行以后，在 <code>apps/build/</code> 下</p>
+<p>如果需要把 zig 编译的程序放进去，可以放在这个里面, 实际测试，运行会崩溃</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xmake smart-rootfs</span><br></pre></td></tr></table></figure>
+
+<p>生成磁盘镜像</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xmake smart-image -f ext4</span><br></pre></td></tr></table></figure>
+
+<h3 id="内核"><a href="#内核" class="headerlink" title="内核"></a>内核</h3><p>toolchain 在 <code>userapps/apps/build/packages</code> 里面，复制出来</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> RTT_CC=<span class="string">&quot;gcc&quot;</span></span><br><span class="line"><span class="built_in">export</span> RTT_EXEC_PATH=<span class="string">&quot;./toolchain/bin/&quot;</span></span><br><span class="line"><span class="built_in">export</span> RTT_CC_PREFIX=<span class="string">&quot;aarch64-linux-musleabi-&quot;</span></span><br><span class="line"><span class="built_in">export</span> PATH=<span class="string">&quot;<span class="variable">$RTT_EXEC_PATH</span>:<span class="variable">$PATH</span>&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>编译内核</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> --depth 1 https://github.com/RT-Thread/rt-thread</span><br><span class="line"><span class="built_in">cd</span> rt-thread/bsp/qemu-virt64-aarch64/</span><br><span class="line">scons --menuconfig</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">RT-Thread Kernel ---&gt;</span><br><span class="line">  [*] Enable RT-Thread Smart (microkernel on kernel/userland)</span><br><span class="line"></span><br><span class="line">RT-Thread online packages  ---&gt;</span><br><span class="line">  system packages  ---&gt;</span><br><span class="line">    [*] lwext4: an excellent choice of ext2/3/4 filesystem <span class="keyword">for</span> microcontrol</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">source</span> ~/.env/env.sh</span><br><span class="line">pkgs --update</span><br><span class="line"></span><br><span class="line">scons -c; scons</span><br><span class="line"><span class="comment"># scons --dist</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="运行"><a href="#运行" class="headerlink" title="运行"></a>运行</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cp</span> ext4.img ../../../rt-thread/bsp/qemu-virt64-aarch64/</span><br></pre></td></tr></table></figure>
+
+<p>修改 qemu.sh 里面的 sd.bin 为 ext4.img</p>
+<p>参考<a target="_blank" rel="noopener" href="https://github.com/RT-Thread/userapps">这里</a>最后生成 prebuilt 的部分里面的 run.sh</p>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/stm32/">stm32</a><a href="/tags/rt-thread/">rt-thread</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
+    <h3 class="article-title"><a href="/2025/11/16/rtt-stm32-u8g/"><span>rt-thread 下，配置 stm32 的 u8g</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/11/16/rtt-stm32-u8g/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-11-16T01:26:39.000Z">
+          2025-11-16
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><h3 id="menuconfig"><a href="#menuconfig" class="headerlink" title="menuconfig"></a>menuconfig</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">RT-Thread online packages -&gt;</span><br><span class="line">  peripheral libraries and drivers ---&gt;</span><br><span class="line">    U8G2: a monochrome graphic library ---&gt;</span><br><span class="line">      Version (c-latest)</span><br></pre></td></tr></table></figure>
+
+<p>字体选用 <code>u8g2_font_wqy12_t_gb2312</code> 可以完整显示中文</p>
+<h3 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">u8g2_SetFont(&amp;u8g2, u8g2_font_wqy12_t_gb2312);</span><br><span class="line">u8g2_DrawUTF8(&amp;u8g2, <span class="number">1</span>, <span class="number">18</span>, <span class="string">&quot;我拿起那40米的大砍刀&quot;</span>);</span><br><span class="line">u8g2_DrawUTF8(&amp;u8g2, <span class="number">5</span>, <span class="number">40</span>, <span class="string">&quot;削你那15米的铅笔&quot;</span>);</span><br><span class="line">u8g2_SendBuffer(&amp;u8g2);</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/stm32/">stm32</a><a href="/tags/rt-thread/">rt-thread</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
     <h3 class="article-title"><a href="/2025/11/15/rtt-stm32-sdcard/"><span>rt-thread 下，配置 stm32 的 sd 卡</span></a></h3>
     
   
@@ -545,144 +690,6 @@
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;fal.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;dfs_fs.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;rtdbg.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">[I/FAL] ==================== FAL partition table ====================</span></span><br><span class="line"><span class="comment">[I/FAL] | name       | flash_dev |   offset   |    length  |</span></span><br><span class="line"><span class="comment">[I/FAL] -------------------------------------------------------------</span></span><br><span class="line"><span class="comment">[I/FAL] | filesystem | W25Q128   | 0x00000000 | 0x01000000 |</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> FS_PARTITION_NAME <span class="string">&quot;filesystem&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> FS_DEVICE_NAME    FS_PARTITION_NAME</span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">w25q128_lfs_demo</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    fal_init();</span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">rt_device</span>* <span class="title">mtd_dev</span> =</span> RT_NULL;</span><br><span class="line">    mtd_dev = fal_mtd_nor_device_create(FS_PARTITION_NAME);</span><br><span class="line">    <span class="keyword">if</span> ( !mtd_dev )&#123;</span><br><span class="line">        LOG_E(<span class="string">&quot;Can&#x27;t create a mtd device on &#x27;%s&#x27; partition.&quot;</span>, FS_PARTITION_NAME);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="comment">// 以防万一，先unmount</span></span><br><span class="line">        dfs_unmount(<span class="string">&quot;/&quot;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (dfs_mount(FS_DEVICE_NAME, <span class="string">&quot;/&quot;</span>, <span class="string">&quot;lfs&quot;</span>, <span class="number">0</span>, <span class="number">0</span>) == <span class="number">0</span>)&#123;</span><br><span class="line">            LOG_I(<span class="string">&quot;Filesystem initialized!&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span>&#123;</span><br><span class="line">            <span class="comment">// mkfs -t lfs filesystem</span></span><br><span class="line">            dfs_mkfs(<span class="string">&quot;lfs&quot;</span>, FS_DEVICE_NAME);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (dfs_mount(FS_DEVICE_NAME, <span class="string">&quot;/&quot;</span>, <span class="string">&quot;lfs&quot;</span>, <span class="number">0</span>, <span class="number">0</span>) == <span class="number">0</span>)&#123;</span><br><span class="line">                LOG_I(<span class="string">&quot;Filesystem initialized!&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">else</span>&#123;</span><br><span class="line">                LOG_E(<span class="string">&quot;Failed to initialize filesystem!&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> RT_EOK;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">MSH_CMD_EXPORT(w25q128_lfs_demo, w25q128_lfs_demo);</span><br></pre></td></tr></table></figure>
 
 <h2 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h2><p>demo 代码里面的<code>dfs_mount</code>和<code>dfs_mkfs</code>的参数，DEVICE_NAME, lfs 和 elm 是不一样的</p>
-
-      
-    </div>
-
-  </div>
-
-  <div class="article-footer">
-    <div class="article-meta pull-left">
-
-    
-
-    
-    
-
-    <span class="post-tags">
-      <i class="icon-tags"></i>
-        <a href="/tags/stm32/">stm32</a><a href="/tags/rt-thread/">rt-thread</a>
-    </span>
-    
-
-    </div>
-
-    
-  </div>
-</article>
-
-
-
-  <article>
-
-  
-    
-    <h3 class="article-title"><a href="/2025/11/08/rtt-stm32-elmfs/"><span>rt-thread 下，配置 stm32 的 elmfs</span></a></h3>
-    
-  
-
-  <div class="article-top-meta">
-    <span class="posted-on">
-      <a href="/2025/11/08/rtt-stm32-elmfs/" rel="bookmark">
-        <time class="entry-date published" datetime="2025-11-08T00:52:39.000Z">
-          2025-11-08
-        </time>
-      </a>
-    </span>
-  </div>
-
-
-  
-
-  <div class="article-content">
-    <div class="entry">
-      
-        <p>elm 文件系统</p>
-<h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>外挂 flash 上的 elm 文件系统</p>
-<p>参考的 <a target="_blank" rel="noopener" href="https://www.rt-thread.org/document/site/application-note/components/dfs/an0012-dfs/">这里</a></p>
-<h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><h3 id="准备"><a href="#准备" class="headerlink" title="准备"></a>准备</h3><p>先按照外挂 flash 的配置配置好</p>
-<h3 id="menuconfig"><a href="#menuconfig" class="headerlink" title="menuconfig"></a>menuconfig</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">RT-Thread Components &gt; Device virtual file system  ---&gt;</span><br><span class="line">  -*- Using device virtual file system</span><br><span class="line">  [*] Using working directory</span><br><span class="line">  (2) The maximal number of mounted file system</span><br><span class="line">  (2) The maximal number of file system <span class="built_in">type</span></span><br><span class="line">  (16) The maximal number of opened files</span><br><span class="line">  [*] Enable elm-chan fatfs</span><br><span class="line">    elm-chan<span class="string">&#x27;s FatFs, Generic FAT Filesystem Module  ---&gt;</span></span><br><span class="line"><span class="string">      Support long file name (3: LFN with dynamic LFN working buffer on the heap)  ---&gt;</span></span><br><span class="line"><span class="string">        (X) 3: LFN with dynamic LFN working buffer on the heap</span></span><br><span class="line"><span class="string">      (4096) Maximum sector size to be handled.</span></span><br><span class="line"><span class="string">      [*] Enable sector erase feature</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">RT-Thread Components &gt; POSIX layer and C standard library</span></span><br><span class="line"><span class="string">  [*] Enable libc APIs from toolchain</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><p>w25q128_elmfs_demo.c</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;fal.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;dfs_fs.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;rtdbg.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">[I/FAL] ==================== FAL partition table ====================</span></span><br><span class="line"><span class="comment">[I/FAL] | name       | flash_dev |   offset   |    length  |</span></span><br><span class="line"><span class="comment">[I/FAL] -------------------------------------------------------------</span></span><br><span class="line"><span class="comment">[I/FAL] | filesystem | W25Q128   | 0x00000000 | 0x01000000 |</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> FS_PARTITION_NAME <span class="string">&quot;filesystem&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> FS_DEVICE_NAME    <span class="string">&quot;W25Q128&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">w25q128_elmfs_demo</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    fal_init();</span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">rt_device</span>* <span class="title">mtd_dev</span> =</span> RT_NULL;</span><br><span class="line">    mtd_dev = fal_mtd_nor_device_create(FS_PARTITION_NAME);</span><br><span class="line">    <span class="keyword">if</span> ( !mtd_dev )&#123;</span><br><span class="line">        LOG_E(<span class="string">&quot;Can&#x27;t create a mtd device on &#x27;%s&#x27; partition.&quot;</span>, FS_PARTITION_NAME);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="comment">// 以防万一，先unmount</span></span><br><span class="line">        dfs_unmount(<span class="string">&quot;/&quot;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (dfs_mount(FS_DEVICE_NAME, <span class="string">&quot;/&quot;</span>, <span class="string">&quot;elm&quot;</span>, <span class="number">0</span>, <span class="number">0</span>) == <span class="number">0</span>)&#123;</span><br><span class="line">            LOG_I(<span class="string">&quot;Filesystem initialized!&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span>&#123;</span><br><span class="line">            <span class="comment">// mkfs -t elm W25Q128</span></span><br><span class="line">            dfs_mkfs(<span class="string">&quot;elm&quot;</span>, FS_DEVICE_NAME);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (dfs_mount(FS_DEVICE_NAME, <span class="string">&quot;/&quot;</span>, <span class="string">&quot;elm&quot;</span>, <span class="number">0</span>, <span class="number">0</span>) == <span class="number">0</span>)&#123;</span><br><span class="line">                LOG_I(<span class="string">&quot;Filesystem initialized!&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">else</span>&#123;</span><br><span class="line">                LOG_E(<span class="string">&quot;Failed to initialize filesystem!&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> RT_EOK;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">MSH_CMD_EXPORT(w25q128_elmfs_demo, w25q128_elmfs_demo);</span><br></pre></td></tr></table></figure>
-
-<h2 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h2><p>demo 代码里面的 <code>dfs_mount</code> 和 <code>dfs_mkfs</code> 的参数，DEVICE_NAME, lfs 和 elm 是不一样的</p>
-<h2 id="建议"><a href="#建议" class="headerlink" title="建议"></a>建议</h2><p>4096 扇区，挂载成 FAT，要格式化成功，至少要 800KB 以上。且还要修改格式化参数。</p>
-<p>所以建议 4MB 以下的 FLASH 不要用 FAT，用 littlefs</p>
-
-      
-    </div>
-
-  </div>
-
-  <div class="article-footer">
-    <div class="article-meta pull-left">
-
-    
-
-    
-    
-
-    <span class="post-tags">
-      <i class="icon-tags"></i>
-        <a href="/tags/stm32/">stm32</a><a href="/tags/rt-thread/">rt-thread</a>
-    </span>
-    
-
-    </div>
-
-    
-  </div>
-</article>
-
-
-
-  <article>
-
-  
-    
-    <h3 class="article-title"><a href="/2025/11/07/rtt-stm32-at-socket/"><span>rtt-stm32-at-socket</span></a></h3>
-    
-  
-
-  <div class="article-top-meta">
-    <span class="posted-on">
-      <a href="/2025/11/07/rtt-stm32-at-socket/" rel="bookmark">
-        <time class="entry-date published" datetime="2025-11-07T02:09:24.000Z">
-          2025-11-07
-        </time>
-      </a>
-    </span>
-  </div>
-
-
-  
-
-  <div class="article-content">
-    <div class="entry">
-      
-        <p>参考<a target="_blank" rel="noopener" href="https://www.rt-thread.org/document/site/application-note/components/at/an0014-at-client/#at-socket">链接</a></p>
-<h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><p>先启用 uart2</p>
-<h3 id="软件包"><a href="#软件包" class="headerlink" title="软件包"></a>软件包</h3><p>开启 at device 的支持</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">RT-Thread online packages &gt;</span><br><span class="line">  IoT - internet of things &gt;</span><br><span class="line">    AT DEVICE: RT-Thread AT component porting or samples <span class="keyword">for</span> different device</span><br><span class="line">       [*]  Espressif ESP8266  ---&gt;</span><br></pre></td></tr></table></figure>
-
-<p>配置参数</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">缓冲区大小可以设置大一点</span><br><span class="line">配置使用 laster 版本软件包；</span><br></pre></td></tr></table></figure>
-
-<h3 id="驱动部分"><a href="#驱动部分" class="headerlink" title="驱动部分"></a>驱动部分</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">RT-Thread Components</span><br><span class="line">  Network</span><br><span class="line">    Socket abstraction layer</span><br><span class="line">      protocol stack implement</span><br><span class="line">        [*]Support AT Commands stack</span><br><span class="line">        [*]Enable BSD socket operated by the file system API</span><br><span class="line">    Enable AT commands</span><br><span class="line">      -*-   Enable AT commands client</span><br><span class="line">      -*-     Enable BSD Socket API support by AT commnads</span><br><span class="line">      <span class="comment"># 这里是选择显示at命令日志</span></span><br><span class="line">      [ ]     Enable <span class="built_in">print</span> RAW format AT <span class="built_in">command</span> communication data</span><br><span class="line">     (128)   The maximum lenght of AT Commonds buffer</span><br></pre></td></tr></table></figure>
-
-<h3 id="调试"><a href="#调试" class="headerlink" title="调试"></a>调试</h3><p>使用 cutecom 连接，回车模式选择 CR&#x2F;LF</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">AT+CWMODE=1</span><br><span class="line">AT+CWJAP=<span class="string">&quot;ssid&quot;</span>,<span class="string">&quot;password&quot;</span></span><br><span class="line">AT+CIFSR</span><br><span class="line"></span><br><span class="line">AT+RST</span><br></pre></td></tr></table></figure>
-
-<h3 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h3><ul>
-<li>模块串口和开发板的串口反接</li>
-<li>注意供电, wifi 芯片功耗很大，vcc 要接 5v，如果提示 <code>wait AT client(uart2) connect timeout(5000 tick)</code>，可能是 vcc 供电不足，可以<code>换一个 5v 的供电口解决</code></li>
-<li>模块如果使用杜邦线接线，用短的，长的可能会出现很多奇怪的问题</li>
-<li>如果提示缓冲区不够，可以使用串口调试器（cutecom）先调试 at 指令，很可能是不同的模块里面，在某些非正常时刻，发出太多的 response 导致的，可以看情况修改调用 at_create_resp 函数的地方针对性的修改缓冲区大小</li>
-</ul>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">比如 [E/at.clnt] Read response buffer failed. The Response buffer size is out of buffer size(xxx)</span><br><span class="line">可以在 at.client.c 的 at_create_resp 函数上下断点观察流程，尝试把缓冲区都改大一点</span><br></pre></td></tr></table></figure>
-
-<p>如果还有解决不了的问题，看<a target="_blank" rel="noopener" href="https://www.rt-thread.org/qa/forum.php?mod=viewthread&tid=11919&extra=page=1&filter=typeid&typeid=5">这里</a></p>
 
       
     </div>

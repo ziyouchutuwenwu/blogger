@@ -71,6 +71,123 @@
 
   
     
+    <h3 class="article-title"><a href="/2025/10/31/rtt-stm32-dev-spi/"><span>rt-thread 下，配置 stm32 的 spi</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/10/31/rtt-stm32-dev-spi/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-10-31T00:41:00.000Z">
+          2025-10-31
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mode 选择`Full-Duplex Master`全双工主模式，NSS Signal 选`Disable`即可</span><br><span class="line">接线的时候，MOSI 和 MISO 不需要反接</span><br></pre></td></tr></table></figure>
+
+<h2 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h2><p>修改 board&#x2F;Kconfig，添加 SPI 部分，以下为参考</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">menuconfig BSP_USING_SPI</span><br><span class="line">    bool <span class="string">&quot;Enable SPI BUS&quot;</span></span><br><span class="line">    default n</span><br><span class="line">    <span class="keyword">select</span> RT_USING_SPI</span><br><span class="line">    <span class="keyword">if</span> BSP_USING_SPI</span><br><span class="line">        config BSP_USING_SPI1</span><br><span class="line">            bool <span class="string">&quot;Enable SPI1 BUS&quot;</span></span><br><span class="line">            default n</span><br><span class="line"></span><br><span class="line">        config BSP_SPI1_TX_USING_DMA</span><br><span class="line">            bool <span class="string">&quot;Enable SPI1 TX DMA&quot;</span></span><br><span class="line">            depends on BSP_USING_SPI1</span><br><span class="line">            default n</span><br><span class="line"></span><br><span class="line">        config BSP_SPI1_RX_USING_DMA</span><br><span class="line">            bool <span class="string">&quot;Enable SPI1 RX DMA&quot;</span></span><br><span class="line">            depends on BSP_USING_SPI1</span><br><span class="line">            <span class="keyword">select</span> BSP_SPI1_TX_USING_DMA</span><br><span class="line">            default n</span><br><span class="line">    endif</span><br></pre></td></tr></table></figure>
+
+<h2 id="menuconfig"><a href="#menuconfig" class="headerlink" title="menuconfig"></a>menuconfig</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">scons --menuconfig 启用 spi</span><br><span class="line">stm32XXxx_hal_conf.h 需要启用 HAL_SPI_MODULE_ENABLED</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/stm32/">stm32</a><a href="/tags/rt-thread/">rt-thread</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
+    <h3 class="article-title"><a href="/2025/10/31/rtt-stm32-dev-sensor/"><span>rt-thread 下，配置 stm32 的 sensor</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/10/31/rtt-stm32-dev-sensor/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-10-31T00:40:57.000Z">
+          2025-10-31
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <p>以 aht10 为例</p>
+<p>用法见 <a target="_blank" rel="noopener" href="https://github.com/RT-Thread-packages/aht10#readme">这里</a></p>
+<p>注意, 由于 aht 为温湿度传感器，因此，sensor 框架会抽象出 温度和湿度两个设备</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rt_hw_aht10_init(<span class="string">&quot;aaa&quot;</span>, &amp;cfg);</span><br></pre></td></tr></table></figure>
+
+<p>list_device 查看结果</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">device           <span class="built_in">type</span>         ref count</span><br><span class="line">-------- -------------------- ----------</span><br><span class="line">humi_aaa Sensor Device        0</span><br><span class="line">temp_aaa Sensor Device        0</span><br><span class="line">i2c1     I2C Bus              0</span><br><span class="line">uart1    Character Device     2</span><br><span class="line">pin      Miscellaneous Device 0</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/stm32/">stm32</a><a href="/tags/rt-thread/">rt-thread</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
     <h3 class="article-title"><a href="/2025/10/30/rtt-stm32-dev-rtc/"><span>rt-thread 下，配置 stm32 的 rtc</span></a></h3>
     
   
@@ -568,132 +685,6 @@
     <span class="post-tags">
       <i class="icon-tags"></i>
         <a href="/tags/stm32/">stm32</a><a href="/tags/rt-thread/">rt-thread</a>
-    </span>
-    
-
-    </div>
-
-    
-  </div>
-</article>
-
-
-
-  <article>
-
-  
-    
-    <h3 class="article-title"><a href="/2025/10/24/freebsd-rc-local/"><span>freebsd 开机启动脚本</span></a></h3>
-    
-  
-
-  <div class="article-top-meta">
-    <span class="posted-on">
-      <a href="/2025/10/24/freebsd-rc-local/" rel="bookmark">
-        <time class="entry-date published" datetime="2025-10-24T02:49:08.000Z">
-          2025-10-24
-        </time>
-      </a>
-    </span>
-  </div>
-
-
-  
-
-  <div class="article-content">
-    <div class="entry">
-      
-        <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>启动顺序</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 自己的启动脚本，需要 chmod a+x</span></span><br><span class="line">/usr/local/etc/rc.d/</span><br><span class="line"></span><br><span class="line"><span class="comment"># 最后加载</span></span><br><span class="line">/etc/rc.local</span><br></pre></td></tr></table></figure>
-
-<h2 id="分类"><a href="#分类" class="headerlink" title="分类"></a>分类</h2><h3 id="rc-格式"><a href="#rc-格式" class="headerlink" title="rc 格式"></a>rc 格式</h3><p>需要符合 rc 格式</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">chmod</span> a+x /usr/local/etc/rc.d/*</span><br></pre></td></tr></table></figure>
-
-<p>格式如下</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/sh</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># PROVIDE: myapp</span></span><br><span class="line"><span class="comment"># REQUIRE: DAEMON</span></span><br><span class="line"><span class="comment"># KEYWORD: shutdown</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 加载预定义变量和函数</span></span><br><span class="line">. /etc/rc.subr</span><br><span class="line"></span><br><span class="line">name=<span class="string">&quot;myapp&quot;</span></span><br><span class="line">rcvar=<span class="string">&quot;myapp_enable&quot;</span></span><br><span class="line"><span class="built_in">command</span>=<span class="string">&quot;/usr/local/bin/myapp&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 用于重启</span></span><br><span class="line">procname=<span class="string">&quot;/usr/local/bin/myapp&quot;</span></span><br><span class="line">desc=<span class="string">&quot;my custom service&quot;</span></span><br><span class="line"></span><br><span class="line">load_rc_config <span class="variable">$name</span></span><br><span class="line"><span class="comment"># 如果变量未定义，则为 NO</span></span><br><span class="line">: <span class="variable">$&#123;myapp_enable:=&quot;NO&quot;&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># $1 为启动参数</span></span><br><span class="line">run_rc_command <span class="string">&quot;<span class="variable">$1</span>&quot;</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="自定义脚本"><a href="#自定义脚本" class="headerlink" title="自定义脚本"></a>自定义脚本</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">chmod</span> a+x /etc/rc.local</span><br></pre></td></tr></table></figure>
-
-<p>标准 shell 格式</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/sh -e</span></span><br><span class="line"></span><br><span class="line">. /etc/profile</span><br><span class="line"></span><br><span class="line"><span class="comment"># nohup xxx &gt; /dev/null 2&gt;&amp;1 &amp;</span></span><br><span class="line"><span class="comment"># screen -dm xxx</span></span><br><span class="line"></span><br><span class="line">/opt/demo/_build/prod/rel/demo/bin/demo daemon</span><br><span class="line"></span><br><span class="line"><span class="built_in">exit</span> 0</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-
-  </div>
-
-  <div class="article-footer">
-    <div class="article-meta pull-left">
-
-    
-
-    
-    
-
-    <span class="post-tags">
-      <i class="icon-tags"></i>
-        <a href="/tags/freebsd/">freebsd</a>
-    </span>
-    
-
-    </div>
-
-    
-  </div>
-</article>
-
-
-
-  <article>
-
-  
-    
-    <h3 class="article-title"><a href="/2025/10/24/freebsd-rc-conf/"><span>freebsd 开机启动配置文件</span></a></h3>
-    
-  
-
-  <div class="article-top-meta">
-    <span class="posted-on">
-      <a href="/2025/10/24/freebsd-rc-conf/" rel="bookmark">
-        <time class="entry-date published" datetime="2025-10-24T02:48:53.000Z">
-          2025-10-24
-        </time>
-      </a>
-    </span>
-  </div>
-
-
-  
-
-  <div class="article-content">
-    <div class="entry">
-      
-        <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>里面有一些 xxx_enable 字段</p>
-<p>都可以用类似如下的方式修改</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sysrc -f /etc/rc.conf kld_list=<span class="string">&quot;i915kms&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p>加载顺序如下</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">/etc/rc.conf</span><br><span class="line"></span><br><span class="line"><span class="comment"># 自己的全局配置，覆盖默认</span></span><br><span class="line">/etc/rc.conf.local</span><br><span class="line"><span class="comment"># 拆分出来的配置</span></span><br><span class="line">/usr/local/etc/rc.conf.d/</span><br></pre></td></tr></table></figure>
-
-<p>这些字段在如下两个目录内的脚本内搜索</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">/etc/rc.d/</span><br><span class="line">/usr/local/etc/rc.d/</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-
-  </div>
-
-  <div class="article-footer">
-    <div class="article-meta pull-left">
-
-    
-
-    
-    
-
-    <span class="post-tags">
-      <i class="icon-tags"></i>
-        <a href="/tags/freebsd/">freebsd</a>
     </span>
     
 
