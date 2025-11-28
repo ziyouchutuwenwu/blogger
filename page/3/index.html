@@ -71,6 +71,67 @@
 
   
     
+    <h3 class="article-title"><a href="/2025/11/09/rtt-stm32-lfs/"><span>rt-thread 下，配置 stm32 的 lfs</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/11/09/rtt-stm32-lfs/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-11-09T04:33:24.000Z">
+          2025-11-09
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <p>外挂 flash 上使用 lfs</p>
+<p>参考的 <a target="_blank" rel="noopener" href="https://www.rt-thread.org/document/site/application-note/components/dfs/an0027-littlefs/">这里</a></p>
+<h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><h3 id="准备"><a href="#准备" class="headerlink" title="准备"></a>准备</h3><p>先按照外挂 flash 的配置配置好</p>
+<h3 id="menuconfig"><a href="#menuconfig" class="headerlink" title="menuconfig"></a>menuconfig</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">RT-Thread Components ---&gt; Device virtual file system</span><br><span class="line">  [*] Using device virtual file system</span><br><span class="line"></span><br><span class="line">RT-Thread online packages &gt; system packages &gt; Littlefs: A high-integrity embedded file system</span><br><span class="line">  [*] Littlefs: A high-integrity embedded file system</span><br><span class="line">    (256) disk <span class="built_in">read</span> size</span><br><span class="line">    (256) disk write size</span><br><span class="line">    (4096) disk block size</span><br><span class="line">    (256) lfs r/w cache size</span><br><span class="line">    (100) lfs enables wear leveling. 0 is <span class="built_in">disable</span>.</span><br><span class="line">    (512) lfs lookahead size</span><br></pre></td></tr></table></figure>
+
+<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><p>w25q128_lfs_demo.c</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;fal.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;dfs_fs.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;rtdbg.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">[I/FAL] ==================== FAL partition table ====================</span></span><br><span class="line"><span class="comment">[I/FAL] | name       | flash_dev |   offset   |    length  |</span></span><br><span class="line"><span class="comment">[I/FAL] -------------------------------------------------------------</span></span><br><span class="line"><span class="comment">[I/FAL] | filesystem | W25Q128   | 0x00000000 | 0x01000000 |</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> FS_PARTITION_NAME <span class="string">&quot;filesystem&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> FS_DEVICE_NAME    FS_PARTITION_NAME</span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">w25q128_lfs_demo</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    fal_init();</span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">rt_device</span>* <span class="title">mtd_dev</span> =</span> RT_NULL;</span><br><span class="line">    mtd_dev = fal_mtd_nor_device_create(FS_PARTITION_NAME);</span><br><span class="line">    <span class="keyword">if</span> ( !mtd_dev )&#123;</span><br><span class="line">        LOG_E(<span class="string">&quot;Can&#x27;t create a mtd device on &#x27;%s&#x27; partition.&quot;</span>, FS_PARTITION_NAME);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="comment">// 以防万一，先unmount</span></span><br><span class="line">        dfs_unmount(<span class="string">&quot;/&quot;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (dfs_mount(FS_DEVICE_NAME, <span class="string">&quot;/&quot;</span>, <span class="string">&quot;lfs&quot;</span>, <span class="number">0</span>, <span class="number">0</span>) == <span class="number">0</span>)&#123;</span><br><span class="line">            LOG_I(<span class="string">&quot;Filesystem initialized!&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span>&#123;</span><br><span class="line">            <span class="comment">// mkfs -t lfs filesystem</span></span><br><span class="line">            dfs_mkfs(<span class="string">&quot;lfs&quot;</span>, FS_DEVICE_NAME);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (dfs_mount(FS_DEVICE_NAME, <span class="string">&quot;/&quot;</span>, <span class="string">&quot;lfs&quot;</span>, <span class="number">0</span>, <span class="number">0</span>) == <span class="number">0</span>)&#123;</span><br><span class="line">                LOG_I(<span class="string">&quot;Filesystem initialized!&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">else</span>&#123;</span><br><span class="line">                LOG_E(<span class="string">&quot;Failed to initialize filesystem!&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> RT_EOK;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">MSH_CMD_EXPORT(w25q128_lfs_demo, w25q128_lfs_demo);</span><br></pre></td></tr></table></figure>
+
+<h2 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h2><p>demo 代码里面的<code>dfs_mount</code>和<code>dfs_mkfs</code>的参数，DEVICE_NAME, lfs 和 elm 是不一样的</p>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/stm32/">stm32</a><a href="/tags/rt-thread/">rt-thread</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
     <h3 class="article-title"><a href="/2025/11/08/rtt-stm32-elmfs/"><span>rt-thread 下，配置 stm32 的 elmfs</span></a></h3>
     
   
@@ -689,65 +750,6 @@
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">menuconfig BSP_USING_UART</span><br><span class="line">    bool <span class="string">&quot;Enable UART&quot;</span></span><br><span class="line">    default y</span><br><span class="line">    <span class="keyword">select</span> RT_USING_SERIAL</span><br><span class="line">    <span class="keyword">if</span> BSP_USING_UART</span><br><span class="line">        config BSP_USING_UART1</span><br><span class="line">            bool <span class="string">&quot;Enable UART1&quot;</span></span><br><span class="line">            default y</span><br><span class="line">        config BSP_UART1_RX_USING_DMA</span><br><span class="line">            bool <span class="string">&quot;Enable UART1 RX DMA&quot;</span></span><br><span class="line">            depends on BSP_USING_UART1 &amp;&amp; RT_SERIAL_USING_DMA</span><br><span class="line">            default n</span><br><span class="line">    endif</span><br></pre></td></tr></table></figure>
 
 <h2 id="menuconfig"><a href="#menuconfig" class="headerlink" title="menuconfig"></a>menuconfig</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">scons --menuconfig 启用 uart，默认启用</span><br><span class="line">stm32XXxx_hal_conf.h 需要启用 HAL_UART_MODULE_ENABLED</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-
-  </div>
-
-  <div class="article-footer">
-    <div class="article-meta pull-left">
-
-    
-
-    
-    
-
-    <span class="post-tags">
-      <i class="icon-tags"></i>
-        <a href="/tags/stm32/">stm32</a><a href="/tags/rt-thread/">rt-thread</a>
-    </span>
-    
-
-    </div>
-
-    
-  </div>
-</article>
-
-
-
-  <article>
-
-  
-    
-    <h3 class="article-title"><a href="/2025/10/31/rtt-stm32-dev-timer/"><span>rt-thread 下，配置 stm32 的 timer</span></a></h3>
-    
-  
-
-  <div class="article-top-meta">
-    <span class="posted-on">
-      <a href="/2025/10/31/rtt-stm32-dev-timer/" rel="bookmark">
-        <time class="entry-date published" datetime="2025-10-31T00:41:03.000Z">
-          2025-10-31
-        </time>
-      </a>
-    </span>
-  </div>
-
-
-  
-
-  <div class="article-content">
-    <div class="entry">
-      
-        <h2 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h2><p>修改 board&#x2F;Kconfig，添加 TIM 部分，以下为参考</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">menuconfig BSP_USING_TIM</span><br><span class="line">    bool <span class="string">&quot;enable timer&quot;</span></span><br><span class="line">    default n</span><br><span class="line">    <span class="keyword">select</span> RT_USING_HWTIMER</span><br><span class="line">    <span class="keyword">if</span> BSP_USING_TIM</span><br><span class="line">        config BSP_USING_TIM11</span><br><span class="line">            bool <span class="string">&quot;Enable TIM11&quot;</span></span><br><span class="line">            default n</span><br><span class="line">    endif</span><br></pre></td></tr></table></figure>
-
-<p>如果启用的定时器不自带，需要手工修改，修改<code>libraries/HAL_Drivers/config/f4/tim_config.h</code>，irq 部分参考 f1 的模板修改</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">ifdef</span> BSP_USING_TIM2</span></span><br><span class="line"><span class="meta">#<span class="keyword">ifndef</span> TIM2_CONFIG</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> TIM2_CONFIG                                        \</span></span><br><span class="line"><span class="meta">    &#123;                                                       \</span></span><br><span class="line"><span class="meta">       .tim_handle.Instance     = TIM2,                    \</span></span><br><span class="line"><span class="meta">       .tim_irqn                = TIM2_IRQn,       \</span></span><br><span class="line"><span class="meta">       .name                    = <span class="string">&quot;timer2&quot;</span>,                \</span></span><br><span class="line"><span class="meta">    &#125;</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br></pre></td></tr></table></figure>
-
-<h2 id="menuconfig"><a href="#menuconfig" class="headerlink" title="menuconfig"></a>menuconfig</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">scons --menuconfig 启用 timer 配置</span><br><span class="line">stm32XXxx_hal_conf.h 需要启用 HAL_TIM_MODULE_ENABLED</span><br><span class="line">注意，硬件定时器的 timer 的超时时间结构体内，`秒和微秒不支持小数点`，开发板的时钟一定要设置正确，否则会出现延迟错误</span><br></pre></td></tr></table></figure>
 
       
     </div>

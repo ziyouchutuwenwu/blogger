@@ -71,6 +71,78 @@
 
   
     
+    <h3 class="article-title"><a href="/2025/10/06/zig-build/"><span>zig 构建相关</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/10/06/zig-build/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-10-06T09:40:58.000Z">
+          2025-10-06
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h2 id="交叉编译"><a href="#交叉编译" class="headerlink" title="交叉编译"></a>交叉编译</h2><p>同时可以支持静态编译</p>
+<p>查看</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">zig targets | grep musl</span><br></pre></td></tr></table></figure>
+
+<p>命令行交叉编译</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">zig build -Dtarget=x86_64-linux-musl --summary all --release=small</span><br></pre></td></tr></table></figure>
+
+<p>作为其它语言的交叉编译器</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CC=<span class="string">&quot;zig cc -target x86_64-linux-musl&quot;</span> CXX=<span class="string">&quot;zig c++ -target x86_64-linux-musl&quot;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CC=<span class="string">&quot;zig cc -target x86_64-linux-gnu.2.31&quot;</span> CXX=<span class="string">&quot;zig c++ -target x86_64-linux-gnu.2.31&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="自定义构建"><a href="#自定义构建" class="headerlink" title="自定义构建"></a>自定义构建</h2><p>使用 musl, 无依赖</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">const default_target = std.Target.Query&#123;</span><br><span class="line">    // .cpu_arch = std.Target.Cpu.Arch.x86_64,</span><br><span class="line">    // .os_tag = std.Target.Os.Tag.linux,</span><br><span class="line">    .abi = std.Target.Abi.musl,</span><br><span class="line">&#125;;</span><br><span class="line">const target = b.standardTargetOptions(.&#123;</span><br><span class="line">    .default_target = default_target,</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>指定 release 使用方式</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">const optimize = b.standardOptimizeOption(.&#123;</span><br><span class="line">    .preferred_optimize_mode = std.builtin.OptimizeMode.ReleaseSmall,</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<h2 id="编译为动态库"><a href="#编译为动态库" class="headerlink" title="编译为动态库"></a>编译为动态库</h2><p>build.zig</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">const lib = b.addSharedLibrary(.&#123;</span><br><span class="line">    .name = &quot;demo&quot;,</span><br><span class="line">    .root_source_file = b.path(&quot;src/root.zig&quot;),</span><br><span class="line">    .target = target,</span><br><span class="line">    .optimize = optimize,</span><br><span class="line">  &#125;);</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/zig/">zig</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
     <h3 class="article-title"><a href="/2025/10/06/zig/"><span>zig基础用法</span></a></h3>
     
   

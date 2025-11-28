@@ -71,6 +71,69 @@
 
   
     
+    <h3 class="article-title"><a href="/2025/10/16/buildroot/"><span>buildroot 基础用法</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/10/16/buildroot/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-10-16T08:00:27.000Z">
+          2025-10-16
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h2 id="准备"><a href="#准备" class="headerlink" title="准备"></a>准备</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://buildroot.org/downloads/buildroot-2025.02.3.tar.gz</span><br></pre></td></tr></table></figure>
+
+<h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><h3 id="defconfig"><a href="#defconfig" class="headerlink" title="defconfig"></a>defconfig</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make O=output qemu_arm_vexpress_defconfig</span><br></pre></td></tr></table></figure>
+
+<h3 id="menuconfig"><a href="#menuconfig" class="headerlink" title="menuconfig"></a>menuconfig</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make O=output menuconfig</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">Bootloaders  ---&gt;</span><br><span class="line">  [*] U-Boot</span><br><span class="line">  (vexpress_ca9x4) Board defconfig</span><br><span class="line">  U-Boot binary format  ---&gt;</span><br><span class="line">    [*] u-boot</span><br><span class="line"></span><br><span class="line">Target packages  ---&gt;</span><br><span class="line">  <span class="comment"># 这个要选中，不然 vim 和 bash 都看不到</span></span><br><span class="line">  [*]   Show packages that are also provided by busybox</span><br><span class="line">    Development tools  ---&gt;</span><br><span class="line">    <span class="comment"># gnu sed，自带的不标准，elixir 会报错</span></span><br><span class="line">    [*] sed</span><br><span class="line"></span><br><span class="line">    <span class="comment"># sh 对标准的支持太差</span></span><br><span class="line">    Shell and utilities  ---&gt;</span><br><span class="line">      [*] bash</span><br><span class="line">    Text editors and viewers  ---&gt;</span><br><span class="line">      [*] vim</span><br></pre></td></tr></table></figure>
+
+<h3 id="编译"><a href="#编译" class="headerlink" title="编译"></a>编译</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make O=output -j$(<span class="built_in">nproc</span>)</span><br></pre></td></tr></table></figure>
+
+<p>编译结果在 <code>output/images</code> 下</p>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/linux/">linux</a><a href="/tags/kernel/">kernel</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
     <h3 class="article-title"><a href="/2025/10/15/erl-heart/"><span>erlang 的 heart 用法</span></a></h3>
     
   
@@ -714,78 +777,6 @@
 <figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> axios <span class="keyword">from</span> <span class="string">&quot;axios&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> <span class="title class_">AppComponent</span> &#123;</span><br><span class="line">  <span class="attr">result</span>: <span class="built_in">number</span> | <span class="literal">null</span> = <span class="literal">null</span>;</span><br><span class="line">  <span class="attr">wasm</span>: <span class="title class_">WebAssembly</span>.<span class="property">Instance</span> | <span class="literal">null</span> = <span class="literal">null</span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">async</span> <span class="title function_">ngOnInit</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">await</span> <span class="variable language_">this</span>.<span class="title function_">loadWasm</span>();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">async</span> <span class="title function_">loadWasm</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      <span class="keyword">const</span> response = <span class="keyword">await</span> axios.<span class="title function_">get</span>(<span class="string">&quot;/xxx/demo.wasm&quot;</span>, &#123;</span><br><span class="line">        <span class="attr">responseType</span>: <span class="string">&quot;arraybuffer&quot;</span>,</span><br><span class="line">      &#125;);</span><br><span class="line">      <span class="keyword">const</span> bytes = <span class="keyword">new</span> <span class="title class_">Uint8Array</span>(response.<span class="property">data</span>);</span><br><span class="line">      <span class="keyword">const</span> <span class="variable language_">module</span> = <span class="keyword">await</span> <span class="title class_">WebAssembly</span>.<span class="title function_">instantiate</span>(bytes);</span><br><span class="line">      <span class="variable language_">this</span>.<span class="property">wasm</span> = <span class="variable language_">module</span>.<span class="property">instance</span>;</span><br><span class="line">    &#125; <span class="keyword">catch</span> (error) &#123;</span><br><span class="line">      <span class="variable language_">console</span>.<span class="title function_">error</span>(<span class="string">&quot;err loading wasm:&quot;</span>, error);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="title function_">doAdd</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="variable language_">this</span>.<span class="property">wasm</span>) &#123;</span><br><span class="line">      <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="variable language_">this</span>.<span class="property">wasm</span>.<span class="property">exports</span>);</span><br><span class="line">      <span class="keyword">const</span> add = <span class="variable language_">this</span>.<span class="property">wasm</span>.<span class="property">exports</span>[<span class="string">&quot;add&quot;</span>] <span class="title function_">as</span> (<span class="attr">a</span>: <span class="built_in">number</span>, <span class="attr">b</span>: <span class="built_in">number</span>) =&gt; <span class="built_in">number</span>;</span><br><span class="line">      <span class="keyword">const</span> result = <span class="title function_">add</span>(<span class="number">5</span>, <span class="number">3</span>);</span><br><span class="line">      <span class="variable language_">this</span>.<span class="property">result</span> = result;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="variable language_">console</span>.<span class="title function_">warn</span>(<span class="string">&quot;wasm instance is not initialized.&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">h1</span>&gt;</span>wasm with angular<span class="tag">&lt;/<span class="name">h1</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">button</span> (<span class="attr">click</span>)=<span class="string">&quot;doAdd()&quot;</span>&gt;</span>call wasm<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">p</span>&gt;</span>result: &#123;&#123; result &#125;&#125;<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-
-  </div>
-
-  <div class="article-footer">
-    <div class="article-meta pull-left">
-
-    
-
-    
-    
-
-    <span class="post-tags">
-      <i class="icon-tags"></i>
-        <a href="/tags/zig/">zig</a>
-    </span>
-    
-
-    </div>
-
-    
-  </div>
-</article>
-
-
-
-  <article>
-
-  
-    
-    <h3 class="article-title"><a href="/2025/10/06/zig-build/"><span>zig 构建相关</span></a></h3>
-    
-  
-
-  <div class="article-top-meta">
-    <span class="posted-on">
-      <a href="/2025/10/06/zig-build/" rel="bookmark">
-        <time class="entry-date published" datetime="2025-10-06T09:40:58.000Z">
-          2025-10-06
-        </time>
-      </a>
-    </span>
-  </div>
-
-
-  
-
-  <div class="article-content">
-    <div class="entry">
-      
-        <h2 id="交叉编译"><a href="#交叉编译" class="headerlink" title="交叉编译"></a>交叉编译</h2><p>同时可以支持静态编译</p>
-<p>查看</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">zig targets | grep musl</span><br></pre></td></tr></table></figure>
-
-<p>命令行交叉编译</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">zig build -Dtarget=x86_64-linux-musl --summary all --release=small</span><br></pre></td></tr></table></figure>
-
-<p>作为其它语言的交叉编译器</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CC=<span class="string">&quot;zig cc -target x86_64-linux-musl&quot;</span> CXX=<span class="string">&quot;zig c++ -target x86_64-linux-musl&quot;</span></span><br></pre></td></tr></table></figure>
-
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CC=<span class="string">&quot;zig cc -target x86_64-linux-gnu.2.31&quot;</span> CXX=<span class="string">&quot;zig c++ -target x86_64-linux-gnu.2.31&quot;</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="自定义构建"><a href="#自定义构建" class="headerlink" title="自定义构建"></a>自定义构建</h2><p>使用 musl, 无依赖</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">const default_target = std.Target.Query&#123;</span><br><span class="line">    // .cpu_arch = std.Target.Cpu.Arch.x86_64,</span><br><span class="line">    // .os_tag = std.Target.Os.Tag.linux,</span><br><span class="line">    .abi = std.Target.Abi.musl,</span><br><span class="line">&#125;;</span><br><span class="line">const target = b.standardTargetOptions(.&#123;</span><br><span class="line">    .default_target = default_target,</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
-
-<p>指定 release 使用方式</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">const optimize = b.standardOptimizeOption(.&#123;</span><br><span class="line">    .preferred_optimize_mode = std.builtin.OptimizeMode.ReleaseSmall,</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
-
-<h2 id="编译为动态库"><a href="#编译为动态库" class="headerlink" title="编译为动态库"></a>编译为动态库</h2><p>build.zig</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">const lib = b.addSharedLibrary(.&#123;</span><br><span class="line">    .name = &quot;demo&quot;,</span><br><span class="line">    .root_source_file = b.path(&quot;src/root.zig&quot;),</span><br><span class="line">    .target = target,</span><br><span class="line">    .optimize = optimize,</span><br><span class="line">  &#125;);</span><br></pre></td></tr></table></figure>
 
       
     </div>

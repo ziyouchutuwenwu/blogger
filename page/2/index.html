@@ -71,6 +71,75 @@
 
   
     
+    <h3 class="article-title"><a href="/2025/11/18/linux-trim-uboot/"><span>linux 内核裁剪之 uboot</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/11/18/linux-trim-uboot/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-11-18T10:36:03.000Z">
+          2025-11-18
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h2 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h2><h3 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h3><p>下载地址</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://ftp.denx.de/pub/u-boot/u-boot-2023.04.tar.bz2</span><br></pre></td></tr></table></figure>
+
+<h3 id="编译"><a href="#编译" class="headerlink" title="编译"></a>编译</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">make vexpress_ca9x4_defconfig</span><br><span class="line">make -j$(<span class="built_in">nproc</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h3><p>qemu 加载 uboot 需要用 elf 的格式</p>
+<p>bin 格式的没有入口点，适合烧录到板子上</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">qemu-system-arm \</span><br><span class="line">  -M vexpress-a9 \</span><br><span class="line">  -m 512M \</span><br><span class="line">  -kernel ~/downloads/u-boot-2023.04/output/u-boot \</span><br><span class="line">  -nographic</span><br></pre></td></tr></table></figure>
+
+<h3 id="调试"><a href="#调试" class="headerlink" title="调试"></a>调试</h3><p>查看变量</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">printenv</span> xxx</span><br></pre></td></tr></table></figure>
+
+<p>手动执行，比如你定义了 bootcmd</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">run bootcmd</span><br></pre></td></tr></table></figure>
+
+<p>重启</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">reset</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/linux/">linux</a><a href="/tags/kernel/">kernel</a><a href="/tags/uboot/">uboot</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
     <h3 class="article-title"><a href="/2025/11/17/rt-smart/"><span>rt-smart</span></a></h3>
     
   
@@ -629,67 +698,6 @@
 <h3 id="menuconfig"><a href="#menuconfig" class="headerlink" title="menuconfig"></a>menuconfig</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Hardware Drivers Config &gt;</span><br><span class="line">  On-chip Peripheral Drivers</span><br><span class="line">    [*] Enable OTGFS as USB device</span><br><span class="line"></span><br><span class="line">RT-Thread Components &gt;</span><br><span class="line">  Device Drivers &gt;</span><br><span class="line">    Using USB &gt;</span><br><span class="line">      [*] Enable composite device &gt;</span><br><span class="line">        [*] Enable to use device as CDC device</span><br></pre></td></tr></table></figure>
 
 <h3 id="测试代码"><a href="#测试代码" class="headerlink" title="测试代码"></a>测试代码</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;rtthread.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;rtdevice.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">vcom_test</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">rt_device_t</span> dev = RT_NULL;</span><br><span class="line">    <span class="type">char</span> buf[] = <span class="string">&quot;hello vcom!\r\n&quot;</span>;</span><br><span class="line"></span><br><span class="line">    dev = rt_device_find(<span class="string">&quot;vcom&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (dev)</span><br><span class="line">        rt_device_open(dev, RT_DEVICE_FLAG_RDWR);</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        <span class="keyword">return</span> -RT_ERROR;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> (<span class="number">1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        rt_device_write(dev, <span class="number">0</span>, buf, rt_strlen(buf));</span><br><span class="line">        rt_thread_mdelay(<span class="number">500</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    rt_device_close(dev);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">MSH_CMD_EXPORT(vcom_test, vcom_test)</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-
-  </div>
-
-  <div class="article-footer">
-    <div class="article-meta pull-left">
-
-    
-
-    
-    
-
-    <span class="post-tags">
-      <i class="icon-tags"></i>
-        <a href="/tags/stm32/">stm32</a><a href="/tags/rt-thread/">rt-thread</a>
-    </span>
-    
-
-    </div>
-
-    
-  </div>
-</article>
-
-
-
-  <article>
-
-  
-    
-    <h3 class="article-title"><a href="/2025/11/09/rtt-stm32-lfs/"><span>rt-thread 下，配置 stm32 的 lfs</span></a></h3>
-    
-  
-
-  <div class="article-top-meta">
-    <span class="posted-on">
-      <a href="/2025/11/09/rtt-stm32-lfs/" rel="bookmark">
-        <time class="entry-date published" datetime="2025-11-09T04:33:24.000Z">
-          2025-11-09
-        </time>
-      </a>
-    </span>
-  </div>
-
-
-  
-
-  <div class="article-content">
-    <div class="entry">
-      
-        <p>外挂 flash 上使用 lfs</p>
-<p>参考的 <a target="_blank" rel="noopener" href="https://www.rt-thread.org/document/site/application-note/components/dfs/an0027-littlefs/">这里</a></p>
-<h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><h3 id="准备"><a href="#准备" class="headerlink" title="准备"></a>准备</h3><p>先按照外挂 flash 的配置配置好</p>
-<h3 id="menuconfig"><a href="#menuconfig" class="headerlink" title="menuconfig"></a>menuconfig</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">RT-Thread Components ---&gt; Device virtual file system</span><br><span class="line">  [*] Using device virtual file system</span><br><span class="line"></span><br><span class="line">RT-Thread online packages &gt; system packages &gt; Littlefs: A high-integrity embedded file system</span><br><span class="line">  [*] Littlefs: A high-integrity embedded file system</span><br><span class="line">    (256) disk <span class="built_in">read</span> size</span><br><span class="line">    (256) disk write size</span><br><span class="line">    (4096) disk block size</span><br><span class="line">    (256) lfs r/w cache size</span><br><span class="line">    (100) lfs enables wear leveling. 0 is <span class="built_in">disable</span>.</span><br><span class="line">    (512) lfs lookahead size</span><br></pre></td></tr></table></figure>
-
-<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><p>w25q128_lfs_demo.c</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;fal.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;dfs_fs.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;rtdbg.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">[I/FAL] ==================== FAL partition table ====================</span></span><br><span class="line"><span class="comment">[I/FAL] | name       | flash_dev |   offset   |    length  |</span></span><br><span class="line"><span class="comment">[I/FAL] -------------------------------------------------------------</span></span><br><span class="line"><span class="comment">[I/FAL] | filesystem | W25Q128   | 0x00000000 | 0x01000000 |</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> FS_PARTITION_NAME <span class="string">&quot;filesystem&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> FS_DEVICE_NAME    FS_PARTITION_NAME</span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">w25q128_lfs_demo</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    fal_init();</span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">rt_device</span>* <span class="title">mtd_dev</span> =</span> RT_NULL;</span><br><span class="line">    mtd_dev = fal_mtd_nor_device_create(FS_PARTITION_NAME);</span><br><span class="line">    <span class="keyword">if</span> ( !mtd_dev )&#123;</span><br><span class="line">        LOG_E(<span class="string">&quot;Can&#x27;t create a mtd device on &#x27;%s&#x27; partition.&quot;</span>, FS_PARTITION_NAME);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="comment">// 以防万一，先unmount</span></span><br><span class="line">        dfs_unmount(<span class="string">&quot;/&quot;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (dfs_mount(FS_DEVICE_NAME, <span class="string">&quot;/&quot;</span>, <span class="string">&quot;lfs&quot;</span>, <span class="number">0</span>, <span class="number">0</span>) == <span class="number">0</span>)&#123;</span><br><span class="line">            LOG_I(<span class="string">&quot;Filesystem initialized!&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span>&#123;</span><br><span class="line">            <span class="comment">// mkfs -t lfs filesystem</span></span><br><span class="line">            dfs_mkfs(<span class="string">&quot;lfs&quot;</span>, FS_DEVICE_NAME);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (dfs_mount(FS_DEVICE_NAME, <span class="string">&quot;/&quot;</span>, <span class="string">&quot;lfs&quot;</span>, <span class="number">0</span>, <span class="number">0</span>) == <span class="number">0</span>)&#123;</span><br><span class="line">                LOG_I(<span class="string">&quot;Filesystem initialized!&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">else</span>&#123;</span><br><span class="line">                LOG_E(<span class="string">&quot;Failed to initialize filesystem!&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> RT_EOK;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">MSH_CMD_EXPORT(w25q128_lfs_demo, w25q128_lfs_demo);</span><br></pre></td></tr></table></figure>
-
-<h2 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h2><p>demo 代码里面的<code>dfs_mount</code>和<code>dfs_mkfs</code>的参数，DEVICE_NAME, lfs 和 elm 是不一样的</p>
 
       
     </div>
