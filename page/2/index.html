@@ -71,6 +71,467 @@
 
   
     
+    <h3 class="article-title"><a href="/2025/11/19/linux-trim-rootfs/"><span>linux 内核裁剪之 rootfs</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/11/19/linux-trim-rootfs/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-11-19T07:19:13.000Z">
+          2025-11-19
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>编译成功以后，貌似需要做很多其它的工作</p>
+<h2 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h2><h3 id="源码"><a href="#源码" class="headerlink" title="源码"></a>源码</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://busybox.net/downloads/busybox-1.36.1.tar.bz2</span><br></pre></td></tr></table></figure>
+
+<h3 id="menuconfig"><a href="#menuconfig" class="headerlink" title="menuconfig"></a>menuconfig</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">mkdir</span> output</span><br><span class="line"></span><br><span class="line">make defconfig</span><br><span class="line">make menuconfig</span><br></pre></td></tr></table></figure>
+
+<p>配置静态编译</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 不然会提示找不到 working dir</span></span><br><span class="line">Settings  ---&gt;</span><br><span class="line">  [*] Build static binary (no shared libs)</span><br></pre></td></tr></table></figure>
+
+<h3 id="编译"><a href="#编译" class="headerlink" title="编译"></a>编译</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make -j$(<span class="built_in">nproc</span>) CONFIG_PREFIX=$(<span class="built_in">pwd</span>)/../rootfs/ install</span><br></pre></td></tr></table></figure>
+
+<h3 id="自定义脚本"><a href="#自定义脚本" class="headerlink" title="自定义脚本"></a>自定义脚本</h3><p>patch_fs.sh</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> [ <span class="string">&quot;<span class="subst">$(id -u)</span>&quot;</span> -ne 0 ]; <span class="keyword">then</span></span><br><span class="line">  <span class="built_in">echo</span> <span class="string">&quot;需要 root 权限。&quot;</span> &gt;&amp;2</span><br><span class="line">  <span class="built_in">exit</span> 1</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line">TTY_NAME=<span class="string">&quot;ttyAMA0&quot;</span></span><br><span class="line">HOST_NAME=<span class="string">&quot;xxx&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 123456</span></span><br><span class="line">ROOT_PASSWORD_HASH=<span class="string">&#x27;$1$B3A6v4ws$ydvwSpAz0PYhYss1WOxOy1&#x27;</span></span><br><span class="line"></span><br><span class="line">BUSYBOX_SRC_DIR=<span class="string">&quot;<span class="subst">$(pwd)</span>/busybox-1.36.1&quot;</span></span><br><span class="line">WORK_DIR=<span class="string">&quot;<span class="subst">$(pwd)</span>/&quot;</span></span><br><span class="line">ROOTFS_DIR=<span class="string">&quot;<span class="subst">$(pwd)</span>/rootfs&quot;</span></span><br><span class="line">IMAGE_NAME=<span class="string">&quot;rootfs.ext4&quot;</span></span><br><span class="line">IMAGE_SIZE_MB=32</span><br><span class="line">TEMP_MOUNT_DIR=<span class="string">&quot;<span class="variable">$&#123;WORK_DIR&#125;</span>/fs_mnt_tmp&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">cleanup</span></span>() &#123;</span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;清理临时挂载点（如果存在）...&quot;</span></span><br><span class="line">    <span class="keyword">if</span> mountpoint -q <span class="string">&quot;<span class="variable">$&#123;TEMP_MOUNT_DIR&#125;</span>&quot;</span>; <span class="keyword">then</span></span><br><span class="line">        umount <span class="string">&quot;<span class="variable">$&#123;TEMP_MOUNT_DIR&#125;</span>&quot;</span></span><br><span class="line">    <span class="keyword">fi</span></span><br><span class="line">    <span class="built_in">rm</span> -rf <span class="string">&quot;<span class="variable">$&#123;TEMP_MOUNT_DIR&#125;</span>&quot;</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;清理完成。&quot;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;开始执行 BusyBox rootfs 准备脚本 (以 root 权限运行)...&quot;</span></span><br><span class="line"><span class="built_in">set</span> -e</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> [ ! -d <span class="string">&quot;<span class="variable">$&#123;BUSYBOX_SRC_DIR&#125;</span>&quot;</span> ]; <span class="keyword">then</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;错误：BusyBox 源码目录 <span class="variable">$&#123;BUSYBOX_SRC_DIR&#125;</span> 未找到！&quot;</span></span><br><span class="line">    <span class="built_in">exit</span> 1</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">mkdir</span> -p <span class="string">&quot;<span class="variable">$&#123;ROOTFS_DIR&#125;</span>&quot;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;Rootfs 目录: <span class="variable">$&#123;ROOTFS_DIR&#125;</span>&quot;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;输出镜像文件: <span class="variable">$&#123;WORK_DIR&#125;</span>/<span class="variable">$&#123;IMAGE_NAME&#125;</span>&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;--- 检查 BusyBox 安装 ---&quot;</span></span><br><span class="line">BUSYBOX_EXEC_PATH=<span class="string">&quot;<span class="variable">$&#123;ROOTFS_DIR&#125;</span>/bin/busybox&quot;</span></span><br><span class="line"><span class="keyword">if</span> [ ! -x <span class="string">&quot;<span class="variable">$&#123;BUSYBOX_EXEC_PATH&#125;</span>&quot;</span> ]; <span class="keyword">then</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;错误：<span class="variable">$&#123;BUSYBOX_EXEC_PATH&#125;</span> 不存在或不可执行！&quot;</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;请提前准备好 BusyBox 安装到 <span class="variable">$&#123;ROOTFS_DIR&#125;</span> 目录。&quot;</span></span><br><span class="line">    <span class="built_in">exit</span> 1</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;BusyBox 主程序 (<span class="variable">$&#123;BUSYBOX_EXEC_PATH&#125;</span>) 存在且可执行。&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;使用 &#x27;file&#x27; 命令检查 BusyBox 可执行文件类型：&quot;</span></span><br><span class="line">file <span class="string">&quot;<span class="variable">$&#123;BUSYBOX_EXEC_PATH&#125;</span>&quot;</span></span><br><span class="line"></span><br><span class="line">INIT_PATH_FOUND=<span class="string">&quot;&quot;</span></span><br><span class="line"><span class="keyword">if</span> [ -L <span class="string">&quot;<span class="variable">$&#123;ROOTFS_DIR&#125;</span>/sbin/init&quot;</span> ] &amp;&amp; [ <span class="string">&quot;<span class="subst">$(readlink -f <span class="string">&quot;<span class="variable">$&#123;ROOTFS_DIR&#125;</span>/sbin/init&quot;</span>)</span>&quot;</span> = <span class="string">&quot;<span class="variable">$&#123;BUSYBOX_EXEC_PATH&#125;</span>&quot;</span> ]; <span class="keyword">then</span></span><br><span class="line">    INIT_PATH_FOUND=<span class="string">&quot;<span class="variable">$&#123;ROOTFS_DIR&#125;</span>/sbin/init&quot;</span></span><br><span class="line"><span class="keyword">elif</span> [ -L <span class="string">&quot;<span class="variable">$&#123;ROOTFS_DIR&#125;</span>/bin/init&quot;</span> ] &amp;&amp; [ <span class="string">&quot;<span class="subst">$(readlink -f <span class="string">&quot;<span class="variable">$&#123;ROOTFS_DIR&#125;</span>/bin/init&quot;</span>)</span>&quot;</span> = <span class="string">&quot;<span class="variable">$&#123;BUSYBOX_EXEC_PATH&#125;</span>&quot;</span> ]; <span class="keyword">then</span></span><br><span class="line">    INIT_PATH_FOUND=<span class="string">&quot;<span class="variable">$&#123;ROOTFS_DIR&#125;</span>/bin/init&quot;</span></span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> [ -z <span class="string">&quot;<span class="variable">$&#123;INIT_PATH_FOUND&#125;</span>&quot;</span> ]; <span class="keyword">then</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;错误：未找到指向 busybox 的 init 符号链接！&quot;</span></span><br><span class="line">    <span class="built_in">exit</span> 1</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;init 程序 (<span class="variable">$&#123;INIT_PATH_FOUND&#125;</span>) 存在且正确链接到 busybox。&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> ! ([ -L <span class="string">&quot;<span class="variable">$&#123;ROOTFS_DIR&#125;</span>/bin/sh&quot;</span> ] &amp;&amp; [ <span class="string">&quot;<span class="subst">$(readlink -f <span class="string">&quot;<span class="variable">$&#123;ROOTFS_DIR&#125;</span>/bin/sh&quot;</span>)</span>&quot;</span> = <span class="string">&quot;<span class="variable">$&#123;BUSYBOX_EXEC_PATH&#125;</span>&quot;</span> ]); <span class="keyword">then</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;错误：<span class="variable">$&#123;ROOTFS_DIR&#125;</span>/bin/sh 未正确链接到 busybox！&quot;</span></span><br><span class="line">    <span class="built_in">exit</span> 1</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;sh 程序 (<span class="variable">$&#123;ROOTFS_DIR&#125;</span>/bin/sh) 存在且正确链接到 busybox。&quot;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;BusyBox 安装验证通过。&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">cd</span> <span class="string">&quot;<span class="variable">$&#123;ROOTFS_DIR&#125;</span>&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建必需目录</span></span><br><span class="line"><span class="built_in">mkdir</span> -p dev dev/pts dev/shm etc lib usr/bin usr/sbin usr/lib var/log var/run var/tmp home root mnt proc sys tmp</span><br><span class="line"></span><br><span class="line"><span class="comment"># 建立 usr -&gt; bin, sbin, lib 软连接（如果不存在）</span></span><br><span class="line"><span class="keyword">if</span> [ -d usr/bin ] &amp;&amp; [ ! -e bin ]; <span class="keyword">then</span> <span class="built_in">ln</span> -sf usr/bin bin; <span class="keyword">fi</span></span><br><span class="line"><span class="keyword">if</span> [ -d usr/sbin ] &amp;&amp; [ ! -e sbin ]; <span class="keyword">then</span> <span class="built_in">ln</span> -sf usr/sbin sbin; <span class="keyword">fi</span></span><br><span class="line"><span class="keyword">if</span> [ -d usr/lib ] &amp;&amp; [ ! -e lib ]; <span class="keyword">then</span> <span class="built_in">ln</span> -sf usr/lib lib; <span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;--- 创建配置文件 ---&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">cat</span> &gt; etc/profile &lt;&lt; <span class="string">EOF</span></span><br><span class="line"><span class="string">PATH=/bin:/sbin:/usr/bin:/usr/sbin</span></span><br><span class="line"><span class="string">export LD_LIBRARY_PATH=/lib:/usr/lib</span></span><br><span class="line"><span class="string">/bin/hostname $&#123;HOST_NAME&#125;</span></span><br><span class="line"><span class="string">USER=root</span></span><br><span class="line"><span class="string">LOGNAME=\$USER</span></span><br><span class="line"><span class="string">HOSTNAME=\$(/bin/hostname)</span></span><br><span class="line"><span class="string">PS1=&#x27;[\u@\h \W]\\# &#x27;</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">cat</span> &gt; etc/inittab &lt;&lt; <span class="string">EOF</span></span><br><span class="line"><span class="string">::sysinit:/etc/init.d/rcS</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">#$&#123;TTY_NAME&#125;::respawn:/sbin/getty -L $&#123;TTY_NAME&#125; 115200 vt100</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"># 免密</span></span><br><span class="line"><span class="string">$&#123;TTY_NAME&#125;::respawn:/bin/sh &lt;/dev/$&#123;TTY_NAME&#125; &gt;/dev/$&#123;TTY_NAME&#125; 2&gt;&amp;1</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">::restart:/sbin/init</span></span><br><span class="line"><span class="string">::ctrlaltdel:/sbin/reboot</span></span><br><span class="line"><span class="string">::shutdown:/bin/umount -a -r</span></span><br><span class="line"><span class="string">::shutdown:/sbin/swapoff -a</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">cat</span> &gt; etc/fstab &lt;&lt; <span class="string">EOF</span></span><br><span class="line"><span class="string">proc            /proc           proc      defaults          0       0</span></span><br><span class="line"><span class="string">sysfs           /sys            sysfs     defaults          0       0</span></span><br><span class="line"><span class="string">devtmpfs        /dev            devtmpfs  mode=0755,nosuid  0       0</span></span><br><span class="line"><span class="string">tmpfs           /tmp            tmpfs     defaults          0       0</span></span><br><span class="line"><span class="string">tmpfs           /dev/shm        tmpfs     defaults          0       0</span></span><br><span class="line"><span class="string">none            /var            ramfs     defaults          0       0</span></span><br><span class="line"><span class="string">devpts          /dev/pts        devpts    gid=5,mode=0620   0       0</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;<span class="variable">$&#123;HOST_NAME&#125;</span>&quot;</span> &gt; etc/hostname</span><br><span class="line"></span><br><span class="line"><span class="built_in">cat</span> &gt; etc/passwd &lt;&lt; <span class="string">EOF</span></span><br><span class="line"><span class="string">root:x:0:0:root:/root:/bin/sh</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"><span class="built_in">chmod</span> 644 etc/passwd</span><br><span class="line"></span><br><span class="line"><span class="built_in">cat</span> &gt; etc/group &lt;&lt; <span class="string">EOF</span></span><br><span class="line"><span class="string">root:x:0:</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"><span class="built_in">chmod</span> 644 etc/group</span><br><span class="line"></span><br><span class="line"><span class="built_in">cat</span> &gt; etc/shadow &lt;&lt; <span class="string">EOF</span></span><br><span class="line"><span class="string">root:$&#123;ROOT_PASSWORD_HASH&#125;:10933:0:99999:7:::</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"><span class="built_in">chmod</span> 600 etc/shadow</span><br><span class="line"></span><br><span class="line"><span class="built_in">mkdir</span> -p etc/init.d</span><br><span class="line"><span class="built_in">cat</span> &gt; etc/init.d/rcS &lt;&lt; <span class="string">EOF</span></span><br><span class="line"><span class="string">#!/bin/sh</span></span><br><span class="line"><span class="string">mkdir -p /tmp</span></span><br><span class="line"><span class="string">mkdir -p /dev/pts</span></span><br><span class="line"><span class="string">mkdir -p /dev/shm</span></span><br><span class="line"><span class="string">/bin/mount -a</span></span><br><span class="line"><span class="string">if [ -f /etc/hostname ]; then</span></span><br><span class="line"><span class="string">    /bin/hostname -F /etc/hostname</span></span><br><span class="line"><span class="string">fi</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"><span class="built_in">chmod</span> +x etc/init.d/rcS</span><br><span class="line"></span><br><span class="line"><span class="built_in">cd</span> <span class="string">&quot;<span class="variable">$&#123;WORK_DIR&#125;</span>&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;--- 创建并填充磁盘镜像 <span class="variable">$&#123;WORK_DIR&#125;</span>/<span class="variable">$&#123;IMAGE_NAME&#125;</span> ---&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">rm</span> -f <span class="string">&quot;<span class="variable">$&#123;WORK_DIR&#125;</span>/<span class="variable">$&#123;IMAGE_NAME&#125;</span>&quot;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;正在创建空磁盘镜像 (<span class="variable">$&#123;IMAGE_SIZE_MB&#125;</span>MB)...&quot;</span></span><br><span class="line"><span class="built_in">dd</span> <span class="keyword">if</span>=/dev/zero of=<span class="string">&quot;<span class="variable">$&#123;WORK_DIR&#125;</span>/<span class="variable">$&#123;IMAGE_NAME&#125;</span>&quot;</span> bs=1M count=<span class="variable">$&#123;IMAGE_SIZE_MB&#125;</span> status=progress</span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;正在将磁盘镜像格式化为 ext4...&quot;</span></span><br><span class="line">mkfs.ext4 -F <span class="string">&quot;<span class="variable">$&#123;WORK_DIR&#125;</span>/<span class="variable">$&#123;IMAGE_NAME&#125;</span>&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">mkdir</span> -p <span class="string">&quot;<span class="variable">$&#123;TEMP_MOUNT_DIR&#125;</span>&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;正在将loop设备挂载到 <span class="variable">$&#123;TEMP_MOUNT_DIR&#125;</span>...&quot;</span></span><br><span class="line">mount -o loop <span class="string">&quot;<span class="variable">$&#123;WORK_DIR&#125;</span>/<span class="variable">$&#123;IMAGE_NAME&#125;</span>&quot;</span> <span class="string">&quot;<span class="variable">$&#123;TEMP_MOUNT_DIR&#125;</span>&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;正在从 <span class="variable">$&#123;ROOTFS_DIR&#125;</span> 复制 rootfs 内容到镜像...&quot;</span></span><br><span class="line">rsync -a --delete <span class="string">&quot;<span class="variable">$&#123;ROOTFS_DIR&#125;</span>/&quot;</span> <span class="string">&quot;<span class="variable">$&#123;TEMP_MOUNT_DIR&#125;</span>/&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;正在卸载 loop 设备...&quot;</span></span><br><span class="line">umount <span class="string">&quot;<span class="variable">$&#123;TEMP_MOUNT_DIR&#125;</span>&quot;</span></span><br><span class="line"><span class="built_in">rmdir</span> <span class="string">&quot;<span class="variable">$&#123;TEMP_MOUNT_DIR&#125;</span>&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;--- Rootfs 镜像已创建: <span class="variable">$&#123;WORK_DIR&#125;</span>/<span class="variable">$&#123;IMAGE_NAME&#125;</span> ---&quot;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;Rootfs 内容也保留在: <span class="variable">$&#123;ROOTFS_DIR&#125;</span>&quot;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;&quot;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;构建过程完成！&quot;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;您现在可以将 <span class="variable">$&#123;WORK_DIR&#125;</span>/<span class="variable">$&#123;IMAGE_NAME&#125;</span> 用于 QEMU 或其他目标系统。&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">exit</span> 0</span><br></pre></td></tr></table></figure>
+
+<h3 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h3><p>append 后面的 root 不能缺</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">qemu-system-arm \</span><br><span class="line">  -M vexpress-a9 \</span><br><span class="line">  -m 512M \</span><br><span class="line">  -kernel ~/downloads/linux-5.10.191/output/arch/arm/boot/zImage \</span><br><span class="line">  -dtb ~/downloads/linux-5.10.191/output/arch/arm/boot/dts/vexpress-v2p-ca9.dtb \</span><br><span class="line">  -nographic \</span><br><span class="line">  -append <span class="string">&quot;root=/dev/mmcblk0 rw console=ttyAMA0&quot;</span> \</span><br><span class="line">  -sd ~/downloads/rootfs.ext4</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/linux/">linux</a><a href="/tags/kernel/">kernel</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
+    <h3 class="article-title"><a href="/2025/11/18/linux-trim-uboot/"><span>linux 内核裁剪之 uboot</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/11/18/linux-trim-uboot/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-11-18T10:36:03.000Z">
+          2025-11-18
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h2 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h2><h3 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h3><p>下载地址</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://ftp.denx.de/pub/u-boot/u-boot-2023.04.tar.bz2</span><br></pre></td></tr></table></figure>
+
+<h3 id="编译"><a href="#编译" class="headerlink" title="编译"></a>编译</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">make vexpress_ca9x4_defconfig</span><br><span class="line">make -j$(<span class="built_in">nproc</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h3><p>qemu 加载 uboot 需要用 elf 的格式</p>
+<p>bin 格式的没有入口点，适合烧录到板子上</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">qemu-system-arm \</span><br><span class="line">  -M vexpress-a9 \</span><br><span class="line">  -m 512M \</span><br><span class="line">  -kernel ~/downloads/u-boot-2023.04/output/u-boot \</span><br><span class="line">  -nographic</span><br></pre></td></tr></table></figure>
+
+<h3 id="调试"><a href="#调试" class="headerlink" title="调试"></a>调试</h3><p>查看变量</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">printenv</span> xxx</span><br></pre></td></tr></table></figure>
+
+<p>手动执行，比如你定义了 bootcmd</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">run bootcmd</span><br></pre></td></tr></table></figure>
+
+<p>重启</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">reset</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/linux/">linux</a><a href="/tags/kernel/">kernel</a><a href="/tags/uboot/">uboot</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
+    <h3 class="article-title"><a href="/2025/11/17/rt-smart/"><span>rt-smart</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/11/17/rt-smart/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-11-17T08:11:48.000Z">
+          2025-11-17
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>整理流程很像 linux, 先 load 内核，再加载 rootfs</p>
+<h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><p>以 qemu-virt64-aarch64 为例</p>
+<h3 id="用户态"><a href="#用户态" class="headerlink" title="用户态"></a>用户态</h3><p>工具链需要通过编译用户态程序才能导出，有点奇怪</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> --depth 1 https://github.com/RT-Thread/userapps.git</span><br><span class="line"><span class="built_in">cd</span> userapps; <span class="built_in">source</span> env.sh</span><br><span class="line"><span class="built_in">cd</span> apps</span><br></pre></td></tr></table></figure>
+
+<p>下载工具链</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xmake config --<span class="built_in">arch</span>=aarch64 -y</span><br></pre></td></tr></table></figure>
+
+<p>导出 toolchain 需要先编译</p>
+<p>每次修改完应用程序，都需要 xmake 一下</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xmake</span><br></pre></td></tr></table></figure>
+
+<p>toolchain 在 <code>apps/build/packages</code> 下</p>
+<p>sdk 在<code>apps/build/sdk</code> 下</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xmake smart-rootfs --<span class="built_in">export</span>=all</span><br></pre></td></tr></table></figure>
+
+<p>生成 rootfs，执行以后，在 <code>apps/build/</code> 下</p>
+<p>如果需要把 zig 编译的程序放进去，可以放在这个里面, 实际测试，运行会崩溃</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xmake smart-rootfs</span><br></pre></td></tr></table></figure>
+
+<p>生成磁盘镜像</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xmake smart-image -f ext4</span><br></pre></td></tr></table></figure>
+
+<h3 id="内核"><a href="#内核" class="headerlink" title="内核"></a>内核</h3><p>toolchain 在 <code>userapps/apps/build/packages</code> 里面，复制出来</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> RTT_CC=<span class="string">&quot;gcc&quot;</span></span><br><span class="line"><span class="built_in">export</span> RTT_EXEC_PATH=<span class="string">&quot;./toolchain/bin/&quot;</span></span><br><span class="line"><span class="built_in">export</span> RTT_CC_PREFIX=<span class="string">&quot;aarch64-linux-musleabi-&quot;</span></span><br><span class="line"><span class="built_in">export</span> PATH=<span class="string">&quot;<span class="variable">$RTT_EXEC_PATH</span>:<span class="variable">$PATH</span>&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>编译内核</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> --depth 1 https://github.com/RT-Thread/rt-thread</span><br><span class="line"><span class="built_in">cd</span> rt-thread/bsp/qemu-virt64-aarch64/</span><br><span class="line">scons --menuconfig</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">RT-Thread Kernel ---&gt;</span><br><span class="line">  [*] Enable RT-Thread Smart (microkernel on kernel/userland)</span><br><span class="line"></span><br><span class="line">RT-Thread online packages  ---&gt;</span><br><span class="line">  system packages  ---&gt;</span><br><span class="line">    [*] lwext4: an excellent choice of ext2/3/4 filesystem <span class="keyword">for</span> microcontrol</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">source</span> ~/.env/env.sh</span><br><span class="line">pkgs --update</span><br><span class="line"></span><br><span class="line">scons -c; scons</span><br><span class="line"><span class="comment"># scons --dist</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="运行"><a href="#运行" class="headerlink" title="运行"></a>运行</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cp</span> ext4.img ../../../rt-thread/bsp/qemu-virt64-aarch64/</span><br></pre></td></tr></table></figure>
+
+<p>修改 qemu.sh 里面的 sd.bin 为 ext4.img</p>
+<p>参考<a target="_blank" rel="noopener" href="https://github.com/RT-Thread/userapps">这里</a>最后生成 prebuilt 的部分里面的 run.sh</p>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/stm32/">stm32</a><a href="/tags/rt-thread/">rt-thread</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
+    <h3 class="article-title"><a href="/2025/11/16/rtt-stm32-u8g/"><span>rt-thread 下，配置 stm32 的 u8g</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/11/16/rtt-stm32-u8g/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-11-16T01:26:39.000Z">
+          2025-11-16
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><h3 id="menuconfig"><a href="#menuconfig" class="headerlink" title="menuconfig"></a>menuconfig</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">RT-Thread online packages -&gt;</span><br><span class="line">  peripheral libraries and drivers ---&gt;</span><br><span class="line">    U8G2: a monochrome graphic library ---&gt;</span><br><span class="line">      Version (c-latest)</span><br></pre></td></tr></table></figure>
+
+<p>字体选用 <code>u8g2_font_wqy12_t_gb2312</code> 可以完整显示中文</p>
+<h3 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">u8g2_SetFont(&amp;u8g2, u8g2_font_wqy12_t_gb2312);</span><br><span class="line">u8g2_DrawUTF8(&amp;u8g2, <span class="number">1</span>, <span class="number">18</span>, <span class="string">&quot;我拿起那40米的大砍刀&quot;</span>);</span><br><span class="line">u8g2_DrawUTF8(&amp;u8g2, <span class="number">5</span>, <span class="number">40</span>, <span class="string">&quot;削你那15米的铅笔&quot;</span>);</span><br><span class="line">u8g2_SendBuffer(&amp;u8g2);</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/stm32/">stm32</a><a href="/tags/rt-thread/">rt-thread</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
+    <h3 class="article-title"><a href="/2025/11/15/rtt-stm32-sdcard/"><span>rt-thread 下，配置 stm32 的 sd 卡</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/11/15/rtt-stm32-sdcard/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-11-15T03:37:24.000Z">
+          2025-11-15
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><h3 id="cubemx"><a href="#cubemx" class="headerlink" title="cubemx"></a>cubemx</h3><p>配置 sdio 接口</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">选择 SD 4 bit wide bus，生成代码，复制到项目</span><br><span class="line"></span><br><span class="line">cubeMX 里面配置的时候，rcc 需要启用 hse，外部晶震，usb 的时钟需要设置为 48MHZ</span><br><span class="line"></span><br><span class="line">复制 main.c 里面的时钟配置到 board.c</span><br></pre></td></tr></table></figure>
+
+<h3 id="Kconfig"><a href="#Kconfig" class="headerlink" title="Kconfig"></a>Kconfig</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">config BSP_USING_SDIO</span><br><span class="line">    bool <span class="string">&quot;Enable sd card&quot;</span></span><br><span class="line">    <span class="keyword">select</span> RT_USING_SDIO</span><br><span class="line">    default n</span><br></pre></td></tr></table></figure>
+
+<h3 id="文件系统"><a href="#文件系统" class="headerlink" title="文件系统"></a>文件系统</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">RT-Thread Components ---&gt;</span><br><span class="line">  Device virtual file system ---&gt;</span><br><span class="line">    [*]Using device virtual file system</span><br></pre></td></tr></table></figure>
+
+<p>配置参数</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[*] Enable elm-chan fatfs</span><br><span class="line">      elm-chan<span class="string">&#x27;s FatFs, Generic FAT Filesystem Module  ---&gt;</span></span><br><span class="line"><span class="string">        (4096) Maximum sector size to be handled.</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="libc"><a href="#libc" class="headerlink" title="libc"></a>libc</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">RT-Thread Components ---&gt;</span><br><span class="line">  POSIX layer and C standard library ---&gt;</span><br><span class="line">    [*] Enable libc APIs from toolchain</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/stm32/">stm32</a><a href="/tags/rt-thread/">rt-thread</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
+    <h3 class="article-title"><a href="/2025/11/14/rtt-stm32-pwm/"><span>rt-thread 下，配置 stm32 的 pwm</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/11/14/rtt-stm32-pwm/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-11-14T00:05:55.000Z">
+          2025-11-14
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <p>同一个定时器，多个通道，频率必须一致，占空比可以不同</p>
+<p>脉冲经过光耦会失真</p>
+<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><p>pwm_demo.c</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;rtthread.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;rtdevice.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PWM_DEV_NAME        <span class="string">&quot;pwm1&quot;</span>      <span class="comment">// 硬件定时器设备名</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PWM_CHANNEL1        1           <span class="comment">// 通道1</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PWM_CHANNEL2        2           <span class="comment">// 通道2</span></span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">rt_device_pwm</span> *<span class="title">pwm_dev</span>;</span></span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="type">int</span> <span class="title function_">pwm_demo</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv[])</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">rt_uint32_t</span> period, pulse1, pulse2;</span><br><span class="line"></span><br><span class="line">    pwm_dev = (<span class="keyword">struct</span> rt_device_pwm *)rt_device_find(PWM_DEV_NAME);</span><br><span class="line">    <span class="keyword">if</span> (pwm_dev == RT_NULL)</span><br><span class="line">    &#123;</span><br><span class="line">        rt_kprintf(<span class="string">&quot;can&#x27;t find %s device!\n&quot;</span>, PWM_DEV_NAME);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 2. 设置周期和脉宽（单位：纳秒）</span></span><br><span class="line">    period = <span class="number">50000</span>;      <span class="comment">// 20kHz = 1s/20000 = 50,000ns</span></span><br><span class="line">    pulse1 = period * <span class="number">30</span> / <span class="number">100</span>; <span class="comment">// 30% 占空比</span></span><br><span class="line">    pulse2 = period * <span class="number">60</span> / <span class="number">100</span>; <span class="comment">// 60% 占空比</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 3. 配置 PWM 通道1</span></span><br><span class="line">    rt_pwm_set(pwm_dev, PWM_CHANNEL1, period, pulse1);</span><br><span class="line">    rt_pwm_enable(pwm_dev, PWM_CHANNEL1);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 4. 配置 PWM 通道2</span></span><br><span class="line">    rt_pwm_set(pwm_dev, PWM_CHANNEL2, period, pulse2);</span><br><span class="line">    rt_pwm_enable(pwm_dev, PWM_CHANNEL2);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">MSH_CMD_EXPORT(pwm_demo, pwm demo);</span><br></pre></td></tr></table></figure>
+
+<h2 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h2><p>逻辑分析仪的 gnd 一定要接，不然数据会不准</p>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/stm32/">stm32</a><a href="/tags/rt-thread/">rt-thread</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
+    <h3 class="article-title"><a href="/2025/11/14/rtt-stm32-pulse-encoder/"><span>rt-thread 下，配置 stm32 的 pulse-encoder</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/11/14/rtt-stm32-pulse-encoder/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-11-14T00:05:51.000Z">
+          2025-11-14
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <p>脉冲编码器</p>
+<h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><h3 id="cubemx"><a href="#cubemx" class="headerlink" title="cubemx"></a>cubemx</h3><p>选一个定时器,设置 Combined Channels 为 <code>Encoder Mode</code></p>
+<h3 id="接线"><a href="#接线" class="headerlink" title="接线"></a>接线</h3><p>定时器对应的 channel 接 DT 和 CLK,正反接都可以</p>
+<h3 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h3><p>pulse_encoder_demo.c</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;rtthread.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;rtdevice.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PULSE_ENCODER_DEV_NAME    <span class="string">&quot;pulse3&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="type">int</span> <span class="title function_">pulse_encoder_demo</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv[])</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">rt_err_t</span> ret = RT_EOK;</span><br><span class="line">    <span class="type">rt_device_t</span> pulse_encoder_dev = RT_NULL;</span><br><span class="line"></span><br><span class="line">    <span class="type">rt_int32_t</span> count;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* 查找脉冲编码器设备 */</span></span><br><span class="line">    pulse_encoder_dev = rt_device_find(PULSE_ENCODER_DEV_NAME);</span><br><span class="line">    <span class="keyword">if</span> (pulse_encoder_dev == RT_NULL)</span><br><span class="line">    &#123;</span><br><span class="line">        rt_kprintf(<span class="string">&quot;pulse encoder sample run failed! can&#x27;t find %s device!\n&quot;</span>, PULSE_ENCODER_DEV_NAME);</span><br><span class="line">        <span class="keyword">return</span> RT_ERROR;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* 以只读方式打开设备 */</span></span><br><span class="line">    ret = rt_device_open(pulse_encoder_dev, RT_DEVICE_OFLAG_RDONLY);</span><br><span class="line">    <span class="keyword">if</span> (ret != RT_EOK)</span><br><span class="line">    &#123;</span><br><span class="line">        rt_kprintf(<span class="string">&quot;open %s device failed!\n&quot;</span>, PULSE_ENCODER_DEV_NAME);</span><br><span class="line">        <span class="keyword">return</span> ret;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span>(<span class="type">rt_uint32_t</span> i = <span class="number">0</span>; i &lt;= <span class="number">10000</span>; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        rt_thread_mdelay(<span class="number">500</span>);</span><br><span class="line"></span><br><span class="line">        rt_device_read(pulse_encoder_dev, <span class="number">0</span>, &amp;count, <span class="number">1</span>);</span><br><span class="line">        rt_device_control(pulse_encoder_dev, PULSE_ENCODER_CMD_CLEAR_COUNT, RT_NULL);</span><br><span class="line">        rt_kprintf(<span class="string">&quot;get count %d\n&quot;</span>,count);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    rt_device_close(pulse_encoder_dev);</span><br><span class="line">    <span class="keyword">return</span> ret;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">MSH_CMD_EXPORT(pulse_encoder_demo, pulse_encoder_demo);</span><br></pre></td></tr></table></figure>
+
+<h2 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h2><p>同一个定时器,如果某通道发了脉冲,其他通道不能再用来读取脉冲编码器了,会冲突</p>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/stm32/">stm32</a><a href="/tags/rt-thread/">rt-thread</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
     <h3 class="article-title"><a href="/2025/11/13/rtt-stm32-mqtt/"><span>rt-thread 下，配置 stm32 的 mqtt</span></a></h3>
     
   
@@ -244,481 +705,6 @@
 
 <p>libmodbus_tcp_slave_demo.c</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;rtthread.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;rtdevice.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;modbus.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sal_socket.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> MAX_CLIENT_NUM  3</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> CLIENT_TIMEOUT  10</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="type">int</span> fd;</span><br><span class="line">    <span class="type">rt_tick_t</span> tick_timeout;</span><br><span class="line">&#125;<span class="type">client_session_t</span>;</span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="type">void</span> <span class="title function_">tcp_slave_demo_thread</span><span class="params">(<span class="type">void</span> *param)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">int</span> server_fd = <span class="number">-1</span>;</span><br><span class="line">    <span class="type">modbus_t</span> *ctx = <span class="literal">NULL</span>;</span><br><span class="line">    <span class="type">modbus_mapping_t</span> *mb_mapping = <span class="literal">NULL</span>;</span><br><span class="line">    <span class="type">client_session_t</span> client_session[MAX_CLIENT_NUM];</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; MAX_CLIENT_NUM; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        client_session[i].fd = <span class="number">-1</span>;</span><br><span class="line">        client_session[i].tick_timeout = rt_tick_get() + rt_tick_from_millisecond(CLIENT_TIMEOUT * <span class="number">1000</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="type">int</span> max_fd = <span class="number">-1</span>;</span><br><span class="line">    fd_set readset;</span><br><span class="line">    <span class="type">int</span> rc;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">timeval</span> <span class="title">select_timeout</span>;</span></span><br><span class="line">    select_timeout.tv_sec = <span class="number">1</span>;</span><br><span class="line">    select_timeout.tv_usec = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    ctx = modbus_new_tcp(RT_NULL, <span class="number">1502</span>, AF_INET);</span><br><span class="line">    RT_ASSERT(ctx != RT_NULL);</span><br><span class="line">    mb_mapping = modbus_mapping_new(MODBUS_MAX_READ_BITS, <span class="number">0</span>,</span><br><span class="line">                                    MODBUS_MAX_READ_REGISTERS, <span class="number">0</span>);</span><br><span class="line">    RT_ASSERT(mb_mapping != RT_NULL);</span><br><span class="line"></span><br><span class="line">_mbtcp_start:</span><br><span class="line">    server_fd = modbus_tcp_listen(ctx, <span class="number">1</span>);</span><br><span class="line">    <span class="keyword">if</span> (server_fd &lt; <span class="number">0</span>)</span><br><span class="line">        <span class="keyword">goto</span> _mbtcp_restart;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> (<span class="number">1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        max_fd = <span class="number">-1</span>;</span><br><span class="line">        FD_ZERO(&amp;readset);</span><br><span class="line">        FD_SET(server_fd, &amp;readset);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span>(max_fd &lt; server_fd)</span><br><span class="line">            max_fd = server_fd;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; MAX_CLIENT_NUM; i++)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span>(client_session[i].fd &gt;= <span class="number">0</span>)</span><br><span class="line">            &#123;</span><br><span class="line">                FD_SET(client_session[i].fd, &amp;readset);</span><br><span class="line">                <span class="keyword">if</span>(max_fd &lt; client_session[i].fd)</span><br><span class="line">                    max_fd = client_session[i].fd;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        rc = select(max_fd + <span class="number">1</span>, &amp;readset, RT_NULL, RT_NULL, &amp;select_timeout);</span><br><span class="line">        <span class="keyword">if</span>(rc &lt; <span class="number">0</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">goto</span> _mbtcp_restart;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span>(rc &gt; <span class="number">0</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span>(FD_ISSET(server_fd, &amp;readset))</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="type">int</span> client_sock_fd = modbus_tcp_accept(ctx, &amp;server_fd);</span><br><span class="line">                <span class="keyword">if</span>(client_sock_fd &gt;= <span class="number">0</span>)</span><br><span class="line">                &#123;</span><br><span class="line">                    <span class="type">int</span> index = <span class="number">-1</span>;</span><br><span class="line">                    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; MAX_CLIENT_NUM; i++)</span><br><span class="line">                    &#123;</span><br><span class="line">                        <span class="keyword">if</span>(client_session[i].fd &lt; <span class="number">0</span>)</span><br><span class="line">                        &#123;</span><br><span class="line">                            index = i;</span><br><span class="line">                            <span class="keyword">break</span>;</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="keyword">if</span>(index &gt;= <span class="number">0</span>)</span><br><span class="line">                    &#123;</span><br><span class="line">                        client_session[index].fd = client_sock_fd;</span><br><span class="line">                        client_session[index].tick_timeout = rt_tick_get() + rt_tick_from_millisecond(CLIENT_TIMEOUT * <span class="number">1000</span>);</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="keyword">else</span></span><br><span class="line">                    &#123;</span><br><span class="line">                        close(client_sock_fd);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; MAX_CLIENT_NUM; i++)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">if</span>(client_session[i].fd &gt;= <span class="number">0</span>)</span><br><span class="line">                &#123;</span><br><span class="line">                    <span class="keyword">if</span>(FD_ISSET(client_session[i].fd, &amp;readset))</span><br><span class="line">                    &#123;</span><br><span class="line">                        <span class="type">uint8_t</span> query[MODBUS_TCP_MAX_ADU_LENGTH];</span><br><span class="line">                        modbus_set_socket(ctx, client_session[i].fd);</span><br><span class="line"></span><br><span class="line">                        rc = modbus_receive(ctx, query);</span><br><span class="line">                        <span class="keyword">if</span> (rc &gt; <span class="number">0</span>)</span><br><span class="line">                        &#123;</span><br><span class="line">                            rc = modbus_reply(ctx, query, rc, mb_mapping);</span><br><span class="line">                            <span class="keyword">if</span>(rc &lt; <span class="number">0</span>)</span><br><span class="line">                            &#123;</span><br><span class="line">                                close(client_session[i].fd);</span><br><span class="line">                                client_session[i].fd = <span class="number">-1</span>;</span><br><span class="line">                            &#125;</span><br><span class="line">                            <span class="keyword">else</span></span><br><span class="line">                            &#123;</span><br><span class="line">                                client_session[i].tick_timeout = rt_tick_get() + rt_tick_from_millisecond(CLIENT_TIMEOUT * <span class="number">1000</span>);</span><br><span class="line">                            &#125;</span><br><span class="line">                        &#125;</span><br><span class="line">                        <span class="keyword">else</span></span><br><span class="line">                        &#123;</span><br><span class="line">                            close(client_session[i].fd);</span><br><span class="line">                            client_session[i].fd = <span class="number">-1</span>;</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 客户端超时未收到数据断开</span></span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> i =<span class="number">0</span>;i&lt;MAX_CLIENT_NUM;i++)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span>(client_session[i].fd &gt;= <span class="number">0</span>)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="comment">//超时</span></span><br><span class="line">                <span class="keyword">if</span>((rt_tick_get() - client_session[i].tick_timeout) &lt; (RT_TICK_MAX / <span class="number">2</span>))</span><br><span class="line">                &#123;</span><br><span class="line">                    close(client_session[i].fd);</span><br><span class="line">                    client_session[i].fd = <span class="number">-1</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">_mbtcp_restart:</span><br><span class="line">    <span class="keyword">if</span>(server_fd &gt;= <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        close(server_fd);</span><br><span class="line">        server_fd = <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> i =<span class="number">0</span>;i&lt;MAX_CLIENT_NUM;i++)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span>(client_session[i].fd &gt;= <span class="number">0</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            close(client_session[i].fd);</span><br><span class="line">            client_session[i].fd = <span class="number">-1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    rt_thread_mdelay(<span class="number">5000</span>);</span><br><span class="line">    <span class="keyword">goto</span> _mbtcp_start;</span><br><span class="line"></span><br><span class="line">    modbus_free(ctx);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">libmodbus_tcp_slave_demo</span><span class="params">()</span>&#123;</span><br><span class="line">    <span class="type">rt_thread_t</span> tid;</span><br><span class="line">    tid = rt_thread_create(<span class="string">&quot;tcp_slave_demo&quot;</span>,</span><br><span class="line">                           tcp_slave_demo_thread, RT_NULL,</span><br><span class="line">                           <span class="number">2048</span>,</span><br><span class="line">                           <span class="number">12</span>, <span class="number">10</span>);</span><br><span class="line">    <span class="keyword">if</span> (tid != RT_NULL) rt_thread_startup(tid);</span><br><span class="line">    <span class="keyword">return</span> RT_EOK;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">MSH_CMD_EXPORT(libmodbus_tcp_slave_demo, libmodbus_tcp_slave_demo)</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-
-  </div>
-
-  <div class="article-footer">
-    <div class="article-meta pull-left">
-
-    
-
-    
-    
-
-    <span class="post-tags">
-      <i class="icon-tags"></i>
-        <a href="/tags/stm32/">stm32</a><a href="/tags/rt-thread/">rt-thread</a>
-    </span>
-    
-
-    </div>
-
-    
-  </div>
-</article>
-
-
-
-  <article>
-
-  
-    
-    <h3 class="article-title"><a href="/2025/11/10/rtt-stm32-vuart/"><span>rt-thread 下，配置 stm32 的 虚拟串口</span></a></h3>
-    
-  
-
-  <div class="article-top-meta">
-    <span class="posted-on">
-      <a href="/2025/11/10/rtt-stm32-vuart/" rel="bookmark">
-        <time class="entry-date published" datetime="2025-11-09T23:55:00.000Z">
-          2025-11-10
-        </time>
-      </a>
-    </span>
-  </div>
-
-
-  
-
-  <div class="article-content">
-    <div class="entry">
-      
-        <p>参考<a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/s8R4zg5-5HjxA4ldt0_n8g">这里</a></p>
-<h2 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h2><h3 id="cubeMX"><a href="#cubeMX" class="headerlink" title="cubeMX"></a>cubeMX</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">打开 cubeMX，开启 USB_OTG, 使用 device 模式，启用 usb otg 的全局中断，配置时钟，生成代码，复制到项目</span><br><span class="line"></span><br><span class="line">注意，cubeMX 里面配置的时候，rcc 需要启用 hse，外部晶震，usb 的时钟需要设置为 48MHZ，我是 F411CEU6 的板</span><br><span class="line"></span><br><span class="line">复制 main.c 里面的时钟配置到 board.c</span><br></pre></td></tr></table></figure>
-
-<h3 id="Kconfig"><a href="#Kconfig" class="headerlink" title="Kconfig"></a>Kconfig</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">config BSP_USING_USBD_FS</span><br><span class="line">    bool <span class="string">&quot;Enable OTGFS as USB device&quot;</span></span><br><span class="line">    <span class="keyword">select</span> RT_USING_USB_DEVICE</span><br><span class="line">    <span class="keyword">select</span> _RT_USB_DEVICE_CDC</span><br><span class="line">    default n</span><br></pre></td></tr></table></figure>
-
-<h3 id="menuconfig"><a href="#menuconfig" class="headerlink" title="menuconfig"></a>menuconfig</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Hardware Drivers Config &gt;</span><br><span class="line">  On-chip Peripheral Drivers</span><br><span class="line">    [*] Enable OTGFS as USB device</span><br><span class="line"></span><br><span class="line">RT-Thread Components &gt;</span><br><span class="line">  Device Drivers &gt;</span><br><span class="line">    Using USB &gt;</span><br><span class="line">      [*] Enable composite device &gt;</span><br><span class="line">        [*] Enable to use device as CDC device</span><br></pre></td></tr></table></figure>
-
-<h3 id="测试代码"><a href="#测试代码" class="headerlink" title="测试代码"></a>测试代码</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;rtthread.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;rtdevice.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">vcom_test</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">rt_device_t</span> dev = RT_NULL;</span><br><span class="line">    <span class="type">char</span> buf[] = <span class="string">&quot;hello vcom!\r\n&quot;</span>;</span><br><span class="line"></span><br><span class="line">    dev = rt_device_find(<span class="string">&quot;vcom&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (dev)</span><br><span class="line">        rt_device_open(dev, RT_DEVICE_FLAG_RDWR);</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        <span class="keyword">return</span> -RT_ERROR;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> (<span class="number">1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        rt_device_write(dev, <span class="number">0</span>, buf, rt_strlen(buf));</span><br><span class="line">        rt_thread_mdelay(<span class="number">500</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    rt_device_close(dev);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">MSH_CMD_EXPORT(vcom_test, vcom_test)</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-
-  </div>
-
-  <div class="article-footer">
-    <div class="article-meta pull-left">
-
-    
-
-    
-    
-
-    <span class="post-tags">
-      <i class="icon-tags"></i>
-        <a href="/tags/stm32/">stm32</a><a href="/tags/rt-thread/">rt-thread</a>
-    </span>
-    
-
-    </div>
-
-    
-  </div>
-</article>
-
-
-
-  <article>
-
-  
-    
-    <h3 class="article-title"><a href="/2025/11/09/rtt-stm32-lfs/"><span>rt-thread 下，配置 stm32 的 lfs</span></a></h3>
-    
-  
-
-  <div class="article-top-meta">
-    <span class="posted-on">
-      <a href="/2025/11/09/rtt-stm32-lfs/" rel="bookmark">
-        <time class="entry-date published" datetime="2025-11-09T04:33:24.000Z">
-          2025-11-09
-        </time>
-      </a>
-    </span>
-  </div>
-
-
-  
-
-  <div class="article-content">
-    <div class="entry">
-      
-        <p>外挂 flash 上使用 lfs</p>
-<p>参考的 <a target="_blank" rel="noopener" href="https://www.rt-thread.org/document/site/application-note/components/dfs/an0027-littlefs/">这里</a></p>
-<h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><h3 id="准备"><a href="#准备" class="headerlink" title="准备"></a>准备</h3><p>先按照外挂 flash 的配置配置好</p>
-<h3 id="menuconfig"><a href="#menuconfig" class="headerlink" title="menuconfig"></a>menuconfig</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">RT-Thread Components ---&gt; Device virtual file system</span><br><span class="line">  [*] Using device virtual file system</span><br><span class="line"></span><br><span class="line">RT-Thread online packages &gt; system packages &gt; Littlefs: A high-integrity embedded file system</span><br><span class="line">  [*] Littlefs: A high-integrity embedded file system</span><br><span class="line">    (256) disk <span class="built_in">read</span> size</span><br><span class="line">    (256) disk write size</span><br><span class="line">    (4096) disk block size</span><br><span class="line">    (256) lfs r/w cache size</span><br><span class="line">    (100) lfs enables wear leveling. 0 is <span class="built_in">disable</span>.</span><br><span class="line">    (512) lfs lookahead size</span><br></pre></td></tr></table></figure>
-
-<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><p>w25q128_lfs_demo.c</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;fal.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;dfs_fs.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;rtdbg.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">[I/FAL] ==================== FAL partition table ====================</span></span><br><span class="line"><span class="comment">[I/FAL] | name       | flash_dev |   offset   |    length  |</span></span><br><span class="line"><span class="comment">[I/FAL] -------------------------------------------------------------</span></span><br><span class="line"><span class="comment">[I/FAL] | filesystem | W25Q128   | 0x00000000 | 0x01000000 |</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> FS_PARTITION_NAME <span class="string">&quot;filesystem&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> FS_DEVICE_NAME    FS_PARTITION_NAME</span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">w25q128_lfs_demo</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    fal_init();</span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">rt_device</span>* <span class="title">mtd_dev</span> =</span> RT_NULL;</span><br><span class="line">    mtd_dev = fal_mtd_nor_device_create(FS_PARTITION_NAME);</span><br><span class="line">    <span class="keyword">if</span> ( !mtd_dev )&#123;</span><br><span class="line">        LOG_E(<span class="string">&quot;Can&#x27;t create a mtd device on &#x27;%s&#x27; partition.&quot;</span>, FS_PARTITION_NAME);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="comment">// 以防万一，先unmount</span></span><br><span class="line">        dfs_unmount(<span class="string">&quot;/&quot;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (dfs_mount(FS_DEVICE_NAME, <span class="string">&quot;/&quot;</span>, <span class="string">&quot;lfs&quot;</span>, <span class="number">0</span>, <span class="number">0</span>) == <span class="number">0</span>)&#123;</span><br><span class="line">            LOG_I(<span class="string">&quot;Filesystem initialized!&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span>&#123;</span><br><span class="line">            <span class="comment">// mkfs -t lfs filesystem</span></span><br><span class="line">            dfs_mkfs(<span class="string">&quot;lfs&quot;</span>, FS_DEVICE_NAME);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (dfs_mount(FS_DEVICE_NAME, <span class="string">&quot;/&quot;</span>, <span class="string">&quot;lfs&quot;</span>, <span class="number">0</span>, <span class="number">0</span>) == <span class="number">0</span>)&#123;</span><br><span class="line">                LOG_I(<span class="string">&quot;Filesystem initialized!&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">else</span>&#123;</span><br><span class="line">                LOG_E(<span class="string">&quot;Failed to initialize filesystem!&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> RT_EOK;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">MSH_CMD_EXPORT(w25q128_lfs_demo, w25q128_lfs_demo);</span><br></pre></td></tr></table></figure>
-
-<h2 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h2><p>demo 代码里面的<code>dfs_mount</code>和<code>dfs_mkfs</code>的参数，DEVICE_NAME, lfs 和 elm 是不一样的</p>
-
-      
-    </div>
-
-  </div>
-
-  <div class="article-footer">
-    <div class="article-meta pull-left">
-
-    
-
-    
-    
-
-    <span class="post-tags">
-      <i class="icon-tags"></i>
-        <a href="/tags/stm32/">stm32</a><a href="/tags/rt-thread/">rt-thread</a>
-    </span>
-    
-
-    </div>
-
-    
-  </div>
-</article>
-
-
-
-  <article>
-
-  
-    
-    <h3 class="article-title"><a href="/2025/11/08/rtt-stm32-elmfs/"><span>rt-thread 下，配置 stm32 的 elmfs</span></a></h3>
-    
-  
-
-  <div class="article-top-meta">
-    <span class="posted-on">
-      <a href="/2025/11/08/rtt-stm32-elmfs/" rel="bookmark">
-        <time class="entry-date published" datetime="2025-11-08T00:52:39.000Z">
-          2025-11-08
-        </time>
-      </a>
-    </span>
-  </div>
-
-
-  
-
-  <div class="article-content">
-    <div class="entry">
-      
-        <p>elm 文件系统</p>
-<h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>外挂 flash 上的 elm 文件系统</p>
-<p>参考的 <a target="_blank" rel="noopener" href="https://www.rt-thread.org/document/site/application-note/components/dfs/an0012-dfs/">这里</a></p>
-<h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><h3 id="准备"><a href="#准备" class="headerlink" title="准备"></a>准备</h3><p>先按照外挂 flash 的配置配置好</p>
-<h3 id="menuconfig"><a href="#menuconfig" class="headerlink" title="menuconfig"></a>menuconfig</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">RT-Thread Components &gt; Device virtual file system  ---&gt;</span><br><span class="line">  -*- Using device virtual file system</span><br><span class="line">  [*] Using working directory</span><br><span class="line">  (2) The maximal number of mounted file system</span><br><span class="line">  (2) The maximal number of file system <span class="built_in">type</span></span><br><span class="line">  (16) The maximal number of opened files</span><br><span class="line">  [*] Enable elm-chan fatfs</span><br><span class="line">    elm-chan<span class="string">&#x27;s FatFs, Generic FAT Filesystem Module  ---&gt;</span></span><br><span class="line"><span class="string">      Support long file name (3: LFN with dynamic LFN working buffer on the heap)  ---&gt;</span></span><br><span class="line"><span class="string">        (X) 3: LFN with dynamic LFN working buffer on the heap</span></span><br><span class="line"><span class="string">      (4096) Maximum sector size to be handled.</span></span><br><span class="line"><span class="string">      [*] Enable sector erase feature</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">RT-Thread Components &gt; POSIX layer and C standard library</span></span><br><span class="line"><span class="string">  [*] Enable libc APIs from toolchain</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><p>w25q128_elmfs_demo.c</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;fal.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;dfs_fs.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;rtdbg.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">[I/FAL] ==================== FAL partition table ====================</span></span><br><span class="line"><span class="comment">[I/FAL] | name       | flash_dev |   offset   |    length  |</span></span><br><span class="line"><span class="comment">[I/FAL] -------------------------------------------------------------</span></span><br><span class="line"><span class="comment">[I/FAL] | filesystem | W25Q128   | 0x00000000 | 0x01000000 |</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> FS_PARTITION_NAME <span class="string">&quot;filesystem&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> FS_DEVICE_NAME    <span class="string">&quot;W25Q128&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">w25q128_elmfs_demo</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    fal_init();</span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">rt_device</span>* <span class="title">mtd_dev</span> =</span> RT_NULL;</span><br><span class="line">    mtd_dev = fal_mtd_nor_device_create(FS_PARTITION_NAME);</span><br><span class="line">    <span class="keyword">if</span> ( !mtd_dev )&#123;</span><br><span class="line">        LOG_E(<span class="string">&quot;Can&#x27;t create a mtd device on &#x27;%s&#x27; partition.&quot;</span>, FS_PARTITION_NAME);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="comment">// 以防万一，先unmount</span></span><br><span class="line">        dfs_unmount(<span class="string">&quot;/&quot;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (dfs_mount(FS_DEVICE_NAME, <span class="string">&quot;/&quot;</span>, <span class="string">&quot;elm&quot;</span>, <span class="number">0</span>, <span class="number">0</span>) == <span class="number">0</span>)&#123;</span><br><span class="line">            LOG_I(<span class="string">&quot;Filesystem initialized!&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span>&#123;</span><br><span class="line">            <span class="comment">// mkfs -t elm W25Q128</span></span><br><span class="line">            dfs_mkfs(<span class="string">&quot;elm&quot;</span>, FS_DEVICE_NAME);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (dfs_mount(FS_DEVICE_NAME, <span class="string">&quot;/&quot;</span>, <span class="string">&quot;elm&quot;</span>, <span class="number">0</span>, <span class="number">0</span>) == <span class="number">0</span>)&#123;</span><br><span class="line">                LOG_I(<span class="string">&quot;Filesystem initialized!&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">else</span>&#123;</span><br><span class="line">                LOG_E(<span class="string">&quot;Failed to initialize filesystem!&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> RT_EOK;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">MSH_CMD_EXPORT(w25q128_elmfs_demo, w25q128_elmfs_demo);</span><br></pre></td></tr></table></figure>
-
-<h2 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h2><p>demo 代码里面的 <code>dfs_mount</code> 和 <code>dfs_mkfs</code> 的参数，DEVICE_NAME, lfs 和 elm 是不一样的</p>
-<h2 id="建议"><a href="#建议" class="headerlink" title="建议"></a>建议</h2><p>4096 扇区，挂载成 FAT，要格式化成功，至少要 800KB 以上。且还要修改格式化参数。</p>
-<p>所以建议 4MB 以下的 FLASH 不要用 FAT，用 littlefs</p>
-
-      
-    </div>
-
-  </div>
-
-  <div class="article-footer">
-    <div class="article-meta pull-left">
-
-    
-
-    
-    
-
-    <span class="post-tags">
-      <i class="icon-tags"></i>
-        <a href="/tags/stm32/">stm32</a><a href="/tags/rt-thread/">rt-thread</a>
-    </span>
-    
-
-    </div>
-
-    
-  </div>
-</article>
-
-
-
-  <article>
-
-  
-    
-    <h3 class="article-title"><a href="/2025/11/07/rtt-stm32-at-socket/"><span>rtt-stm32-at-socket</span></a></h3>
-    
-  
-
-  <div class="article-top-meta">
-    <span class="posted-on">
-      <a href="/2025/11/07/rtt-stm32-at-socket/" rel="bookmark">
-        <time class="entry-date published" datetime="2025-11-07T02:09:24.000Z">
-          2025-11-07
-        </time>
-      </a>
-    </span>
-  </div>
-
-
-  
-
-  <div class="article-content">
-    <div class="entry">
-      
-        <p>参考<a target="_blank" rel="noopener" href="https://www.rt-thread.org/document/site/application-note/components/at/an0014-at-client/#at-socket">链接</a></p>
-<h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><p>先启用 uart2</p>
-<h3 id="软件包"><a href="#软件包" class="headerlink" title="软件包"></a>软件包</h3><p>开启 at device 的支持</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">RT-Thread online packages &gt;</span><br><span class="line">  IoT - internet of things &gt;</span><br><span class="line">    AT DEVICE: RT-Thread AT component porting or samples <span class="keyword">for</span> different device</span><br><span class="line">       [*]  Espressif ESP8266  ---&gt;</span><br></pre></td></tr></table></figure>
-
-<p>配置参数</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">缓冲区大小可以设置大一点</span><br><span class="line">配置使用 laster 版本软件包；</span><br></pre></td></tr></table></figure>
-
-<h3 id="驱动部分"><a href="#驱动部分" class="headerlink" title="驱动部分"></a>驱动部分</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">RT-Thread Components</span><br><span class="line">  Network</span><br><span class="line">    Socket abstraction layer</span><br><span class="line">      protocol stack implement</span><br><span class="line">        [*]Support AT Commands stack</span><br><span class="line">        [*]Enable BSD socket operated by the file system API</span><br><span class="line">    Enable AT commands</span><br><span class="line">      -*-   Enable AT commands client</span><br><span class="line">      -*-     Enable BSD Socket API support by AT commnads</span><br><span class="line">      <span class="comment"># 这里是选择显示at命令日志</span></span><br><span class="line">      [ ]     Enable <span class="built_in">print</span> RAW format AT <span class="built_in">command</span> communication data</span><br><span class="line">     (128)   The maximum lenght of AT Commonds buffer</span><br></pre></td></tr></table></figure>
-
-<h3 id="调试"><a href="#调试" class="headerlink" title="调试"></a>调试</h3><p>使用 cutecom 连接，回车模式选择 CR&#x2F;LF</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">AT+CWMODE=1</span><br><span class="line">AT+CWJAP=<span class="string">&quot;ssid&quot;</span>,<span class="string">&quot;password&quot;</span></span><br><span class="line">AT+CIFSR</span><br><span class="line"></span><br><span class="line">AT+RST</span><br></pre></td></tr></table></figure>
-
-<h3 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h3><ul>
-<li>模块串口和开发板的串口反接</li>
-<li>注意供电, wifi 芯片功耗很大，vcc 要接 5v，如果提示 <code>wait AT client(uart2) connect timeout(5000 tick)</code>，可能是 vcc 供电不足，可以<code>换一个 5v 的供电口解决</code></li>
-<li>模块如果使用杜邦线接线，用短的，长的可能会出现很多奇怪的问题</li>
-<li>如果提示缓冲区不够，可以使用串口调试器（cutecom）先调试 at 指令，很可能是不同的模块里面，在某些非正常时刻，发出太多的 response 导致的，可以看情况修改调用 at_create_resp 函数的地方针对性的修改缓冲区大小</li>
-</ul>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">比如 [E/at.clnt] Read response buffer failed. The Response buffer size is out of buffer size(xxx)</span><br><span class="line">可以在 at.client.c 的 at_create_resp 函数上下断点观察流程，尝试把缓冲区都改大一点</span><br></pre></td></tr></table></figure>
-
-<p>如果还有解决不了的问题，看<a target="_blank" rel="noopener" href="https://www.rt-thread.org/qa/forum.php?mod=viewthread&tid=11919&extra=page=1&filter=typeid&typeid=5">这里</a></p>
-
-      
-    </div>
-
-  </div>
-
-  <div class="article-footer">
-    <div class="article-meta pull-left">
-
-    
-
-    
-    
-
-    <span class="post-tags">
-      <i class="icon-tags"></i>
-        <a href="/tags/stm32/">stm32</a><a href="/tags/rt-thread/">rt-thread</a>
-    </span>
-    
-
-    </div>
-
-    
-  </div>
-</article>
-
-
-
-  <article>
-
-  
-    
-    <h3 class="article-title"><a href="/2025/11/06/rtt-stm32-eth-lan8720a/"><span>rt-thread 下，配置 stm32 的 LAN8720A 网卡</span></a></h3>
-    
-  
-
-  <div class="article-top-meta">
-    <span class="posted-on">
-      <a href="/2025/11/06/rtt-stm32-eth-lan8720a/" rel="bookmark">
-        <time class="entry-date published" datetime="2025-11-06T01:32:22.000Z">
-          2025-11-06
-        </time>
-      </a>
-    </span>
-  </div>
-
-
-  
-
-  <div class="article-content">
-    <div class="entry">
-      
-        <p>配置 LAN8720A 接入网络</p>
-<p>参考<a target="_blank" rel="noopener" href="https://www.rt-thread.org/document/site/application-note/components/network/an0010-lwip-driver-porting/">链接</a></p>
-<h2 id="cubeMX-配置"><a href="#cubeMX-配置" class="headerlink" title="cubeMX 配置"></a>cubeMX 配置</h2><p>启用 Eth 模块</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">选择 RMII</span><br><span class="line">对比实际板的原理图，修改引脚位置，注意rst引脚的位置</span><br></pre></td></tr></table></figure>
-
-<h2 id="项目配置"><a href="#项目配置" class="headerlink" title="项目配置"></a>项目配置</h2><p>修改 ports&#x2F;phy_reset.c 内 rst 引脚位置, 复制 ports 目录到 board 下，修改 SConscript</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">path += [cwd + <span class="string">&#x27;/ports&#x27;</span>]</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> GetDepend([<span class="string">&#x27;BSP_USING_ETH&#x27;</span>]):</span><br><span class="line">    src += Glob(<span class="string">&#x27;ports/phy_reset.c&#x27;</span>)</span><br></pre></td></tr></table></figure>
-
-<h2 id="board-Kconfig-配置"><a href="#board-Kconfig-配置" class="headerlink" title="board&#x2F;Kconfig 配置"></a>board&#x2F;Kconfig 配置</h2><p>Kconfig 里面，menu “Onboard Peripheral Drivers”内添加</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">config PHY_USING_LAN8720A</span><br><span class="line">    bool</span><br><span class="line">config BSP_USING_ETH</span><br><span class="line">    bool <span class="string">&quot;Enable Ethernet&quot;</span></span><br><span class="line">    default n</span><br><span class="line">    <span class="keyword">select</span> RT_USING_LWIP</span><br><span class="line">    <span class="keyword">select</span> PHY_USING_LAN8720A</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">RT-Thread Components &gt;</span><br><span class="line">  Network &gt;</span><br><span class="line">    Socket abstraction layer</span><br><span class="line">      [*] Enable socket abstraction layer</span><br><span class="line">      [*] Enable BSD socket operated by file system API</span><br><span class="line">    light weight TCP/IP stack</span><br><span class="line">      [] Enable alloc ip address through DHCP</span><br><span class="line">      [*] Enable lwIP stack</span><br></pre></td></tr></table></figure>
-
-<p>在<code>light weight TCP/IP stack</code>里面, 选项 <code>Enable alloc ip address through DHCP</code>来控制 dhcp 或者固定 ip</p>
-<h2 id="打开调试开关"><a href="#打开调试开关" class="headerlink" title="打开调试开关"></a>打开调试开关</h2><p>libraries&#x2F;HAL_Drivers&#x2F;drv_eth.c</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> ETH_RX_DUMP</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> ETH_TX_DUMP</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> DRV_DEBUG</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="相关代码"><a href="#相关代码" class="headerlink" title="相关代码"></a>相关代码</h2><p>phy_reset.c</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;board.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> RESET_IO GET_PIN(H, 2)</span></span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">phy_reset</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    rt_pin_write(RESET_IO, PIN_LOW);</span><br><span class="line">    rt_thread_mdelay(<span class="number">50</span>);</span><br><span class="line">    rt_pin_write(RESET_IO, PIN_HIGH);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">phy_init</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    rt_pin_mode(RESET_IO, PIN_MODE_OUTPUT);</span><br><span class="line">    rt_pin_write(RESET_IO, PIN_HIGH);</span><br><span class="line">    <span class="keyword">return</span> RT_EOK;</span><br><span class="line">&#125;</span><br><span class="line">INIT_BOARD_EXPORT(phy_init);</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-
-  </div>
-
-  <div class="article-footer">
-    <div class="article-meta pull-left">
-
-    
-
-    
-    
-
-    <span class="post-tags">
-      <i class="icon-tags"></i>
-        <a href="/tags/stm32/">stm32</a><a href="/tags/rt-thread/">rt-thread</a>
-    </span>
-    
-
-    </div>
-
-    
-  </div>
-</article>
-
-
-
-  <article>
-
-  
-    
-    <h3 class="article-title"><a href="/2025/11/05/rtt-stm32-eth-w5500/"><span>rt-thread 下，配置 stm32 的 w5500 网卡</span></a></h3>
-    
-  
-
-  <div class="article-top-meta">
-    <span class="posted-on">
-      <a href="/2025/11/05/rtt-stm32-eth-w5500/" rel="bookmark">
-        <time class="entry-date published" datetime="2025-11-05T06:14:34.000Z">
-          2025-11-05
-        </time>
-      </a>
-    </span>
-  </div>
-
-
-  
-
-  <div class="article-content">
-    <div class="entry">
-      
-        <p>配置 w5500 网卡接入网络</p>
-<h2 id="物理接线"><a href="#物理接线" class="headerlink" title="物理接线"></a>物理接线</h2><p>cubeMX 里面的 nss 脚貌似不需要接，cubeMX 里面的 sck 脚是对应模块的 sclk 脚</p>
-<p>模块的 scs 脚接的位置就是, rt_hw_spi_device_attach 的<code>最后两个参数的值</code></p>
-<p>开发板和模块之间的 MISO 和 MOSI <code>不需要反接</code></p>
-<h2 id="cubeMX-配置"><a href="#cubeMX-配置" class="headerlink" title="cubeMX 配置"></a>cubeMX 配置</h2><p>启用 spi1</p>
-<p>设置 Mode 为 Full Duplex Master</p>
-<p>设置 Hardware NSS Signal 为 output 模式</p>
-<h2 id="menuconfig-配置"><a href="#menuconfig-配置" class="headerlink" title="menuconfig 配置"></a>menuconfig 配置</h2><p>参考驱动配置，在 board&#x2F;Kconfig 里面启用 spi1 的配置</p>
-<p>配置 iot packages 里面的 wiznet 部分</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">RT-Thread online packages ---&gt;</span><br><span class="line">  IoT - internet of things ---&gt;</span><br><span class="line">    WIZnet: WIZnet TCP/IP chips SAL framework imlement ---&gt;</span><br><span class="line">      WIZnet device configure</span><br><span class="line">         (spi10) SPI device name</span><br><span class="line">         (10) Reset PIN number (NEW)</span><br><span class="line">         (11) IRQ PIN number (NEW)</span><br></pre></td></tr></table></figure>
-
-<p>参数说明</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">SPI device name 不是 spi 的总线名，需要手工创建，比如 spi10</span><br><span class="line">设置 Reset PIN number</span><br><span class="line">设置IRQ PIN number，也就是模块上的int引脚</span><br></pre></td></tr></table></figure>
-
-<h2 id="编写-spi-初始化代码"><a href="#编写-spi-初始化代码" class="headerlink" title="编写 spi 初始化代码"></a>编写 spi 初始化代码</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;rtthread.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;rtdevice.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;board.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="type">int</span> <span class="title function_">w5500_spi_init</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    __HAL_RCC_GPIOA_CLK_ENABLE();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 最后两个参数是spi模块scs引脚的位置</span></span><br><span class="line">    <span class="keyword">return</span> rt_hw_spi_device_attach(<span class="string">&quot;spi1&quot;</span>, <span class="string">&quot;spi10&quot;</span>, GPIOA, GPIO_PIN_4);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/* 导出到自动初始化 */</span></span><br><span class="line">INIT_COMPONENT_EXPORT(w5500_spi_init);</span><br></pre></td></tr></table></figure>
-
-<h2 id="重连测试"><a href="#重连测试" class="headerlink" title="重连测试"></a>重连测试</h2><p>测试模拟：开机断网，中间断网，重连以后，看到 W5500 提示 link up 以后，可以 ping 通其他主机</p>
-<p>无论 dhcp 模式打开还是关闭，均支持。</p>
-
-      
-    </div>
-
-  </div>
-
-  <div class="article-footer">
-    <div class="article-meta pull-left">
-
-    
-
-    
-    
-
-    <span class="post-tags">
-      <i class="icon-tags"></i>
-        <a href="/tags/stm32/">stm32</a><a href="/tags/rt-thread/">rt-thread</a>
-    </span>
-    
-
-    </div>
-
-    
-  </div>
-</article>
-
-
-
-  <article>
-
-  
-    
-    <h3 class="article-title"><a href="/2025/11/04/rtt-stm32-flash/"><span>rt-thread 下，配置 stm32 的外挂 flash</span></a></h3>
-    
-  
-
-  <div class="article-top-meta">
-    <span class="posted-on">
-      <a href="/2025/11/04/rtt-stm32-flash/" rel="bookmark">
-        <time class="entry-date published" datetime="2025-11-04T03:56:10.000Z">
-          2025-11-04
-        </time>
-      </a>
-    </span>
-  </div>
-
-
-  
-
-  <div class="article-content">
-    <div class="entry">
-      
-        <p>外挂 flash 读写<br>参考<a target="_blank" rel="noopener" href="https://www.rt-thread.org/document/site/application-note/components/sfud/an0048-sfud/">这里</a></p>
-<h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><h3 id="cubeMX"><a href="#cubeMX" class="headerlink" title="cubeMX"></a>cubeMX</h3><p>根据原理图，找到相应的 spi 脚，配置引脚</p>
-<h3 id="Kconfig"><a href="#Kconfig" class="headerlink" title="Kconfig"></a>Kconfig</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">menuconfig BSP_USING_SPI</span><br><span class="line">    bool <span class="string">&quot;Enable SPI BUS&quot;</span></span><br><span class="line">    default n</span><br><span class="line">    <span class="keyword">select</span> RT_USING_SPI</span><br><span class="line">    <span class="keyword">if</span> BSP_USING_SPI</span><br><span class="line">        config BSP_USING_SPI2</span><br><span class="line">            bool <span class="string">&quot;Enable SPI2 BUS&quot;</span></span><br><span class="line">            default n</span><br><span class="line"></span><br><span class="line">        config BSP_SPI2_TX_USING_DMA</span><br><span class="line">            bool <span class="string">&quot;Enable SPI2 TX DMA&quot;</span></span><br><span class="line">            depends on BSP_USING_SPI2</span><br><span class="line">            default n</span><br><span class="line"></span><br><span class="line">        config BSP_SPI2_RX_USING_DMA</span><br><span class="line">            bool <span class="string">&quot;Enable SPI1 RX DMA&quot;</span></span><br><span class="line">            depends on BSP_USING_SPI2</span><br><span class="line">            <span class="keyword">select</span> BSP_SPI2_TX_USING_DMA</span><br><span class="line">            default n</span><br><span class="line">    endif</span><br></pre></td></tr></table></figure>
-
-<p>Kconfig 的 <code>&quot;Onboard Peripheral Drivers&quot;</code> 添加</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">config BSP_USING_QSPI_FLASH</span><br><span class="line">    bool <span class="string">&quot;Enable QSPI FLASH (W25Q128 spi10)&quot;</span></span><br><span class="line">    <span class="keyword">select</span> BSP_USING_QSPI</span><br><span class="line">    <span class="keyword">select</span> RT_USING_SFUD</span><br><span class="line">    <span class="keyword">select</span> RT_SFUD_USING_QSPI</span><br><span class="line">    default n</span><br></pre></td></tr></table></figure>
-
-<h3 id="menuconfig"><a href="#menuconfig" class="headerlink" title="menuconfig"></a>menuconfig</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">Hardware Drivers Config &gt; Onboard Peripheral Drivers</span><br><span class="line">  [*] Enable QSPI FLASH (W25Q128 spi10)</span><br><span class="line"></span><br><span class="line">RT-Thread Components &gt; Device Drivers</span><br><span class="line">  [*] Using MTD Nor Flash device drivers</span><br><span class="line"></span><br><span class="line">RT-Thread online packages &gt;</span><br><span class="line"> system packages &gt;</span><br><span class="line">  [*] fal: Flash Abstraction Layer implement. Manage flash device and partition.  ---&gt;</span><br><span class="line">    (W25Q128) The name of the device used by FAL</span><br><span class="line">    这是 SFUD 初始化 flash 后创建的设备名</span><br><span class="line"></span><br><span class="line">Hardware Drivers Config &gt; On-chip Peripheral Drivers &gt; Enable SPI BUS</span><br><span class="line">  [*] Enable SPI BUS  ---&gt;</span><br><span class="line">    [*]   Enable SPI2 BUS</span><br><span class="line">    -*-     Enable SPI2 TX DMA</span><br><span class="line">    [*]     Enable SPI1 RX DMA</span><br><span class="line"></span><br><span class="line">RT-Thread Components &gt; Device Drivers</span><br><span class="line">  [*] Using SPI Bus/Device device drivers</span><br><span class="line">  -*- Enable QSPI mode</span><br><span class="line">  -*- Using Serial Flash Universal Driver</span><br><span class="line">  [*] Using auto probe flash JEDEC SFDP parameter</span><br><span class="line">  [*] Using defined supported flash chip information table</span><br><span class="line">  -*- Using QSPI mode support</span><br><span class="line">  (50000000) Default spi maximum speed(HZ)</span><br></pre></td></tr></table></figure>
-
-<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><p>fal_cfg.h</p>
-<figure class="highlight h"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">ifndef</span> _FAL_CFG_H_</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> _FAL_CFG_H_</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;rtthread.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;board.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">if</span> defined(BSP_USING_ON_CHIP_FLASH)</span></span><br><span class="line"><span class="keyword">extern</span> <span class="type">const</span> <span class="class"><span class="keyword">struct</span> <span class="title">fal_flash_dev</span> <span class="title">stm32_onchip_flash</span>;</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span> <span class="comment">/* BSP_USING_ON_CHIP_FLASH */</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">if</span> defined(BSP_USING_QSPI_FLASH)</span></span><br><span class="line"><span class="keyword">extern</span> <span class="class"><span class="keyword">struct</span> <span class="title">fal_flash_dev</span> <span class="title">nor_flash0</span>;</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span> <span class="comment">/* BSP_USING_QSPI_FLASH */</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">/* ========================= Device Configuration ========================== */</span></span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> BSP_USING_ON_CHIP_FLASH</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> ONCHIP_FLASH_DEV     &amp;stm32_onchip_flash,</span></span><br><span class="line"><span class="meta">#<span class="keyword">else</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> ONCHIP_FLASH_DEV</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span> <span class="comment">/* BSP_USING_ON_CHIP_FLASH */</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> BSP_USING_QSPI_FLASH</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> SPI_FLASH_DEV        &amp;nor_flash0,</span></span><br><span class="line"><span class="meta">#<span class="keyword">else</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> SPI_FLASH_DEV</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span> <span class="comment">/* BSP_USING_QSPI_FLASH */</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">/* flash device table */</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> FAL_FLASH_DEV_TABLE                                          \</span></span><br><span class="line"><span class="meta">&#123;                                                                    \</span></span><br><span class="line"><span class="meta">    ONCHIP_FLASH_DEV                                                 \</span></span><br><span class="line"><span class="meta">    SPI_FLASH_DEV                                                    \</span></span><br><span class="line"><span class="meta">&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/* ====================== Partition Configuration ========================== */</span></span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> FAL_PART_HAS_TABLE_CFG</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> BSP_USING_ON_CHIP_FLASH</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> ONCHIP_FLASH_PATITION          &#123;FAL_PART_MAGIC_WROD, <span class="string">&quot;app&quot;</span>,   <span class="string">&quot;onchip_flash&quot;</span>,   0,           496 * 1024, 0&#125;,      \</span></span><br><span class="line"><span class="meta">                                       &#123;FAL_PART_MAGIC_WROD, <span class="string">&quot;param&quot;</span>, <span class="string">&quot;onchip_flash&quot;</span>,   496* 1024,   16 * 1024,  0&#125;,</span></span><br><span class="line"><span class="meta">#<span class="keyword">else</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> ONCHIP_FLASH_PATITION</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> BSP_USING_QSPI_FLASH</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> SPI_FLASH_PARTITION            &#123;FAL_PART_MAGIC_WROD, <span class="string">&quot;filesystem&quot;</span>, <span class="string">&quot;W25Q128&quot;</span>, 9 * 1024 * 1024, 16 * 1024 * 1024, 0&#125;,</span></span><br><span class="line"><span class="meta">#<span class="keyword">else</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> SPI_FLASH_PARTITION</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">/* partition table */</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> FAL_PART_TABLE                                               \</span></span><br><span class="line"><span class="meta">&#123;                                                                    \</span></span><br><span class="line"><span class="meta">    ONCHIP_FLASH_PATITION                                            \</span></span><br><span class="line"><span class="meta">    SPI_FLASH_PARTITION                                              \</span></span><br><span class="line"><span class="meta">&#125;</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span> <span class="comment">/* FAL_PART_HAS_TABLE_CFG */</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span> <span class="comment">/* _FAL_CFG_H_ */</span></span></span><br></pre></td></tr></table></figure>
-
-<p>w25q128_auto_init.c</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;rtthread.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;rtdevice.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;board.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="type">int</span> <span class="title function_">w25q128_auto_init</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    __HAL_RCC_GPIOB_CLK_ENABLE();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 最后俩参数是spi接口的cs脚</span></span><br><span class="line">    rt_hw_spi_device_attach(<span class="string">&quot;spi2&quot;</span>, <span class="string">&quot;spi10&quot;</span>, GPIOI, GPIO_PIN_0);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (RT_NULL == rt_sfud_flash_probe(<span class="string">&quot;W25Q128&quot;</span>, <span class="string">&quot;spi10&quot;</span>))</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> -RT_ERROR;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> RT_EOK;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/* 导出到自动初始化 */</span></span><br><span class="line">INIT_COMPONENT_EXPORT(w25q128_auto_init);</span><br></pre></td></tr></table></figure>
-
-<p>w25q128_flash_demo.c</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;rtthread.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;rtdevice.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;board.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sfud.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> SPI_FLASH_DEVICE_NAME <span class="string">&quot;spi10&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">w25q128_flash_demo</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    sfud_err result;</span><br><span class="line">    <span class="type">uint8_t</span>* read_data;</span><br><span class="line">    <span class="type">uint8_t</span>* write_data;</span><br><span class="line">    sfud_flash* sfud_dev = <span class="literal">NULL</span>;</span><br><span class="line"></span><br><span class="line">    sfud_dev = rt_sfud_flash_find(SPI_FLASH_DEVICE_NAME);</span><br><span class="line">    <span class="comment">// 或者 sfud_dev = rt_sfud_flash_find_by_dev_name(&quot;W25Q128&quot;);</span></span><br><span class="line"></span><br><span class="line">    sfud_erase(sfud_dev, <span class="number">0</span>, <span class="number">4096</span>);</span><br><span class="line"></span><br><span class="line">    write_data = rt_malloc(<span class="number">32</span>);</span><br><span class="line">    rt_memset(write_data, <span class="number">3</span>, <span class="number">32</span>);</span><br><span class="line">    sfud_write(sfud_dev, <span class="number">0</span>, <span class="number">32</span>, write_data);</span><br><span class="line"></span><br><span class="line">    read_data = rt_malloc(<span class="number">32</span>);</span><br><span class="line">    sfud_read(sfud_dev, <span class="number">0</span>, <span class="number">32</span>, read_data);</span><br><span class="line"></span><br><span class="line">    rt_kprintf(<span class="string">&quot;please run cmd to check result\r\n&quot;</span>);</span><br><span class="line">    rt_kprintf(<span class="string">&quot;sf probe %s\r\n&quot;</span>, SPI_FLASH_DEVICE_NAME);</span><br><span class="line">    rt_kprintf(<span class="string">&quot;sf read 0 32\r\n&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">MSH_CMD_EXPORT(w25q128_flash_demo, w25q128_flash_demo);</span><br></pre></td></tr></table></figure>
-
-<h2 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">msh /&gt;list_device</span><br><span class="line">device           <span class="built_in">type</span>         ref count</span><br><span class="line">-------- -------------------- ----------</span><br><span class="line">W25Q128  Block Device         0</span><br><span class="line">spi10    SPI Device           0</span><br><span class="line">e0       Network Interface    0</span><br><span class="line">spi2     SPI Bus              0</span><br><span class="line">uart1    Character Device     2</span><br><span class="line">pin      Miscellaneous Device 0</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">msh /&gt;sf probe spi10</span><br><span class="line">msh /&gt;sf erase 0 10</span><br><span class="line">msh /&gt;sf <span class="built_in">read</span> 0 10</span><br><span class="line">msh /&gt;sf bench <span class="built_in">yes</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h2><p>Flash 先擦后写<br>写入之前请先擦除，这是 flash 特性决定的，因为 flash 的编程原理就是只能将 1 写为 0，而不能将 0 写为 1。擦除动作就是相应的页 &#x2F; 块的所有位变为 1（所有字节均为 0xFF），所以不擦除直接写入会有问题。</p>
 
       
     </div>

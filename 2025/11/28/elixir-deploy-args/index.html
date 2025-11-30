@@ -1,0 +1,183 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8" />
+  
+  <title>elixir 发布之参数配置 | 独钓寒江雪</title>
+
+  
+  <meta name="author" content="John Doe" />
+   
+  <meta
+    name="description"
+    content="位置123456$ tree relrel├── env.bat.eex├── env.sh.eex├── remote.vm.args.eex└── vm.args.eex
+
+说明env.sh.eexrelease 脚本启动之前，可以执行任何操作
+运行期加载环境变量
+12export AAA=&amp;l" />
+    
+  <meta name="keywords" content="elixir"> 
+
+  <meta
+    id="viewport"
+    name="viewport"
+    content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+
+  
+  <meta property="og:title" content="elixir 发布之参数配置" />
+  
+
+  <meta property="og:site_name" content="独钓寒江雪" />
+
+  
+  <meta property="og:image" content="/favicon.ico" />
+  
+
+  <link href="/favicon.ico" rel="icon" />
+  <link
+    rel="alternate"
+    href="/atom.xml"
+    title="独钓寒江雪"
+    type="application/atom+xml" />
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css" />
+
+  <script
+    async
+    src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9313450459437229"
+    crossorigin="anonymous"></script>
+<meta name="generator" content="Hexo 8.0.0"></head>
+
+
+<body>
+<div class="blog">
+  <div class="content">
+
+    <header>
+  <div class="site-branding">
+    <h1 class="site-title">
+      <a href="/">独钓寒江雪</a>
+    </h1>
+    <p class="site-description"></p>
+  </div>
+  <nav class="site-navigation">
+    <ul>
+      
+        <li><a href="/">首页</a></li>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/tags">标签</a></li>
+      
+        <li><a href="/about">关于</a></li>
+      
+    </ul>
+  </nav>
+</header>
+
+    <main class="site-main posts-loop">
+    <article>
+
+  
+    
+    <h3 class="article-title"><span>elixir 发布之参数配置</span></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/11/28/elixir-deploy-args/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-11-28T03:50:47.000Z">
+          2025-11-28
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h2 id="位置"><a href="#位置" class="headerlink" title="位置"></a>位置</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ tree rel</span><br><span class="line">rel</span><br><span class="line">├── env.bat.eex</span><br><span class="line">├── env.sh.eex</span><br><span class="line">├── remote.vm.args.eex</span><br><span class="line">└── vm.args.eex</span><br></pre></td></tr></table></figure>
+
+<h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><h3 id="env-sh-eex"><a href="#env-sh-eex" class="headerlink" title="env.sh.eex"></a>env.sh.eex</h3><p>release 脚本启动之前，可以执行任何操作</p>
+<p>运行期加载环境变量</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">export <span class="title class_">AAA</span>=&lt;%= <span class="title class_">System</span>.get_env(<span class="string">&quot;ABC&quot;</span>) %&gt;</span><br><span class="line">export <span class="title class_">BBB</span>=<span class="number">12345</span></span><br></pre></td></tr></table></figure>
+
+<p>测试</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">mix release</span><br><span class="line"><span class="built_in">export</span> ABC=<span class="string">&quot;asdasd&quot;</span></span><br><span class="line">_build/dev/rel/demo/bin/demo start_iex</span><br><span class="line">System.get_env(<span class="string">&quot;AAA&quot;</span>)</span><br><span class="line">System.get_env(<span class="string">&quot;ABC&quot;</span>)</span><br><span class="line">System.get_env(<span class="string">&quot;BBB&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="sys-config"><a href="#sys-config" class="headerlink" title="sys.config"></a>sys.config</h3><p>改到 config 目录里面去了</p>
+<h3 id="vm-args-eex"><a href="#vm-args-eex" class="headerlink" title="vm.args.eex"></a>vm.args.eex</h3><p>配置虚拟机参数，只支持编译期加载环境变量</p>
+<h4 id="编译期"><a href="#编译期" class="headerlink" title="编译期"></a>编译期</h4><p>默认只能编译期加载</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">-kernel inet_dist_listen_min &lt;%= <span class="title class_">System</span>.get_env(<span class="string">&quot;DIST_PORT&quot;</span>) %&gt;</span><br><span class="line">-kernel inet_dist_listen_max &lt;%= <span class="title class_">System</span>.get_env(<span class="string">&quot;DIST_PORT&quot;</span>) %&gt;</span><br></pre></td></tr></table></figure>
+
+<p>测试</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">DIST_PORT=5555 mix release</span><br></pre></td></tr></table></figure>
+
+<h4 id="运行期"><a href="#运行期" class="headerlink" title="运行期"></a>运行期</h4><p>运行期加载环境变量为 hack 的方式</p>
+<p>env.sh.eex</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">VERSION_DIR=<span class="string">&quot;<span class="subst">$(ls <span class="string">&quot;<span class="variable">$RELEASE_ROOT</span>/releases/&quot;</span> | head -n1)</span>&quot;</span></span><br><span class="line"><span class="built_in">export</span> DIST_PORT=<span class="string">&quot;<span class="variable">$&#123;DIST_PORT:-7878&#125;</span>&quot;</span></span><br><span class="line">sed -i <span class="string">&quot;s/\$&#123;DIST_PORT&#125;/<span class="variable">$&#123;DIST_PORT&#125;</span>/g&quot;</span> \</span><br><span class="line">  <span class="string">&quot;<span class="variable">$RELEASE_ROOT</span>/releases/<span class="variable">$VERSION_DIR</span>/vm.args&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>vm.args.eex</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">-kernel inet_dist_listen_min <span class="variable">$&#123;</span><span class="title class_">DIST_PORT</span>&#125;</span><br><span class="line">-kernel inet_dist_listen_max <span class="variable">$&#123;</span><span class="title class_">DIST_PORT</span>&#125;</span><br></pre></td></tr></table></figure>
+
+<p>测试</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">MIX_ENV=prod mix release</span><br><span class="line">DIST_PORT=5555 _build/prod/rel/demo/bin/demo start_iex</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/elixir/">elixir</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+  
+
+
+
+
+
+
+
+
+
+    </main>
+
+    <footer class="site-footer">
+  <p class="site-info">
+    Proudly powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and
+    Theme by <a href="https://github.com/CodeDaraW/Hacker" target="_blank">Hacker</a>
+    </br>
+    
+    &copy; 2025 John Doe
+    
+  </p>
+</footer>
+    
+    
+  </div>
+</div>
+</body>
+</html>
