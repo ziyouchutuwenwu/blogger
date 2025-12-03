@@ -71,6 +71,319 @@
 
   
     
+    <h3 class="article-title"><a href="/2025/12/03/elixir-config/"><span>elixir 之配置文件</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/12/03/elixir-config/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-12-03T00:08:34.000Z">
+          2025-12-03
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><ol>
+<li>runtime 为运行时会调用的配置文件, 其它为编译期调用的配置</li>
+<li>固定的配置写在 dev&#x2F;prod 等里面</li>
+<li>动态配置，写在 runtime 里面，如果 runtime 里面没有，则从 dev&#x2F;prod 里面去取</li>
+</ol>
+<h2 id="例子"><a href="#例子" class="headerlink" title="例子"></a>例子</h2><h3 id="目录结构"><a href="#目录结构" class="headerlink" title="目录结构"></a>目录结构</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">lib</span><br><span class="line">└── demo.exs</span><br><span class="line">config</span><br><span class="line">├── config.exs</span><br><span class="line">├── dev.exs</span><br><span class="line">├── test.exs</span><br><span class="line">├── prod.exs</span><br><span class="line">└── runtime.exs</span><br></pre></td></tr></table></figure>
+
+<h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h3><p>config.exs</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="title class_">Config</span></span><br><span class="line"></span><br><span class="line">config <span class="symbol">:demo</span>, <span class="symbol">mode:</span> config_env()</span><br><span class="line">import_config <span class="string">&quot;<span class="subst">#&#123;config_env()&#125;</span>.exs&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>dev.exs</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="title class_">Config</span></span><br><span class="line"></span><br><span class="line">config <span class="symbol">:demo</span>,</span><br><span class="line">  <span class="symbol">aaa:</span> <span class="string">&quot;aaa in dev&quot;</span>,</span><br><span class="line">  <span class="symbol">bbb:</span> <span class="string">&quot;bbb in dev&quot;</span></span><br><span class="line"></span><br><span class="line">config <span class="symbol">:demo</span>, <span class="title class_">MyModule</span>,</span><br><span class="line">  <span class="symbol">ccc:</span> <span class="string">&quot;ccc in dev&quot;</span>,</span><br><span class="line">  <span class="symbol">ddd:</span> <span class="string">&quot;ddd in dev&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>test.exs</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="title class_">Config</span></span><br><span class="line"></span><br><span class="line">config <span class="symbol">:demo</span>,</span><br><span class="line">  <span class="symbol">aaa:</span> <span class="string">&quot;aaa in test&quot;</span>,</span><br><span class="line">  <span class="symbol">bbb:</span> <span class="string">&quot;bbb in test&quot;</span></span><br><span class="line"></span><br><span class="line">config <span class="symbol">:demo</span>, <span class="title class_">MyModule</span>,</span><br><span class="line">  <span class="symbol">ccc:</span> <span class="string">&quot;ccc in test&quot;</span>,</span><br><span class="line">  <span class="symbol">ddd:</span> <span class="string">&quot;ddd in test&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>prod.exs</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="title class_">Config</span></span><br><span class="line"></span><br><span class="line">config <span class="symbol">:demo</span>,</span><br><span class="line">  <span class="symbol">aaa:</span> <span class="string">&quot;aaa in prod&quot;</span>,</span><br><span class="line">  <span class="symbol">bbb:</span> <span class="string">&quot;bbb in prod&quot;</span></span><br><span class="line"></span><br><span class="line">config <span class="symbol">:demo</span>, <span class="title class_">MyModule</span>,</span><br><span class="line">  <span class="symbol">ccc:</span> <span class="string">&quot;ccc in prod&quot;</span>,</span><br><span class="line">  <span class="symbol">ddd:</span> <span class="string">&quot;ddd in prod&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>runtime.exs</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="title class_">Config</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 这个只能用于配置文件，代码内不能使用这个方式动态处理代码</span></span><br><span class="line"><span class="keyword">if</span> config_env() == <span class="symbol">:prod</span> <span class="keyword">do</span></span><br><span class="line">  config <span class="symbol">:demo</span>,</span><br><span class="line">    <span class="symbol">aaa:</span> <span class="title class_">System</span>.get_env(<span class="string">&quot;AAA&quot;</span>) || <span class="string">&quot;aaa in runtime&quot;</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MIX_ENV=prod iex -S mix</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="title class_">Application</span>.fetch_env!(<span class="symbol">:demo</span>, <span class="symbol">:aaa</span>)</span><br><span class="line"><span class="title class_">Application</span>.get_env(<span class="symbol">:demo</span>, <span class="symbol">:bbb</span>)</span><br><span class="line"></span><br><span class="line">[<span class="symbol">ccc:</span> ccc_value, <span class="symbol">ddd:</span> ddd_value] = <span class="title class_">Application</span>.get_env(<span class="symbol">:demo</span>, <span class="title class_">MyModule</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="备注"><a href="#备注" class="headerlink" title="备注"></a>备注</h3><p>如果需要在运行的时候获取当前模式</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> <span class="title class_">Application</span>.get_env(<span class="symbol">:demo</span>, <span class="symbol">:mode</span>) === <span class="symbol">:prod</span> <span class="keyword">do</span></span><br><span class="line">  xxxx</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/elixir/">elixir</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
+    <h3 class="article-title"><a href="/2025/12/02/elixir-cond-panduan/"><span>elixir 之 cond 判断</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/12/02/elixir-cond-panduan/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-12-02T07:23:10.000Z">
+          2025-12-02
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>都不支持多 else</p>
+<p>匹配条件可以用函数</p>
+<h2 id="用法"><a href="#用法" class="headerlink" title="用法"></a>用法</h2><h3 id="cond"><a href="#cond" class="headerlink" title="cond"></a>cond</h3><figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">info1 = <span class="string">&quot;&quot;</span></span><br><span class="line">info2 = <span class="string">&quot;&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">cond</span> <span class="keyword">do</span></span><br><span class="line">  <span class="title class_">String</span>.length(info1) !== <span class="number">0</span> -&gt;</span><br><span class="line">    <span class="string">&quot;info1 not 0&quot;</span></span><br><span class="line"></span><br><span class="line">  <span class="title class_">String</span>.length(info2) !== <span class="number">0</span> -&gt;</span><br><span class="line">    <span class="string">&quot;info2 not 0&quot;</span></span><br><span class="line"></span><br><span class="line">  <span class="title class_">String</span>.length(info1) === <span class="number">0</span> &amp;&amp; <span class="title class_">String</span>.length(info2) === <span class="number">0</span> -&gt;</span><br><span class="line">    <span class="string">&quot;len are 0&quot;</span></span><br><span class="line"></span><br><span class="line">  <span class="literal">true</span> -&gt;</span><br><span class="line">    <span class="string">&quot;default&quot;</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="if"><a href="#if" class="headerlink" title="if"></a>if</h3><figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> <span class="title class_">String</span>.valid?(<span class="string">&quot;aaa&quot;</span>) &amp;&amp; <span class="title class_">String</span>.valid?(<span class="string">&quot;bbb&quot;</span>) <span class="keyword">do</span></span><br><span class="line">  <span class="string">&quot;Valid string!&quot;</span></span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">  <span class="string">&quot;Invalid string.&quot;</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/elixir/">elixir</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
+    <h3 class="article-title"><a href="/2025/12/02/elixir-match-panduan/"><span>elixir 之 match 判断</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/12/02/elixir-match-panduan/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-12-02T07:23:05.000Z">
+          2025-12-02
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>都不支持多 else</p>
+<h2 id="用法"><a href="#用法" class="headerlink" title="用法"></a>用法</h2><h3 id="case"><a href="#case" class="headerlink" title="case"></a>case</h3><ul>
+<li>待匹配变量必须先定义</li>
+<li>匹配条件不可以用函数</li>
+</ul>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">require</span> <span class="title class_">Logger</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">case</span> xxx(<span class="string">&quot;aaa&quot;</span>) <span class="keyword">do</span></span><br><span class="line">  <span class="string">&quot;aaa&quot;</span> -&gt;</span><br><span class="line">    <span class="title class_">Logger</span>.debug(<span class="string">&quot;aaa&quot;</span>)</span><br><span class="line"></span><br><span class="line">  <span class="string">&quot;bbb&quot;</span> -&gt;</span><br><span class="line">    <span class="title class_">Logger</span>.debug(<span class="string">&quot;bbb&quot;</span>)</span><br><span class="line">  _ -&gt;</span><br><span class="line">    <span class="title class_">Logger</span>.debug(<span class="string">&quot;default&quot;</span>)</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="with"><a href="#with" class="headerlink" title="with"></a>with</h3><ul>
+<li>链式匹配，所以待匹配变量无需定义</li>
+<li>如果某个 step 失败，之前的还是会成功执行</li>
+</ul>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">defmodule</span> <span class="title">WithDemo</span></span> <span class="keyword">do</span></span><br><span class="line">  <span class="keyword">require</span> <span class="title class_">Logger</span></span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">demo</span></span> <span class="keyword">do</span></span><br><span class="line">    <span class="keyword">with</span> &#123;<span class="symbol">:ok</span>, result1&#125; &lt;- step1(),</span><br><span class="line">         &#123;<span class="symbol">:ok</span>, result2&#125; &lt;- step2(result1),</span><br><span class="line">         &#123;<span class="symbol">:ok</span>, result3&#125; &lt;- step3(result2) <span class="keyword">do</span></span><br><span class="line">      <span class="title class_">Logger</span>.debug(<span class="string">&quot;final result <span class="subst">#&#123;result1 + result2 + result3&#125;</span>&quot;</span>)</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">      &#123;<span class="symbol">:error</span>, _&#125; -&gt;</span><br><span class="line">        <span class="title class_">Logger</span>.debug(<span class="string">&quot;某些需要匹配的错误&quot;</span>)</span><br><span class="line"></span><br><span class="line">      _ -&gt;</span><br><span class="line">        <span class="title class_">Logger</span>.debug(<span class="string">&quot;都不匹配，到这里&quot;</span>)</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">step1</span></span>() <span class="keyword">do</span></span><br><span class="line">    <span class="title class_">Logger</span>.debug(<span class="string">&quot;in step1&quot;</span>)</span><br><span class="line">    &#123;<span class="symbol">:ok</span>, <span class="number">111</span>&#125;</span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">step2</span></span>(arg) <span class="keyword">do</span></span><br><span class="line">    <span class="title class_">Logger</span>.debug(<span class="string">&quot;in step2 <span class="subst">#&#123;inspect(arg)&#125;</span>&quot;</span>)</span><br><span class="line">    &#123;<span class="symbol">:ok</span>, <span class="number">222</span>&#125;</span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">step3</span></span>(arg) <span class="keyword">do</span></span><br><span class="line">    <span class="title class_">Logger</span>.debug(<span class="string">&quot;in step2 <span class="subst">#&#123;inspect(arg)&#125;</span>&quot;</span>)</span><br><span class="line">    &#123;<span class="symbol">:ok</span>, <span class="number">333</span>&#125;</span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/elixir/">elixir</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
+    <h3 class="article-title"><a href="/2025/12/01/elixir-node-visualize/"><span>elixir 之节点可视化</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/12/01/elixir-node-visualize/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-12-01T00:18:10.000Z">
+          2025-12-01
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <p>Phoenix LiveDashboard，从 phoenix 独立出来了</p>
+<h2 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h2><h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mix escript.install hex plds</span><br></pre></td></tr></table></figure>
+
+<h3 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">iex --sname aaa@localhost --cookie 123456</span><br><span class="line">plds server --connect aaa@localhost --cookie 123456 --port 9000 --open</span><br></pre></td></tr></table></figure>
+
+<p>注意右上角的节点，别选错了</p>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/elixir/">elixir</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
+    <h3 class="article-title"><a href="/2025/12/01/elixir-phoenix-deploy/"><span>elixir phoenix 应用原生发布</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/12/01/elixir-phoenix-deploy/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-12-01T00:16:10.000Z">
+          2025-12-01
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <p><a target="_blank" rel="noopener" href="https://hexdocs.pm/phoenix/deployment.html">参考地址</a></p>
+<h2 id="例子"><a href="#例子" class="headerlink" title="例子"></a>例子</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">mix deps.get --only prod</span><br><span class="line">MIX_ENV=prod mix compile</span><br><span class="line"></span><br><span class="line">MIX_ENV=prod mix assets.deploy</span><br><span class="line"><span class="comment"># MIX_ENV=prod mix ecto.migrate</span></span><br><span class="line">MIX_ENV=prod mix release</span><br><span class="line"><span class="built_in">export</span> SECRET_KEY_BASE=`mix phx.gen.secret` PHX_SERVER=<span class="literal">true</span> PHX_HOST=<span class="string">&quot;aaa.com&quot;</span> PORT=9876;</span><br><span class="line">_build/prod/rel/web_demo/bin/web_demo start</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/elixir/">elixir</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
     <h3 class="article-title"><a href="/2025/11/30/elixir-normai-deploy/"><span>elixir 普通应用原生发布</span></a></h3>
     
   
@@ -386,435 +699,6 @@
     <span class="post-tags">
       <i class="icon-tags"></i>
         <a href="/tags/elixir/">elixir</a>
-    </span>
-    
-
-    </div>
-
-    
-  </div>
-</article>
-
-
-
-  <article>
-
-  
-    
-    <h3 class="article-title"><a href="/2025/11/25/debootstrap/"><span>debootstrap</span></a></h3>
-    
-  
-
-  <div class="article-top-meta">
-    <span class="posted-on">
-      <a href="/2025/11/25/debootstrap/" rel="bookmark">
-        <time class="entry-date published" datetime="2025-11-25T00:06:21.000Z">
-          2025-11-25
-        </time>
-      </a>
-    </span>
-  </div>
-
-
-  
-
-  <div class="article-content">
-    <div class="entry">
-      
-        <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>用来生成 rootfs</p>
-<h2 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h2><h3 id="准备"><a href="#准备" class="headerlink" title="准备"></a>准备</h3><p>debian</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt install qemu-user-static debootstrap binfmt-support</span><br></pre></td></tr></table></figure>
-
-<p>manjaro</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> pacman -S qemu-user-static debootstrap qemu-user-static-binfmt</span><br></pre></td></tr></table></figure>
-
-<h3 id="创建"><a href="#创建" class="headerlink" title="创建"></a>创建</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 用 https 的源</span></span><br><span class="line"><span class="built_in">sudo</span> debootstrap --<span class="built_in">arch</span> armhf --foreign --no-check-gpg bookworm deb_fs https://mirrors.ustc.edu.cn/debian</span><br></pre></td></tr></table></figure>
-
-<h3 id="基础配置"><a href="#基础配置" class="headerlink" title="基础配置"></a>基础配置</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> <span class="built_in">cp</span> /usr/bin/qemu-arm-static ./deb_fs/usr/bin/</span><br><span class="line"></span><br><span class="line"><span class="comment"># chroot 需要手动 mount 一大堆</span></span><br><span class="line"><span class="built_in">sudo</span> systemd-nspawn -D ./deb_fs</span><br></pre></td></tr></table></figure>
-
-<p>或者</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> bwrap \</span><br><span class="line">  --<span class="built_in">bind</span> ./deb_fs / \</span><br><span class="line">  --dev /dev \</span><br><span class="line">  --dev-bind /dev/pts /dev/pts \</span><br><span class="line">  --dev-bind /dev/null /dev/null \</span><br><span class="line">  --dev-bind /dev/zero /dev/zero \</span><br><span class="line">  --dev-bind /dev/random /dev/random \</span><br><span class="line">  --dev-bind /dev/urandom /dev/urandom \</span><br><span class="line">  --proc /proc \</span><br><span class="line">  --ro-bind /sys /sys \</span><br><span class="line">  --tmpfs /tmp \</span><br><span class="line">  --setenv HOME /root \</span><br><span class="line">  --setenv PATH /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin \</span><br><span class="line">  /bin/bash</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/debootstrap/debootstrap --second-stage</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">apt install -y neovim</span><br></pre></td></tr></table></figure>
-
-<h3 id="profile"><a href="#profile" class="headerlink" title="profile"></a>profile</h3><p>&#x2F;etc&#x2F;profile.d&#x2F;path.sh</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin</span><br></pre></td></tr></table></figure>
-
-<p>&#x2F;etc&#x2F;profile.d&#x2F;ls.sh</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">alias</span> ll=<span class="string">&#x27;ls -la --color=auto&#x27;</span> 2&gt;/dev/null</span><br><span class="line"><span class="built_in">alias</span> l.=<span class="string">&#x27;ls --color=auto -d .*&#x27;</span> 2&gt;/dev/null</span><br><span class="line"><span class="built_in">alias</span> <span class="built_in">ls</span>=<span class="string">&#x27;ls --color=auto&#x27;</span> 2&gt;/dev/null</span><br></pre></td></tr></table></figure>
-
-<p>&#x2F;etc&#x2F;profile.d&#x2F;proxy.sh</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">alias</span> pon=<span class="string">&quot;export HTTP_PROXY=http://127.0.0.1:8118 HTTPS_PROXY=http://127.0.0.1:8118 ALL_PROXY=socks5://127.0.0.1:1080 NO_PROXY=localhost,127.0.0.1,10.0.2.1&quot;</span></span><br><span class="line"><span class="built_in">alias</span> poff=<span class="string">&quot;unset HTTP_PROXY HTTPS_PROXY ALL_PROXY NO_PROXY&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p>&#x2F;etc&#x2F;profile.d&#x2F;python.sh</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> PYTHONPYCACHEPREFIX=/dev/null</span><br><span class="line"><span class="built_in">export</span> UV_INDEX=<span class="string">&quot;https://mirrors.aliyun.com/pypi/simple&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p>~&#x2F;.bashrc</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[[ -f /etc/profile ]] &amp;&amp; <span class="built_in">source</span> /etc/profile</span><br></pre></td></tr></table></figure>
-
-<h3 id="必备工具"><a href="#必备工具" class="headerlink" title="必备工具"></a>必备工具</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">source</span> /etc/profile</span><br><span class="line">apt install -y iputils-ping net-tools ncat file</span><br></pre></td></tr></table></figure>
-
-<h2 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h2><h3 id="制作镜像"><a href="#制作镜像" class="headerlink" title="制作镜像"></a>制作镜像</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># dd if=/dev/zero of=rootfs.ext4 bs=1M count=512</span></span><br><span class="line"><span class="built_in">dd</span> <span class="keyword">if</span>=/dev/zero of=rootfs.ext4 bs=1G count=1</span><br><span class="line"><span class="built_in">sudo</span> mkfs.ext4 rootfs.ext4</span><br><span class="line"></span><br><span class="line"><span class="built_in">mkdir</span> mnt_fs</span><br><span class="line"><span class="built_in">sudo</span> mount -o loop rootfs.ext4 mnt_fs</span><br><span class="line"></span><br><span class="line"><span class="built_in">sudo</span> <span class="built_in">cp</span> -rf ./deb_fs/* ./mnt_fs/</span><br><span class="line"></span><br><span class="line"><span class="built_in">sudo</span> umount mnt_fs</span><br><span class="line"><span class="built_in">rm</span> -rf mnt_fs</span><br></pre></td></tr></table></figure>
-
-<h3 id="qemu"><a href="#qemu" class="headerlink" title="qemu"></a>qemu</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">qemu-system-arm \</span><br><span class="line">  -M vexpress-a9 \</span><br><span class="line">  -m 512M \</span><br><span class="line">  -kernel ~/downloads/linux-5.10.191/output/arch/arm/boot/zImage \</span><br><span class="line">  -dtb ~/downloads/linux-5.10.191/output/arch/arm/boot/dts/vexpress-v2p-ca9.dtb \</span><br><span class="line">  -nographic \</span><br><span class="line">  -append <span class="string">&quot;root=/dev/mmcblk0 rw console=ttyAMA0&quot;</span> \</span><br><span class="line">  -sd ~/downloads/rootfs.ext4</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-
-  </div>
-
-  <div class="article-footer">
-    <div class="article-meta pull-left">
-
-    
-
-    
-    
-
-    <span class="post-tags">
-      <i class="icon-tags"></i>
-        <a href="/tags/linux/">linux</a><a href="/tags/kernel/">kernel</a>
-    </span>
-    
-
-    </div>
-
-    
-  </div>
-</article>
-
-
-
-  <article>
-
-  
-    
-    <h3 class="article-title"><a href="/2025/11/24/buildroot-extra/"><span>buildroot 辅助用法</span></a></h3>
-    
-  
-
-  <div class="article-top-meta">
-    <span class="posted-on">
-      <a href="/2025/11/24/buildroot-extra/" rel="bookmark">
-        <time class="entry-date published" datetime="2025-11-24T01:02:49.000Z">
-          2025-11-24
-        </time>
-      </a>
-    </span>
-  </div>
-
-
-  
-
-  <div class="article-content">
-    <div class="entry">
-      
-        <h2 id="文件打包"><a href="#文件打包" class="headerlink" title="文件打包"></a>文件打包</h2><p><code>output/target</code> 目录先做好备份</p>
-<h3 id="方法"><a href="#方法" class="headerlink" title="方法"></a>方法</h3><h4 id="方法-1"><a href="#方法-1" class="headerlink" title="方法 1"></a>方法 1</h4><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make O=output menuconfig</span><br></pre></td></tr></table></figure>
-
-<p>设置为 overlay_fs</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">System configuration  ---&gt;</span><br><span class="line">  (overlay_fs)  Root filesystem overlay directories</span><br></pre></td></tr></table></figure>
-
-<p>目录结构如下</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">overlay_fs</span><br><span class="line">└── usr</span><br><span class="line">    └── <span class="built_in">local</span></span><br><span class="line">        └── bin</span><br><span class="line">            └── demo</span><br></pre></td></tr></table></figure>
-
-<p>编译</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 这个会处理 output/target 目录，但是不会生成 ext2 文件</span></span><br><span class="line">make O=output target-finalize -j$(<span class="built_in">nproc</span>)</span><br><span class="line"><span class="comment"># 生成 etx2</span></span><br><span class="line">make O=output rootfs-ext2 -j$(<span class="built_in">nproc</span>)</span><br></pre></td></tr></table></figure>
-
-<p>或者</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">make O=output -j$(<span class="built_in">nproc</span>)</span><br><span class="line">make O=output all -j$(<span class="built_in">nproc</span>)</span><br></pre></td></tr></table></figure>
-
-<h4 id="方法-2"><a href="#方法-2" class="headerlink" title="方法 2"></a>方法 2</h4><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make O=output menuconfig</span><br></pre></td></tr></table></figure>
-
-<p>设置为 overlay_fs</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">System configuration  ---&gt;</span><br><span class="line">  (custom_fs/post.sh)  Custom scripts to run before creating filesystem images</span><br></pre></td></tr></table></figure>
-
-<p>目录结构如下</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">custom_fs</span><br><span class="line">├── files</span><br><span class="line">│   └── demo</span><br><span class="line">└── post.sh</span><br></pre></td></tr></table></figure>
-
-<p>post.sh</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/sh</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># output/target</span></span><br><span class="line">TARGET_DIR=<span class="variable">$1</span></span><br><span class="line">CURRENT_DIR=$(<span class="built_in">cd</span> <span class="string">&quot;<span class="subst">$(dirname <span class="string">&quot;<span class="variable">$0</span>&quot;</span>)</span>&quot;</span>;<span class="built_in">pwd</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">mkdir</span> -p <span class="variable">$&#123;TARGET_DIR&#125;</span>/usr/local/bin</span><br><span class="line"><span class="built_in">cp</span> -rf <span class="variable">$&#123;CURRENT_DIR&#125;</span>/files/* <span class="variable">$&#123;TARGET_DIR&#125;</span>/usr/local/bin/</span><br><span class="line"></span><br><span class="line"><span class="built_in">chmod</span> a+x <span class="variable">$&#123;TARGET_DIR&#125;</span>/usr/local/bin/*</span><br></pre></td></tr></table></figure>
-
-<p>编译</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 这个会处理 output/target 目录，但是不会生成 ext2 文件</span></span><br><span class="line">make O=output target-finalize -j$(<span class="built_in">nproc</span>)</span><br><span class="line"><span class="comment"># 生成 etx2</span></span><br><span class="line">make O=output rootfs-ext2 -j$(<span class="built_in">nproc</span>)</span><br></pre></td></tr></table></figure>
-
-<p>或者</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">make O=output -j$(<span class="built_in">nproc</span>)</span><br><span class="line">make O=output all -j$(<span class="built_in">nproc</span>)</span><br></pre></td></tr></table></figure>
-
-<h2 id="make-用法"><a href="#make-用法" class="headerlink" title="make 用法"></a>make 用法</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># uboot</span></span><br><span class="line">make O=output uboot-dirclean</span><br><span class="line">make O=output uboot-rebuild -j$(<span class="built_in">nproc</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 内核</span></span><br><span class="line">make O=output linux-dirclean</span><br><span class="line">make O=output linux-rebuild -j$(<span class="built_in">nproc</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 文件系统</span></span><br><span class="line">make O=output busybox-dirclean</span><br><span class="line">make O=output busybox-rebuild -j$(<span class="built_in">nproc</span>)</span><br></pre></td></tr></table></figure>
-
-<p>清理</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 清理特定包，不删除下载的源码</span></span><br><span class="line">make O=output xxx-dirclean</span><br><span class="line"></span><br><span class="line"><span class="comment"># 保留下载的源码</span></span><br><span class="line">make O=output clean</span><br><span class="line"></span><br><span class="line"><span class="comment"># 删除下载的源码</span></span><br><span class="line">make O=output distclean</span><br></pre></td></tr></table></figure>
-
-<h2 id="nfs"><a href="#nfs" class="headerlink" title="nfs"></a>nfs</h2><p>配置好网络, tftp, nfs 等服务</p>
-<h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h3><h4 id="内核"><a href="#内核" class="headerlink" title="内核"></a>内核</h4><p>启用 nfs，默认已经开启了</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make O=output linux-menuconfig</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">File systems  ---&gt;</span><br><span class="line">  [*] Network File Systems  ---&gt;</span><br><span class="line">    &lt;*&gt; NFS client support</span><br><span class="line">    &lt;*&gt; NFS client support <span class="keyword">for</span> NFS version 3</span><br><span class="line">    [*] Root file system on NFS</span><br></pre></td></tr></table></figure>
-
-<h4 id="uboot"><a href="#uboot" class="headerlink" title="uboot"></a>uboot</h4><p>核心已经支持, 就算不选中, nfs 也可以加载</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make O=output uboot-menuconfig</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Command line interface  ---&gt;</span><br><span class="line">  [*] nfs</span><br></pre></td></tr></table></figure>
-
-<h4 id="整体"><a href="#整体" class="headerlink" title="整体"></a>整体</h4><p>启用 uImage, 设置加载地址</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make O=output menuconfig</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Kernel  ---&gt;</span><br><span class="line">  [*] Linux Kernel</span><br><span class="line">    Kernel binary format (uImage)</span><br><span class="line">    (0x60010000) load address (<span class="keyword">for</span> 3.7+ multi-platform image)</span><br></pre></td></tr></table></figure>
-
-<p>打包 rootfs</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Filesystem images  ---&gt;</span><br><span class="line">  [*] tar the root filesystem</span><br></pre></td></tr></table></figure>
-
-<p>uboot 配置环境变量</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Bootloaders  ---&gt;</span><br><span class="line">  (uboot.env) Text file with default environment</span><br></pre></td></tr></table></figure>
-
-<p>uboot.env</p>
-<p>内存地址一定要注意，否则可能会无法启动</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">ipaddr=10.0.2.222</span><br><span class="line"><span class="comment"># ttfp 服务器 ip</span></span><br><span class="line">serverip=10.0.2.1</span><br><span class="line"><span class="comment"># 最后的 ip 不能缺</span></span><br><span class="line">root=/dev/nfs rw nfsroot=10.0.2.1:/mnt/nfs/rootfs,nfsvers=3 init=/linuxrc console=ttyAMA0 ip=10.0.2.222</span><br><span class="line"><span class="comment"># bootm 中间的 - 不能缺</span></span><br><span class="line">bootcmd=tftp 0x60010000 uImage; tftp 0x61000000 vexpress-v2p-ca9.dtb; bootm 0x60010000 - 0x61000000</span><br></pre></td></tr></table></figure>
-
-<h4 id="编译"><a href="#编译" class="headerlink" title="编译"></a>编译</h4><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make O=output -j$(<span class="built_in">nproc</span>)</span><br></pre></td></tr></table></figure>
-
-<h4 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h4><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> qemu-system-arm \</span><br><span class="line">  -M vexpress-a9 \</span><br><span class="line">  -m 512M \</span><br><span class="line">  -kernel ~/downloads/buildroot-2025.02.3/output/images/u-boot \</span><br><span class="line">  -nographic \</span><br><span class="line">  -netdev bridge,<span class="built_in">id</span>=net0,br=virbr0 \</span><br><span class="line">  -net nic,netdev=net0</span><br></pre></td></tr></table></figure>
-
-<p>手动，支持变量展开，需要用双引号，单引号不支持</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">setenv ipaddr 10.0.2.222</span><br><span class="line">setenv serverip 10.0.2.1</span><br><span class="line">setenv bootargs <span class="string">&quot;root=/dev/nfs rw nfsroot=<span class="variable">$&#123;serverip&#125;</span>:/mnt/nfs/rootfs,nfsvers=3 init=/linuxrc console=ttyAMA0 ip=<span class="variable">$&#123;ipaddr&#125;</span>&quot;</span></span><br><span class="line">setenv bootcmd <span class="string">&#x27;tftp 0x60010000 uImage; tftp 0x61000000 vexpress-v2p-ca9.dtb; bootm 0x60010000 - 0x61000000&#x27;</span></span><br><span class="line">saveenv</span><br><span class="line"></span><br><span class="line">run bootcmd</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-
-  </div>
-
-  <div class="article-footer">
-    <div class="article-meta pull-left">
-
-    
-
-    
-    
-
-    <span class="post-tags">
-      <i class="icon-tags"></i>
-        <a href="/tags/linux/">linux</a><a href="/tags/kernel/">kernel</a>
-    </span>
-    
-
-    </div>
-
-    
-  </div>
-</article>
-
-
-
-  <article>
-
-  
-    
-    <h3 class="article-title"><a href="/2025/11/22/linux-trim-tftp/"><span>linux 内核裁剪之 tftp</span></a></h3>
-    
-  
-
-  <div class="article-top-meta">
-    <span class="posted-on">
-      <a href="/2025/11/22/linux-trim-tftp/" rel="bookmark">
-        <time class="entry-date published" datetime="2025-11-22T04:30:01.000Z">
-          2025-11-22
-        </time>
-      </a>
-    </span>
-  </div>
-
-
-  
-
-  <div class="article-content">
-    <div class="entry">
-      
-        <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>用来加载内核</p>
-<h2 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h2><h3 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h3><p>启动 tftp 服务</p>
-<h3 id="编译内核"><a href="#编译内核" class="headerlink" title="编译内核"></a>编译内核</h3><p>内核需要 uImage 格式，才能被 uboot 加载</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make LOADADDR=0x60003000 uImage -j$(<span class="built_in">nproc</span>)</span><br></pre></td></tr></table></figure>
-
-<p>把 <code>output/arch/arm/boot/uImage</code> 和 <code>dts</code> 放到 <code>tftp</code> 的目录</p>
-<h3 id="uboot"><a href="#uboot" class="headerlink" title="uboot"></a>uboot</h3><h4 id="手动测试"><a href="#手动测试" class="headerlink" title="手动测试"></a>手动测试</h4><p>进入 uboot 后中断</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> qemu-system-arm \</span><br><span class="line">  -M vexpress-a9 \</span><br><span class="line">  -m 512M \</span><br><span class="line">  -kernel ~/downloads/u-boot-2023.04/output/u-boot \</span><br><span class="line">  -nographic \</span><br><span class="line">  -netdev bridge,<span class="built_in">id</span>=net0,br=virbr0 \</span><br><span class="line">  -net nic,netdev=net0</span><br></pre></td></tr></table></figure>
-
-<p>手动设置变量</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># qemu 虚拟机 ip</span></span><br><span class="line">setenv ipaddr 10.0.2.222</span><br><span class="line"></span><br><span class="line"><span class="comment"># tftp 服务器 ip</span></span><br><span class="line">setenv serverip 10.0.2.1</span><br><span class="line">ping 10.0.2.1</span><br></pre></td></tr></table></figure>
-
-<p>下载内核，设备树，启动</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">tftp 0x60003000 uImage</span><br><span class="line">tftp 0x60500000 vexpress-v2p-ca9.dtb</span><br><span class="line">bootm 0x60003000 - 0x60500000</span><br></pre></td></tr></table></figure>
-
-<h4 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h4><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make menuconfig</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Environment  ---&gt;</span><br><span class="line">  [*] Create default environment from file</span><br><span class="line">  (uboot.env)  Path to default environment file (NEW)</span><br></pre></td></tr></table></figure>
-
-<p>uboot.env</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ipaddr=10.0.2.222</span><br><span class="line">serverip=10.0.2.1</span><br><span class="line">bootargs=root=/dev/mmcblk0 rw init=/linuxrc ip=10.0.2.222 console=ttyAMA0</span><br><span class="line">bootcmd=tftp 0x60003000 uImage; tftp 0x60500000 vexpress-v2p-ca9.dtb; bootm 0x60003000 - 0x60500000</span><br></pre></td></tr></table></figure>
-
-<h4 id="编译"><a href="#编译" class="headerlink" title="编译"></a>编译</h4><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make -j$(<span class="built_in">nproc</span>)</span><br></pre></td></tr></table></figure>
-
-<h4 id="运行"><a href="#运行" class="headerlink" title="运行"></a>运行</h4><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> qemu-system-arm \</span><br><span class="line">  -M vexpress-a9 \</span><br><span class="line">  -m 512M \</span><br><span class="line">  -kernel ~/downloads/u-boot-2023.04/output/u-boot \</span><br><span class="line">  -nographic \</span><br><span class="line">  -netdev bridge,<span class="built_in">id</span>=net0,br=virbr0 \</span><br><span class="line">  -net nic,netdev=net0</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-
-  </div>
-
-  <div class="article-footer">
-    <div class="article-meta pull-left">
-
-    
-
-    
-    
-
-    <span class="post-tags">
-      <i class="icon-tags"></i>
-        <a href="/tags/linux/">linux</a><a href="/tags/kernel/">kernel</a>
-    </span>
-    
-
-    </div>
-
-    
-  </div>
-</article>
-
-
-
-  <article>
-
-  
-    
-    <h3 class="article-title"><a href="/2025/11/21/linux-trim-nfs/"><span>linux 内核裁剪之 nfs</span></a></h3>
-    
-  
-
-  <div class="article-top-meta">
-    <span class="posted-on">
-      <a href="/2025/11/21/linux-trim-nfs/" rel="bookmark">
-        <time class="entry-date published" datetime="2025-11-21T01:20:06.000Z">
-          2025-11-21
-        </time>
-      </a>
-    </span>
-  </div>
-
-
-  
-
-  <div class="article-content">
-    <div class="entry">
-      
-        <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>用于加载文件系统</p>
-<h2 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h2><h3 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h3><p>启动 nfs 服务，把 <code>rootfs</code> 文件夹放到 nfs 的根目录下</p>
-<h3 id="内核"><a href="#内核" class="headerlink" title="内核"></a>内核</h3><h4 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h4><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make menuconfig</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">File systems  ---&gt;</span><br><span class="line">  [*] Network File Systems  ---&gt;</span><br><span class="line">    &lt;*&gt; NFS client support</span><br><span class="line">    &lt;*&gt; NFS client support <span class="keyword">for</span> NFS version 3</span><br><span class="line">    [*] Root file system on NFS</span><br></pre></td></tr></table></figure>
-
-<h4 id="编译"><a href="#编译" class="headerlink" title="编译"></a>编译</h4><p>编译结束后，uImage 复制到 tftp 根目录</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make LOADADDR=0x60003000 uImage -j$(<span class="built_in">nproc</span>)</span><br></pre></td></tr></table></figure>
-
-<h3 id="uboot"><a href="#uboot" class="headerlink" title="uboot"></a>uboot</h3><h4 id="环境变量"><a href="#环境变量" class="headerlink" title="环境变量"></a>环境变量</h4><p>uboot.env</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">ipaddr=10.0.2.222</span><br><span class="line">serverip=10.0.2.1</span><br><span class="line"><span class="comment"># 最后的 ip 不能缺</span></span><br><span class="line">bootargs=root=/dev/nfs rw nfsroot=10.0.2.1:/mnt/nfs/rootfs,nfsvers=3 init=/linuxrc console=ttyAMA0 ip=10.0.2.222</span><br><span class="line"><span class="comment"># bootm 中间的 - 不能缺</span></span><br><span class="line">bootcmd=tftp 0x60003000 uImage; tftp 0x60500000 vexpress-v2p-ca9.dtb; bootm 0x60003000 - 0x60500000</span><br></pre></td></tr></table></figure>
-
-<h4 id="make"><a href="#make" class="headerlink" title="make"></a>make</h4><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make -j$(<span class="built_in">nproc</span>)</span><br></pre></td></tr></table></figure>
-
-<h3 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> qemu-system-arm \</span><br><span class="line">  -M vexpress-a9 \</span><br><span class="line">  -m 512M \</span><br><span class="line">  -kernel ~/downloads/u-boot-2023.04/output/u-boot \</span><br><span class="line">  -nographic \</span><br><span class="line">  -netdev bridge,<span class="built_in">id</span>=net0,br=virbr0 \</span><br><span class="line">  -net nic,netdev=net0</span><br></pre></td></tr></table></figure>
-
-<p>手动，支持变量展开，需要用双引号，单引号不支持</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">setenv ipaddr 10.0.2.222</span><br><span class="line">setenv serverip 10.0.2.1</span><br><span class="line">setenv bootargs <span class="string">&quot;root=/dev/nfs rw nfsroot=<span class="variable">$&#123;serverip&#125;</span>:/mnt/nfs/rootfs,nfsvers=3 init=/linuxrc console=ttyAMA0 ip=<span class="variable">$&#123;ipaddr&#125;</span>&quot;</span></span><br><span class="line">setenv bootcmd <span class="string">&#x27;tftp 0x60003000 uImage; tftp 0x60500000 vexpress-v2p-ca9.dtb; bootm 0x60003000 - 0x60500000&#x27;</span></span><br><span class="line">saveenv</span><br><span class="line"></span><br><span class="line">run bootcmd</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-
-  </div>
-
-  <div class="article-footer">
-    <div class="article-meta pull-left">
-
-    
-
-    
-    
-
-    <span class="post-tags">
-      <i class="icon-tags"></i>
-        <a href="/tags/linux/">linux</a><a href="/tags/kernel/">kernel</a>
-    </span>
-    
-
-    </div>
-
-    
-  </div>
-</article>
-
-
-
-  <article>
-
-  
-    
-    <h3 class="article-title"><a href="/2025/11/20/linux-trim-kernel/"><span>linux 内核裁剪之 kernel</span></a></h3>
-    
-  
-
-  <div class="article-top-meta">
-    <span class="posted-on">
-      <a href="/2025/11/20/linux-trim-kernel/" rel="bookmark">
-        <time class="entry-date published" datetime="2025-11-19T23:56:15.000Z">
-          2025-11-20
-        </time>
-      </a>
-    </span>
-  </div>
-
-
-  
-
-  <div class="article-content">
-    <div class="entry">
-      
-        <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>需要编译</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">内核</span><br><span class="line">设备树</span><br><span class="line">其它驱动程序</span><br></pre></td></tr></table></figure>
-
-<h2 id="准备"><a href="#准备" class="headerlink" title="准备"></a>准备</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-5.10.191.tar.xz</span><br></pre></td></tr></table></figure>
-
-<h2 id="用法"><a href="#用法" class="headerlink" title="用法"></a>用法</h2><h3 id="默认配置"><a href="#默认配置" class="headerlink" title="默认配置"></a>默认配置</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make vexpress_defconfig</span><br></pre></td></tr></table></figure>
-
-<h3 id="menuconfig"><a href="#menuconfig" class="headerlink" title="menuconfig"></a>menuconfig</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make menuconfig</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 不想要在 rootfs 里面手动 mknod，需要开这个</span></span><br><span class="line">Device Drivers  ---&gt;</span><br><span class="line">  Generic Driver Options  ---&gt;</span><br><span class="line">    [*] Maintain a devtmpfs filesystem to mount at /dev</span><br><span class="line">    [*]   Automount devtmpfs at /dev, after the kernel mounted the rootfs</span><br></pre></td></tr></table></figure>
-
-<h3 id="编译"><a href="#编译" class="headerlink" title="编译"></a>编译</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make -j$(<span class="built_in">nproc</span>)</span><br></pre></td></tr></table></figure>
-
-<h2 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h2><p>查看 tty</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> .config | grep -i <span class="built_in">tty</span></span><br></pre></td></tr></table></figure>
-
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CONFIG_CMDLINE=<span class="string">&quot;console=ttyAMA0&quot;</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="运行"><a href="#运行" class="headerlink" title="运行"></a>运行</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">qemu-system-arm \</span><br><span class="line">  -M vexpress-a9 \</span><br><span class="line">  -m 512M \</span><br><span class="line">  -kernel ~/downloads/linux-5.10.191/output/arch/arm/boot/zImage \</span><br><span class="line">  -dtb ~/downloads/linux-5.10.191/output/arch/arm/boot/dts/vexpress-v2p-ca9.dtb \</span><br><span class="line">  -nographic \</span><br><span class="line">  -append <span class="string">&quot;console=ttyAMA0&quot;</span></span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-
-  </div>
-
-  <div class="article-footer">
-    <div class="article-meta pull-left">
-
-    
-
-    
-    
-
-    <span class="post-tags">
-      <i class="icon-tags"></i>
-        <a href="/tags/linux/">linux</a><a href="/tags/kernel/">kernel</a>
     </span>
     
 
