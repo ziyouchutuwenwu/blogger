@@ -71,6 +71,166 @@
 
   
     
+    <h3 class="article-title"><a href="/2025/11/26/elixir-callback/"><span>elixir 通过函数回调</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/11/26/elixir-callback/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-11-26T06:14:27.000Z">
+          2025-11-26
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h2 id="用法"><a href="#用法" class="headerlink" title="用法"></a>用法</h2><h3 id="匿名函数"><a href="#匿名函数" class="headerlink" title="匿名函数"></a>匿名函数</h3><figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">require</span> <span class="title class_">Logger</span></span><br><span class="line">sum = &amp;(&amp;<span class="number">1</span> + &amp;<span class="number">2</span> + &amp;<span class="number">3</span> + &amp;<span class="number">4</span>)</span><br><span class="line">result = sum.(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>)</span><br><span class="line"><span class="title class_">Logger</span>.debug(result)</span><br></pre></td></tr></table></figure>
+
+<p>等同于</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="title class_">Logger</span>.debug</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sum</span></span>(a, b, c , d) <span class="keyword">do</span></span><br><span class="line">  a + b + c + d</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">result = sum(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>)</span><br><span class="line"><span class="title class_">Logger</span>.debug(result)</span><br></pre></td></tr></table></figure>
+
+<h3 id="直接调用"><a href="#直接调用" class="headerlink" title="直接调用"></a>直接调用</h3><p><code>&amp;模块名字.方法名/参数个数</code></p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&amp;__MODULE__.demo_func_name/<span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+<p>例如</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">demo_func = &amp;demo_module_name.demo_func_name/<span class="number">1</span></span><br><span class="line">demo_func.(<span class="number">123</span>)</span><br></pre></td></tr></table></figure>
+
+<p>官方例子</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">defmodule</span> <span class="title">Demo</span></span> <span class="keyword">do</span></span><br><span class="line">  <span class="keyword">require</span> <span class="title class_">Logger</span></span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">check_length</span></span>(text)<span class="keyword">do</span></span><br><span class="line">    <span class="title class_">Logger</span>.debug(text)</span><br><span class="line">    <span class="title class_">String</span>.length(text) === <span class="number">3</span></span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="title class_">Enum</span>.any?([<span class="string">&quot;foo&quot;</span>, <span class="string">&quot;bar&quot;</span>, <span class="string">&quot;hello&quot;</span>], &amp;<span class="title class_">Demo</span>.check_length/<span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="apply-法"><a href="#apply-法" class="headerlink" title="apply 法"></a>apply 法</h3><figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">apply(__MODULE__, <span class="symbol">:demo_func_name</span>, [<span class="number">123</span>])</span><br></pre></td></tr></table></figure>
+
+<p>如果模块名为 string</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">module_atom = <span class="title class_">String</span>.to_existing_atom(<span class="string">&quot;Elixir.Demo&quot;</span>)</span><br><span class="line">apply(module_atom, <span class="symbol">:on_data</span>, [data])</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/elixir/">elixir</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
+    <h3 class="article-title"><a href="/2025/11/25/debootstrap/"><span>debootstrap</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/11/25/debootstrap/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-11-25T00:06:21.000Z">
+          2025-11-25
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>用来生成 rootfs</p>
+<h2 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h2><h3 id="准备"><a href="#准备" class="headerlink" title="准备"></a>准备</h3><p>debian</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt install qemu-user-static debootstrap binfmt-support</span><br></pre></td></tr></table></figure>
+
+<p>manjaro</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> pacman -S qemu-user-static debootstrap qemu-user-static-binfmt</span><br></pre></td></tr></table></figure>
+
+<h3 id="创建"><a href="#创建" class="headerlink" title="创建"></a>创建</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 用 https 的源</span></span><br><span class="line"><span class="built_in">sudo</span> debootstrap --<span class="built_in">arch</span> armhf --foreign --no-check-gpg bookworm deb_fs https://mirrors.ustc.edu.cn/debian</span><br></pre></td></tr></table></figure>
+
+<h3 id="基础配置"><a href="#基础配置" class="headerlink" title="基础配置"></a>基础配置</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> <span class="built_in">cp</span> /usr/bin/qemu-arm-static ./deb_fs/usr/bin/</span><br><span class="line"></span><br><span class="line"><span class="comment"># chroot 需要手动 mount 一大堆</span></span><br><span class="line"><span class="built_in">sudo</span> systemd-nspawn -D ./deb_fs</span><br></pre></td></tr></table></figure>
+
+<p>或者</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> bwrap \</span><br><span class="line">  --<span class="built_in">bind</span> ./deb_fs / \</span><br><span class="line">  --dev /dev \</span><br><span class="line">  --dev-bind /dev/pts /dev/pts \</span><br><span class="line">  --dev-bind /dev/null /dev/null \</span><br><span class="line">  --dev-bind /dev/zero /dev/zero \</span><br><span class="line">  --dev-bind /dev/random /dev/random \</span><br><span class="line">  --dev-bind /dev/urandom /dev/urandom \</span><br><span class="line">  --proc /proc \</span><br><span class="line">  --ro-bind /sys /sys \</span><br><span class="line">  --tmpfs /tmp \</span><br><span class="line">  --setenv HOME /root \</span><br><span class="line">  --setenv PATH /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin \</span><br><span class="line">  /bin/bash</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/debootstrap/debootstrap --second-stage</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">apt install -y neovim</span><br></pre></td></tr></table></figure>
+
+<h3 id="profile"><a href="#profile" class="headerlink" title="profile"></a>profile</h3><p>&#x2F;etc&#x2F;profile.d&#x2F;path.sh</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin</span><br></pre></td></tr></table></figure>
+
+<p>&#x2F;etc&#x2F;profile.d&#x2F;ls.sh</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">alias</span> ll=<span class="string">&#x27;ls -la --color=auto&#x27;</span> 2&gt;/dev/null</span><br><span class="line"><span class="built_in">alias</span> l.=<span class="string">&#x27;ls --color=auto -d .*&#x27;</span> 2&gt;/dev/null</span><br><span class="line"><span class="built_in">alias</span> <span class="built_in">ls</span>=<span class="string">&#x27;ls --color=auto&#x27;</span> 2&gt;/dev/null</span><br></pre></td></tr></table></figure>
+
+<p>&#x2F;etc&#x2F;profile.d&#x2F;proxy.sh</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">alias</span> pon=<span class="string">&quot;export HTTP_PROXY=http://127.0.0.1:8118 HTTPS_PROXY=http://127.0.0.1:8118 ALL_PROXY=socks5://127.0.0.1:1080 NO_PROXY=localhost,127.0.0.1,10.0.2.1&quot;</span></span><br><span class="line"><span class="built_in">alias</span> poff=<span class="string">&quot;unset HTTP_PROXY HTTPS_PROXY ALL_PROXY NO_PROXY&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>&#x2F;etc&#x2F;profile.d&#x2F;python.sh</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> PYTHONPYCACHEPREFIX=/dev/null</span><br><span class="line"><span class="built_in">export</span> UV_INDEX=<span class="string">&quot;https://mirrors.aliyun.com/pypi/simple&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>~&#x2F;.bashrc</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[[ -f /etc/profile ]] &amp;&amp; <span class="built_in">source</span> /etc/profile</span><br></pre></td></tr></table></figure>
+
+<h3 id="必备工具"><a href="#必备工具" class="headerlink" title="必备工具"></a>必备工具</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">source</span> /etc/profile</span><br><span class="line">apt install -y iputils-ping net-tools ncat file</span><br></pre></td></tr></table></figure>
+
+<h2 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h2><h3 id="制作镜像"><a href="#制作镜像" class="headerlink" title="制作镜像"></a>制作镜像</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># dd if=/dev/zero of=rootfs.ext4 bs=1M count=512</span></span><br><span class="line"><span class="built_in">dd</span> <span class="keyword">if</span>=/dev/zero of=rootfs.ext4 bs=1G count=1</span><br><span class="line"><span class="built_in">sudo</span> mkfs.ext4 rootfs.ext4</span><br><span class="line"></span><br><span class="line"><span class="built_in">mkdir</span> mnt_fs</span><br><span class="line"><span class="built_in">sudo</span> mount -o loop rootfs.ext4 mnt_fs</span><br><span class="line"></span><br><span class="line"><span class="built_in">sudo</span> <span class="built_in">cp</span> -rf ./deb_fs/* ./mnt_fs/</span><br><span class="line"></span><br><span class="line"><span class="built_in">sudo</span> umount mnt_fs</span><br><span class="line"><span class="built_in">rm</span> -rf mnt_fs</span><br></pre></td></tr></table></figure>
+
+<h3 id="qemu"><a href="#qemu" class="headerlink" title="qemu"></a>qemu</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">qemu-system-arm \</span><br><span class="line">  -M vexpress-a9 \</span><br><span class="line">  -m 512M \</span><br><span class="line">  -kernel ~/downloads/linux-5.10.191/output/arch/arm/boot/zImage \</span><br><span class="line">  -dtb ~/downloads/linux-5.10.191/output/arch/arm/boot/dts/vexpress-v2p-ca9.dtb \</span><br><span class="line">  -nographic \</span><br><span class="line">  -append <span class="string">&quot;root=/dev/mmcblk0 rw console=ttyAMA0&quot;</span> \</span><br><span class="line">  -sd ~/downloads/rootfs.ext4</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/linux/">linux</a><a href="/tags/kernel/">kernel</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
     <h3 class="article-title"><a href="/2025/11/24/buildroot-extra/"><span>buildroot 辅助用法</span></a></h3>
     
   
@@ -659,127 +819,6 @@
 
 <p>字体选用 <code>u8g2_font_wqy12_t_gb2312</code> 可以完整显示中文</p>
 <h3 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">u8g2_SetFont(&amp;u8g2, u8g2_font_wqy12_t_gb2312);</span><br><span class="line">u8g2_DrawUTF8(&amp;u8g2, <span class="number">1</span>, <span class="number">18</span>, <span class="string">&quot;我拿起那40米的大砍刀&quot;</span>);</span><br><span class="line">u8g2_DrawUTF8(&amp;u8g2, <span class="number">5</span>, <span class="number">40</span>, <span class="string">&quot;削你那15米的铅笔&quot;</span>);</span><br><span class="line">u8g2_SendBuffer(&amp;u8g2);</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-
-  </div>
-
-  <div class="article-footer">
-    <div class="article-meta pull-left">
-
-    
-
-    
-    
-
-    <span class="post-tags">
-      <i class="icon-tags"></i>
-        <a href="/tags/stm32/">stm32</a><a href="/tags/rt-thread/">rt-thread</a>
-    </span>
-    
-
-    </div>
-
-    
-  </div>
-</article>
-
-
-
-  <article>
-
-  
-    
-    <h3 class="article-title"><a href="/2025/11/15/rtt-stm32-sdcard/"><span>rt-thread 下，配置 stm32 的 sd 卡</span></a></h3>
-    
-  
-
-  <div class="article-top-meta">
-    <span class="posted-on">
-      <a href="/2025/11/15/rtt-stm32-sdcard/" rel="bookmark">
-        <time class="entry-date published" datetime="2025-11-15T03:37:24.000Z">
-          2025-11-15
-        </time>
-      </a>
-    </span>
-  </div>
-
-
-  
-
-  <div class="article-content">
-    <div class="entry">
-      
-        <h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><h3 id="cubemx"><a href="#cubemx" class="headerlink" title="cubemx"></a>cubemx</h3><p>配置 sdio 接口</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">选择 SD 4 bit wide bus，生成代码，复制到项目</span><br><span class="line"></span><br><span class="line">cubeMX 里面配置的时候，rcc 需要启用 hse，外部晶震，usb 的时钟需要设置为 48MHZ</span><br><span class="line"></span><br><span class="line">复制 main.c 里面的时钟配置到 board.c</span><br></pre></td></tr></table></figure>
-
-<h3 id="Kconfig"><a href="#Kconfig" class="headerlink" title="Kconfig"></a>Kconfig</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">config BSP_USING_SDIO</span><br><span class="line">    bool <span class="string">&quot;Enable sd card&quot;</span></span><br><span class="line">    <span class="keyword">select</span> RT_USING_SDIO</span><br><span class="line">    default n</span><br></pre></td></tr></table></figure>
-
-<h3 id="文件系统"><a href="#文件系统" class="headerlink" title="文件系统"></a>文件系统</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">RT-Thread Components ---&gt;</span><br><span class="line">  Device virtual file system ---&gt;</span><br><span class="line">    [*]Using device virtual file system</span><br></pre></td></tr></table></figure>
-
-<p>配置参数</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[*] Enable elm-chan fatfs</span><br><span class="line">      elm-chan<span class="string">&#x27;s FatFs, Generic FAT Filesystem Module  ---&gt;</span></span><br><span class="line"><span class="string">        (4096) Maximum sector size to be handled.</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="libc"><a href="#libc" class="headerlink" title="libc"></a>libc</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">RT-Thread Components ---&gt;</span><br><span class="line">  POSIX layer and C standard library ---&gt;</span><br><span class="line">    [*] Enable libc APIs from toolchain</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-
-  </div>
-
-  <div class="article-footer">
-    <div class="article-meta pull-left">
-
-    
-
-    
-    
-
-    <span class="post-tags">
-      <i class="icon-tags"></i>
-        <a href="/tags/stm32/">stm32</a><a href="/tags/rt-thread/">rt-thread</a>
-    </span>
-    
-
-    </div>
-
-    
-  </div>
-</article>
-
-
-
-  <article>
-
-  
-    
-    <h3 class="article-title"><a href="/2025/11/14/rtt-stm32-pwm/"><span>rt-thread 下，配置 stm32 的 pwm</span></a></h3>
-    
-  
-
-  <div class="article-top-meta">
-    <span class="posted-on">
-      <a href="/2025/11/14/rtt-stm32-pwm/" rel="bookmark">
-        <time class="entry-date published" datetime="2025-11-14T00:05:55.000Z">
-          2025-11-14
-        </time>
-      </a>
-    </span>
-  </div>
-
-
-  
-
-  <div class="article-content">
-    <div class="entry">
-      
-        <p>同一个定时器，多个通道，频率必须一致，占空比可以不同</p>
-<p>脉冲经过光耦会失真</p>
-<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><p>pwm_demo.c</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;rtthread.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;rtdevice.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PWM_DEV_NAME        <span class="string">&quot;pwm1&quot;</span>      <span class="comment">// 硬件定时器设备名</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PWM_CHANNEL1        1           <span class="comment">// 通道1</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PWM_CHANNEL2        2           <span class="comment">// 通道2</span></span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">rt_device_pwm</span> *<span class="title">pwm_dev</span>;</span></span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="type">int</span> <span class="title function_">pwm_demo</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv[])</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">rt_uint32_t</span> period, pulse1, pulse2;</span><br><span class="line"></span><br><span class="line">    pwm_dev = (<span class="keyword">struct</span> rt_device_pwm *)rt_device_find(PWM_DEV_NAME);</span><br><span class="line">    <span class="keyword">if</span> (pwm_dev == RT_NULL)</span><br><span class="line">    &#123;</span><br><span class="line">        rt_kprintf(<span class="string">&quot;can&#x27;t find %s device!\n&quot;</span>, PWM_DEV_NAME);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 2. 设置周期和脉宽（单位：纳秒）</span></span><br><span class="line">    period = <span class="number">50000</span>;      <span class="comment">// 20kHz = 1s/20000 = 50,000ns</span></span><br><span class="line">    pulse1 = period * <span class="number">30</span> / <span class="number">100</span>; <span class="comment">// 30% 占空比</span></span><br><span class="line">    pulse2 = period * <span class="number">60</span> / <span class="number">100</span>; <span class="comment">// 60% 占空比</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 3. 配置 PWM 通道1</span></span><br><span class="line">    rt_pwm_set(pwm_dev, PWM_CHANNEL1, period, pulse1);</span><br><span class="line">    rt_pwm_enable(pwm_dev, PWM_CHANNEL1);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 4. 配置 PWM 通道2</span></span><br><span class="line">    rt_pwm_set(pwm_dev, PWM_CHANNEL2, period, pulse2);</span><br><span class="line">    rt_pwm_enable(pwm_dev, PWM_CHANNEL2);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">MSH_CMD_EXPORT(pwm_demo, pwm demo);</span><br></pre></td></tr></table></figure>
-
-<h2 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h2><p>逻辑分析仪的 gnd 一定要接，不然数据会不准</p>
 
       
     </div>

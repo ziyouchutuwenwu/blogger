@@ -71,6 +71,127 @@
 
   
     
+    <h3 class="article-title"><a href="/2025/11/15/rtt-stm32-sdcard/"><span>rt-thread 下，配置 stm32 的 sd 卡</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/11/15/rtt-stm32-sdcard/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-11-15T03:37:24.000Z">
+          2025-11-15
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><h3 id="cubemx"><a href="#cubemx" class="headerlink" title="cubemx"></a>cubemx</h3><p>配置 sdio 接口</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">选择 SD 4 bit wide bus，生成代码，复制到项目</span><br><span class="line"></span><br><span class="line">cubeMX 里面配置的时候，rcc 需要启用 hse，外部晶震，usb 的时钟需要设置为 48MHZ</span><br><span class="line"></span><br><span class="line">复制 main.c 里面的时钟配置到 board.c</span><br></pre></td></tr></table></figure>
+
+<h3 id="Kconfig"><a href="#Kconfig" class="headerlink" title="Kconfig"></a>Kconfig</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">config BSP_USING_SDIO</span><br><span class="line">    bool <span class="string">&quot;Enable sd card&quot;</span></span><br><span class="line">    <span class="keyword">select</span> RT_USING_SDIO</span><br><span class="line">    default n</span><br></pre></td></tr></table></figure>
+
+<h3 id="文件系统"><a href="#文件系统" class="headerlink" title="文件系统"></a>文件系统</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">RT-Thread Components ---&gt;</span><br><span class="line">  Device virtual file system ---&gt;</span><br><span class="line">    [*]Using device virtual file system</span><br></pre></td></tr></table></figure>
+
+<p>配置参数</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[*] Enable elm-chan fatfs</span><br><span class="line">      elm-chan<span class="string">&#x27;s FatFs, Generic FAT Filesystem Module  ---&gt;</span></span><br><span class="line"><span class="string">        (4096) Maximum sector size to be handled.</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="libc"><a href="#libc" class="headerlink" title="libc"></a>libc</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">RT-Thread Components ---&gt;</span><br><span class="line">  POSIX layer and C standard library ---&gt;</span><br><span class="line">    [*] Enable libc APIs from toolchain</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/stm32/">stm32</a><a href="/tags/rt-thread/">rt-thread</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
+    <h3 class="article-title"><a href="/2025/11/14/rtt-stm32-pwm/"><span>rt-thread 下，配置 stm32 的 pwm</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/11/14/rtt-stm32-pwm/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-11-14T00:05:55.000Z">
+          2025-11-14
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <p>同一个定时器，多个通道，频率必须一致，占空比可以不同</p>
+<p>脉冲经过光耦会失真</p>
+<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><p>pwm_demo.c</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;rtthread.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;rtdevice.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PWM_DEV_NAME        <span class="string">&quot;pwm1&quot;</span>      <span class="comment">// 硬件定时器设备名</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PWM_CHANNEL1        1           <span class="comment">// 通道1</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PWM_CHANNEL2        2           <span class="comment">// 通道2</span></span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">rt_device_pwm</span> *<span class="title">pwm_dev</span>;</span></span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="type">int</span> <span class="title function_">pwm_demo</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv[])</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">rt_uint32_t</span> period, pulse1, pulse2;</span><br><span class="line"></span><br><span class="line">    pwm_dev = (<span class="keyword">struct</span> rt_device_pwm *)rt_device_find(PWM_DEV_NAME);</span><br><span class="line">    <span class="keyword">if</span> (pwm_dev == RT_NULL)</span><br><span class="line">    &#123;</span><br><span class="line">        rt_kprintf(<span class="string">&quot;can&#x27;t find %s device!\n&quot;</span>, PWM_DEV_NAME);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 2. 设置周期和脉宽（单位：纳秒）</span></span><br><span class="line">    period = <span class="number">50000</span>;      <span class="comment">// 20kHz = 1s/20000 = 50,000ns</span></span><br><span class="line">    pulse1 = period * <span class="number">30</span> / <span class="number">100</span>; <span class="comment">// 30% 占空比</span></span><br><span class="line">    pulse2 = period * <span class="number">60</span> / <span class="number">100</span>; <span class="comment">// 60% 占空比</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 3. 配置 PWM 通道1</span></span><br><span class="line">    rt_pwm_set(pwm_dev, PWM_CHANNEL1, period, pulse1);</span><br><span class="line">    rt_pwm_enable(pwm_dev, PWM_CHANNEL1);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 4. 配置 PWM 通道2</span></span><br><span class="line">    rt_pwm_set(pwm_dev, PWM_CHANNEL2, period, pulse2);</span><br><span class="line">    rt_pwm_enable(pwm_dev, PWM_CHANNEL2);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">MSH_CMD_EXPORT(pwm_demo, pwm demo);</span><br></pre></td></tr></table></figure>
+
+<h2 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h2><p>逻辑分析仪的 gnd 一定要接，不然数据会不准</p>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/stm32/">stm32</a><a href="/tags/rt-thread/">rt-thread</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
     <h3 class="article-title"><a href="/2025/11/14/rtt-stm32-pulse-encoder/"><span>rt-thread 下，配置 stm32 的 pulse-encoder</span></a></h3>
     
   
@@ -562,147 +683,6 @@
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">比如 [E/at.clnt] Read response buffer failed. The Response buffer size is out of buffer size(xxx)</span><br><span class="line">可以在 at.client.c 的 at_create_resp 函数上下断点观察流程，尝试把缓冲区都改大一点</span><br></pre></td></tr></table></figure>
 
 <p>如果还有解决不了的问题，看<a target="_blank" rel="noopener" href="https://www.rt-thread.org/qa/forum.php?mod=viewthread&tid=11919&extra=page=1&filter=typeid&typeid=5">这里</a></p>
-
-      
-    </div>
-
-  </div>
-
-  <div class="article-footer">
-    <div class="article-meta pull-left">
-
-    
-
-    
-    
-
-    <span class="post-tags">
-      <i class="icon-tags"></i>
-        <a href="/tags/stm32/">stm32</a><a href="/tags/rt-thread/">rt-thread</a>
-    </span>
-    
-
-    </div>
-
-    
-  </div>
-</article>
-
-
-
-  <article>
-
-  
-    
-    <h3 class="article-title"><a href="/2025/11/06/rtt-stm32-eth-lan8720a/"><span>rt-thread 下，配置 stm32 的 LAN8720A 网卡</span></a></h3>
-    
-  
-
-  <div class="article-top-meta">
-    <span class="posted-on">
-      <a href="/2025/11/06/rtt-stm32-eth-lan8720a/" rel="bookmark">
-        <time class="entry-date published" datetime="2025-11-06T01:32:22.000Z">
-          2025-11-06
-        </time>
-      </a>
-    </span>
-  </div>
-
-
-  
-
-  <div class="article-content">
-    <div class="entry">
-      
-        <p>配置 LAN8720A 接入网络</p>
-<p>参考<a target="_blank" rel="noopener" href="https://www.rt-thread.org/document/site/application-note/components/network/an0010-lwip-driver-porting/">链接</a></p>
-<h2 id="cubeMX-配置"><a href="#cubeMX-配置" class="headerlink" title="cubeMX 配置"></a>cubeMX 配置</h2><p>启用 Eth 模块</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">选择 RMII</span><br><span class="line">对比实际板的原理图，修改引脚位置，注意rst引脚的位置</span><br></pre></td></tr></table></figure>
-
-<h2 id="项目配置"><a href="#项目配置" class="headerlink" title="项目配置"></a>项目配置</h2><p>修改 ports&#x2F;phy_reset.c 内 rst 引脚位置, 复制 ports 目录到 board 下，修改 SConscript</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">path += [cwd + <span class="string">&#x27;/ports&#x27;</span>]</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> GetDepend([<span class="string">&#x27;BSP_USING_ETH&#x27;</span>]):</span><br><span class="line">    src += Glob(<span class="string">&#x27;ports/phy_reset.c&#x27;</span>)</span><br></pre></td></tr></table></figure>
-
-<h2 id="board-Kconfig-配置"><a href="#board-Kconfig-配置" class="headerlink" title="board&#x2F;Kconfig 配置"></a>board&#x2F;Kconfig 配置</h2><p>Kconfig 里面，menu “Onboard Peripheral Drivers”内添加</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">config PHY_USING_LAN8720A</span><br><span class="line">    bool</span><br><span class="line">config BSP_USING_ETH</span><br><span class="line">    bool <span class="string">&quot;Enable Ethernet&quot;</span></span><br><span class="line">    default n</span><br><span class="line">    <span class="keyword">select</span> RT_USING_LWIP</span><br><span class="line">    <span class="keyword">select</span> PHY_USING_LAN8720A</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">RT-Thread Components &gt;</span><br><span class="line">  Network &gt;</span><br><span class="line">    Socket abstraction layer</span><br><span class="line">      [*] Enable socket abstraction layer</span><br><span class="line">      [*] Enable BSD socket operated by file system API</span><br><span class="line">    light weight TCP/IP stack</span><br><span class="line">      [] Enable alloc ip address through DHCP</span><br><span class="line">      [*] Enable lwIP stack</span><br></pre></td></tr></table></figure>
-
-<p>在<code>light weight TCP/IP stack</code>里面, 选项 <code>Enable alloc ip address through DHCP</code>来控制 dhcp 或者固定 ip</p>
-<h2 id="打开调试开关"><a href="#打开调试开关" class="headerlink" title="打开调试开关"></a>打开调试开关</h2><p>libraries&#x2F;HAL_Drivers&#x2F;drv_eth.c</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> ETH_RX_DUMP</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> ETH_TX_DUMP</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> DRV_DEBUG</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="相关代码"><a href="#相关代码" class="headerlink" title="相关代码"></a>相关代码</h2><p>phy_reset.c</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;board.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> RESET_IO GET_PIN(H, 2)</span></span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">phy_reset</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    rt_pin_write(RESET_IO, PIN_LOW);</span><br><span class="line">    rt_thread_mdelay(<span class="number">50</span>);</span><br><span class="line">    rt_pin_write(RESET_IO, PIN_HIGH);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">phy_init</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    rt_pin_mode(RESET_IO, PIN_MODE_OUTPUT);</span><br><span class="line">    rt_pin_write(RESET_IO, PIN_HIGH);</span><br><span class="line">    <span class="keyword">return</span> RT_EOK;</span><br><span class="line">&#125;</span><br><span class="line">INIT_BOARD_EXPORT(phy_init);</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-
-  </div>
-
-  <div class="article-footer">
-    <div class="article-meta pull-left">
-
-    
-
-    
-    
-
-    <span class="post-tags">
-      <i class="icon-tags"></i>
-        <a href="/tags/stm32/">stm32</a><a href="/tags/rt-thread/">rt-thread</a>
-    </span>
-    
-
-    </div>
-
-    
-  </div>
-</article>
-
-
-
-  <article>
-
-  
-    
-    <h3 class="article-title"><a href="/2025/11/05/rtt-stm32-eth-w5500/"><span>rt-thread 下，配置 stm32 的 w5500 网卡</span></a></h3>
-    
-  
-
-  <div class="article-top-meta">
-    <span class="posted-on">
-      <a href="/2025/11/05/rtt-stm32-eth-w5500/" rel="bookmark">
-        <time class="entry-date published" datetime="2025-11-05T06:14:34.000Z">
-          2025-11-05
-        </time>
-      </a>
-    </span>
-  </div>
-
-
-  
-
-  <div class="article-content">
-    <div class="entry">
-      
-        <p>配置 w5500 网卡接入网络</p>
-<h2 id="物理接线"><a href="#物理接线" class="headerlink" title="物理接线"></a>物理接线</h2><p>cubeMX 里面的 nss 脚貌似不需要接，cubeMX 里面的 sck 脚是对应模块的 sclk 脚</p>
-<p>模块的 scs 脚接的位置就是, rt_hw_spi_device_attach 的<code>最后两个参数的值</code></p>
-<p>开发板和模块之间的 MISO 和 MOSI <code>不需要反接</code></p>
-<h2 id="cubeMX-配置"><a href="#cubeMX-配置" class="headerlink" title="cubeMX 配置"></a>cubeMX 配置</h2><p>启用 spi1</p>
-<p>设置 Mode 为 Full Duplex Master</p>
-<p>设置 Hardware NSS Signal 为 output 模式</p>
-<h2 id="menuconfig-配置"><a href="#menuconfig-配置" class="headerlink" title="menuconfig 配置"></a>menuconfig 配置</h2><p>参考驱动配置，在 board&#x2F;Kconfig 里面启用 spi1 的配置</p>
-<p>配置 iot packages 里面的 wiznet 部分</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">RT-Thread online packages ---&gt;</span><br><span class="line">  IoT - internet of things ---&gt;</span><br><span class="line">    WIZnet: WIZnet TCP/IP chips SAL framework imlement ---&gt;</span><br><span class="line">      WIZnet device configure</span><br><span class="line">         (spi10) SPI device name</span><br><span class="line">         (10) Reset PIN number (NEW)</span><br><span class="line">         (11) IRQ PIN number (NEW)</span><br></pre></td></tr></table></figure>
-
-<p>参数说明</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">SPI device name 不是 spi 的总线名，需要手工创建，比如 spi10</span><br><span class="line">设置 Reset PIN number</span><br><span class="line">设置IRQ PIN number，也就是模块上的int引脚</span><br></pre></td></tr></table></figure>
-
-<h2 id="编写-spi-初始化代码"><a href="#编写-spi-初始化代码" class="headerlink" title="编写 spi 初始化代码"></a>编写 spi 初始化代码</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;rtthread.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;rtdevice.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;board.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="type">int</span> <span class="title function_">w5500_spi_init</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    __HAL_RCC_GPIOA_CLK_ENABLE();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 最后两个参数是spi模块scs引脚的位置</span></span><br><span class="line">    <span class="keyword">return</span> rt_hw_spi_device_attach(<span class="string">&quot;spi1&quot;</span>, <span class="string">&quot;spi10&quot;</span>, GPIOA, GPIO_PIN_4);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/* 导出到自动初始化 */</span></span><br><span class="line">INIT_COMPONENT_EXPORT(w5500_spi_init);</span><br></pre></td></tr></table></figure>
-
-<h2 id="重连测试"><a href="#重连测试" class="headerlink" title="重连测试"></a>重连测试</h2><p>测试模拟：开机断网，中间断网，重连以后，看到 W5500 提示 link up 以后，可以 ping 通其他主机</p>
-<p>无论 dhcp 模式打开还是关闭，均支持。</p>
 
       
     </div>

@@ -71,6 +71,143 @@
 
   
     
+    <h3 class="article-title"><a href="/2025/12/04/elixir-config-split/"><span>elixir 之配置文件拆分</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/12/04/elixir-config-split/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-12-04T00:21:21.000Z">
+          2025-12-04
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>配置太多，需要拆分</p>
+<h2 id="目录结构"><a href="#目录结构" class="headerlink" title="目录结构"></a>目录结构</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">├── config.exs</span><br><span class="line">├── dev</span><br><span class="line">│   ├── api.exs</span><br><span class="line">│   └── bot.exs</span><br><span class="line">├── prod</span><br><span class="line">│   └── api.exs</span><br><span class="line">├── runtime</span><br><span class="line">│   └── api.exs</span><br><span class="line">└── <span class="built_in">test</span></span><br><span class="line">    └── api.exs</span><br></pre></td></tr></table></figure>
+
+<p>config.exs</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># import_config &quot;#&#123;config_env()&#125;.exs&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># umbrella 项目的话，在顶层 config 目录内拆分</span></span><br><span class="line"><span class="keyword">for</span> config &lt;- <span class="string">&quot;<span class="subst">#&#123;config_env()&#125;</span>/*.exs&quot;</span> |&gt; <span class="title class_">Path</span>.expand(__DIR__) |&gt; <span class="title class_">Path</span>.wildcard() <span class="keyword">do</span></span><br><span class="line">  <span class="keyword">if</span> <span class="title class_">File</span>.exists?(config) <span class="keyword">do</span></span><br><span class="line">    import_config config</span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/elixir/">elixir</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
+    <h3 class="article-title"><a href="/2025/12/03/elixir-config/"><span>elixir 之配置文件</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/12/03/elixir-config/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-12-03T00:08:34.000Z">
+          2025-12-03
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><ol>
+<li>runtime 为运行时会调用的配置文件, 其它为编译期调用的配置</li>
+<li>固定的配置写在 dev&#x2F;prod 等里面</li>
+<li>动态配置，写在 runtime 里面，如果 runtime 里面没有，则从 dev&#x2F;prod 里面去取</li>
+</ol>
+<h2 id="例子"><a href="#例子" class="headerlink" title="例子"></a>例子</h2><h3 id="目录结构"><a href="#目录结构" class="headerlink" title="目录结构"></a>目录结构</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">lib</span><br><span class="line">└── demo.exs</span><br><span class="line">config</span><br><span class="line">├── config.exs</span><br><span class="line">├── dev.exs</span><br><span class="line">├── test.exs</span><br><span class="line">├── prod.exs</span><br><span class="line">└── runtime.exs</span><br></pre></td></tr></table></figure>
+
+<h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h3><p>config.exs</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="title class_">Config</span></span><br><span class="line"></span><br><span class="line">config <span class="symbol">:demo</span>, <span class="symbol">mode:</span> config_env()</span><br><span class="line">import_config <span class="string">&quot;<span class="subst">#&#123;config_env()&#125;</span>.exs&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>dev.exs</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="title class_">Config</span></span><br><span class="line"></span><br><span class="line">config <span class="symbol">:demo</span>,</span><br><span class="line">  <span class="symbol">aaa:</span> <span class="string">&quot;aaa in dev&quot;</span>,</span><br><span class="line">  <span class="symbol">bbb:</span> <span class="string">&quot;bbb in dev&quot;</span></span><br><span class="line"></span><br><span class="line">config <span class="symbol">:demo</span>, <span class="title class_">MyModule</span>,</span><br><span class="line">  <span class="symbol">ccc:</span> <span class="string">&quot;ccc in dev&quot;</span>,</span><br><span class="line">  <span class="symbol">ddd:</span> <span class="string">&quot;ddd in dev&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>test.exs</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="title class_">Config</span></span><br><span class="line"></span><br><span class="line">config <span class="symbol">:demo</span>,</span><br><span class="line">  <span class="symbol">aaa:</span> <span class="string">&quot;aaa in test&quot;</span>,</span><br><span class="line">  <span class="symbol">bbb:</span> <span class="string">&quot;bbb in test&quot;</span></span><br><span class="line"></span><br><span class="line">config <span class="symbol">:demo</span>, <span class="title class_">MyModule</span>,</span><br><span class="line">  <span class="symbol">ccc:</span> <span class="string">&quot;ccc in test&quot;</span>,</span><br><span class="line">  <span class="symbol">ddd:</span> <span class="string">&quot;ddd in test&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>prod.exs</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="title class_">Config</span></span><br><span class="line"></span><br><span class="line">config <span class="symbol">:demo</span>,</span><br><span class="line">  <span class="symbol">aaa:</span> <span class="string">&quot;aaa in prod&quot;</span>,</span><br><span class="line">  <span class="symbol">bbb:</span> <span class="string">&quot;bbb in prod&quot;</span></span><br><span class="line"></span><br><span class="line">config <span class="symbol">:demo</span>, <span class="title class_">MyModule</span>,</span><br><span class="line">  <span class="symbol">ccc:</span> <span class="string">&quot;ccc in prod&quot;</span>,</span><br><span class="line">  <span class="symbol">ddd:</span> <span class="string">&quot;ddd in prod&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>runtime.exs</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="title class_">Config</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 这个只能用于配置文件，代码内不能使用这个方式动态处理代码</span></span><br><span class="line"><span class="keyword">if</span> config_env() == <span class="symbol">:prod</span> <span class="keyword">do</span></span><br><span class="line">  config <span class="symbol">:demo</span>,</span><br><span class="line">    <span class="symbol">aaa:</span> <span class="title class_">System</span>.get_env(<span class="string">&quot;AAA&quot;</span>) || <span class="string">&quot;aaa in runtime&quot;</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MIX_ENV=prod iex -S mix</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="title class_">Application</span>.fetch_env!(<span class="symbol">:demo</span>, <span class="symbol">:aaa</span>)</span><br><span class="line"><span class="title class_">Application</span>.get_env(<span class="symbol">:demo</span>, <span class="symbol">:bbb</span>)</span><br><span class="line"></span><br><span class="line">[<span class="symbol">ccc:</span> ccc_value, <span class="symbol">ddd:</span> ddd_value] = <span class="title class_">Application</span>.get_env(<span class="symbol">:demo</span>, <span class="title class_">MyModule</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="备注"><a href="#备注" class="headerlink" title="备注"></a>备注</h3><p>如果需要在运行的时候获取当前模式</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> <span class="title class_">Application</span>.get_env(<span class="symbol">:demo</span>, <span class="symbol">:mode</span>) === <span class="symbol">:prod</span> <span class="keyword">do</span></span><br><span class="line">  xxxx</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/elixir/">elixir</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
     <h3 class="article-title"><a href="/2025/12/02/elixir-cond-panduan/"><span>elixir 之 cond 判断</span></a></h3>
     
   
@@ -549,166 +686,6 @@
     <span class="post-tags">
       <i class="icon-tags"></i>
         <a href="/tags/elixir/">elixir</a>
-    </span>
-    
-
-    </div>
-
-    
-  </div>
-</article>
-
-
-
-  <article>
-
-  
-    
-    <h3 class="article-title"><a href="/2025/11/26/elixir-callback/"><span>elixir 通过函数回调</span></a></h3>
-    
-  
-
-  <div class="article-top-meta">
-    <span class="posted-on">
-      <a href="/2025/11/26/elixir-callback/" rel="bookmark">
-        <time class="entry-date published" datetime="2025-11-26T06:14:27.000Z">
-          2025-11-26
-        </time>
-      </a>
-    </span>
-  </div>
-
-
-  
-
-  <div class="article-content">
-    <div class="entry">
-      
-        <h2 id="用法"><a href="#用法" class="headerlink" title="用法"></a>用法</h2><h3 id="匿名函数"><a href="#匿名函数" class="headerlink" title="匿名函数"></a>匿名函数</h3><figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">require</span> <span class="title class_">Logger</span></span><br><span class="line">sum = &amp;(&amp;<span class="number">1</span> + &amp;<span class="number">2</span> + &amp;<span class="number">3</span> + &amp;<span class="number">4</span>)</span><br><span class="line">result = sum.(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>)</span><br><span class="line"><span class="title class_">Logger</span>.debug(result)</span><br></pre></td></tr></table></figure>
-
-<p>等同于</p>
-<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="title class_">Logger</span>.debug</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sum</span></span>(a, b, c , d) <span class="keyword">do</span></span><br><span class="line">  a + b + c + d</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">result = sum(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>)</span><br><span class="line"><span class="title class_">Logger</span>.debug(result)</span><br></pre></td></tr></table></figure>
-
-<h3 id="直接调用"><a href="#直接调用" class="headerlink" title="直接调用"></a>直接调用</h3><p><code>&amp;模块名字.方法名/参数个数</code></p>
-<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&amp;__MODULE__.demo_func_name/<span class="number">1</span></span><br></pre></td></tr></table></figure>
-
-<p>例如</p>
-<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">demo_func = &amp;demo_module_name.demo_func_name/<span class="number">1</span></span><br><span class="line">demo_func.(<span class="number">123</span>)</span><br></pre></td></tr></table></figure>
-
-<p>官方例子</p>
-<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">defmodule</span> <span class="title">Demo</span></span> <span class="keyword">do</span></span><br><span class="line">  <span class="keyword">require</span> <span class="title class_">Logger</span></span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">check_length</span></span>(text)<span class="keyword">do</span></span><br><span class="line">    <span class="title class_">Logger</span>.debug(text)</span><br><span class="line">    <span class="title class_">String</span>.length(text) === <span class="number">3</span></span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="title class_">Enum</span>.any?([<span class="string">&quot;foo&quot;</span>, <span class="string">&quot;bar&quot;</span>, <span class="string">&quot;hello&quot;</span>], &amp;<span class="title class_">Demo</span>.check_length/<span class="number">1</span>)</span><br></pre></td></tr></table></figure>
-
-<h3 id="apply-法"><a href="#apply-法" class="headerlink" title="apply 法"></a>apply 法</h3><figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">apply(__MODULE__, <span class="symbol">:demo_func_name</span>, [<span class="number">123</span>])</span><br></pre></td></tr></table></figure>
-
-<p>如果模块名为 string</p>
-<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">module_atom = <span class="title class_">String</span>.to_existing_atom(<span class="string">&quot;Elixir.Demo&quot;</span>)</span><br><span class="line">apply(module_atom, <span class="symbol">:on_data</span>, [data])</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-
-  </div>
-
-  <div class="article-footer">
-    <div class="article-meta pull-left">
-
-    
-
-    
-    
-
-    <span class="post-tags">
-      <i class="icon-tags"></i>
-        <a href="/tags/elixir/">elixir</a>
-    </span>
-    
-
-    </div>
-
-    
-  </div>
-</article>
-
-
-
-  <article>
-
-  
-    
-    <h3 class="article-title"><a href="/2025/11/25/debootstrap/"><span>debootstrap</span></a></h3>
-    
-  
-
-  <div class="article-top-meta">
-    <span class="posted-on">
-      <a href="/2025/11/25/debootstrap/" rel="bookmark">
-        <time class="entry-date published" datetime="2025-11-25T00:06:21.000Z">
-          2025-11-25
-        </time>
-      </a>
-    </span>
-  </div>
-
-
-  
-
-  <div class="article-content">
-    <div class="entry">
-      
-        <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>用来生成 rootfs</p>
-<h2 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h2><h3 id="准备"><a href="#准备" class="headerlink" title="准备"></a>准备</h3><p>debian</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt install qemu-user-static debootstrap binfmt-support</span><br></pre></td></tr></table></figure>
-
-<p>manjaro</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> pacman -S qemu-user-static debootstrap qemu-user-static-binfmt</span><br></pre></td></tr></table></figure>
-
-<h3 id="创建"><a href="#创建" class="headerlink" title="创建"></a>创建</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 用 https 的源</span></span><br><span class="line"><span class="built_in">sudo</span> debootstrap --<span class="built_in">arch</span> armhf --foreign --no-check-gpg bookworm deb_fs https://mirrors.ustc.edu.cn/debian</span><br></pre></td></tr></table></figure>
-
-<h3 id="基础配置"><a href="#基础配置" class="headerlink" title="基础配置"></a>基础配置</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> <span class="built_in">cp</span> /usr/bin/qemu-arm-static ./deb_fs/usr/bin/</span><br><span class="line"></span><br><span class="line"><span class="comment"># chroot 需要手动 mount 一大堆</span></span><br><span class="line"><span class="built_in">sudo</span> systemd-nspawn -D ./deb_fs</span><br></pre></td></tr></table></figure>
-
-<p>或者</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> bwrap \</span><br><span class="line">  --<span class="built_in">bind</span> ./deb_fs / \</span><br><span class="line">  --dev /dev \</span><br><span class="line">  --dev-bind /dev/pts /dev/pts \</span><br><span class="line">  --dev-bind /dev/null /dev/null \</span><br><span class="line">  --dev-bind /dev/zero /dev/zero \</span><br><span class="line">  --dev-bind /dev/random /dev/random \</span><br><span class="line">  --dev-bind /dev/urandom /dev/urandom \</span><br><span class="line">  --proc /proc \</span><br><span class="line">  --ro-bind /sys /sys \</span><br><span class="line">  --tmpfs /tmp \</span><br><span class="line">  --setenv HOME /root \</span><br><span class="line">  --setenv PATH /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin \</span><br><span class="line">  /bin/bash</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/debootstrap/debootstrap --second-stage</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">apt install -y neovim</span><br></pre></td></tr></table></figure>
-
-<h3 id="profile"><a href="#profile" class="headerlink" title="profile"></a>profile</h3><p>&#x2F;etc&#x2F;profile.d&#x2F;path.sh</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin</span><br></pre></td></tr></table></figure>
-
-<p>&#x2F;etc&#x2F;profile.d&#x2F;ls.sh</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">alias</span> ll=<span class="string">&#x27;ls -la --color=auto&#x27;</span> 2&gt;/dev/null</span><br><span class="line"><span class="built_in">alias</span> l.=<span class="string">&#x27;ls --color=auto -d .*&#x27;</span> 2&gt;/dev/null</span><br><span class="line"><span class="built_in">alias</span> <span class="built_in">ls</span>=<span class="string">&#x27;ls --color=auto&#x27;</span> 2&gt;/dev/null</span><br></pre></td></tr></table></figure>
-
-<p>&#x2F;etc&#x2F;profile.d&#x2F;proxy.sh</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">alias</span> pon=<span class="string">&quot;export HTTP_PROXY=http://127.0.0.1:8118 HTTPS_PROXY=http://127.0.0.1:8118 ALL_PROXY=socks5://127.0.0.1:1080 NO_PROXY=localhost,127.0.0.1,10.0.2.1&quot;</span></span><br><span class="line"><span class="built_in">alias</span> poff=<span class="string">&quot;unset HTTP_PROXY HTTPS_PROXY ALL_PROXY NO_PROXY&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p>&#x2F;etc&#x2F;profile.d&#x2F;python.sh</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> PYTHONPYCACHEPREFIX=/dev/null</span><br><span class="line"><span class="built_in">export</span> UV_INDEX=<span class="string">&quot;https://mirrors.aliyun.com/pypi/simple&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p>~&#x2F;.bashrc</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[[ -f /etc/profile ]] &amp;&amp; <span class="built_in">source</span> /etc/profile</span><br></pre></td></tr></table></figure>
-
-<h3 id="必备工具"><a href="#必备工具" class="headerlink" title="必备工具"></a>必备工具</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">source</span> /etc/profile</span><br><span class="line">apt install -y iputils-ping net-tools ncat file</span><br></pre></td></tr></table></figure>
-
-<h2 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h2><h3 id="制作镜像"><a href="#制作镜像" class="headerlink" title="制作镜像"></a>制作镜像</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># dd if=/dev/zero of=rootfs.ext4 bs=1M count=512</span></span><br><span class="line"><span class="built_in">dd</span> <span class="keyword">if</span>=/dev/zero of=rootfs.ext4 bs=1G count=1</span><br><span class="line"><span class="built_in">sudo</span> mkfs.ext4 rootfs.ext4</span><br><span class="line"></span><br><span class="line"><span class="built_in">mkdir</span> mnt_fs</span><br><span class="line"><span class="built_in">sudo</span> mount -o loop rootfs.ext4 mnt_fs</span><br><span class="line"></span><br><span class="line"><span class="built_in">sudo</span> <span class="built_in">cp</span> -rf ./deb_fs/* ./mnt_fs/</span><br><span class="line"></span><br><span class="line"><span class="built_in">sudo</span> umount mnt_fs</span><br><span class="line"><span class="built_in">rm</span> -rf mnt_fs</span><br></pre></td></tr></table></figure>
-
-<h3 id="qemu"><a href="#qemu" class="headerlink" title="qemu"></a>qemu</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">qemu-system-arm \</span><br><span class="line">  -M vexpress-a9 \</span><br><span class="line">  -m 512M \</span><br><span class="line">  -kernel ~/downloads/linux-5.10.191/output/arch/arm/boot/zImage \</span><br><span class="line">  -dtb ~/downloads/linux-5.10.191/output/arch/arm/boot/dts/vexpress-v2p-ca9.dtb \</span><br><span class="line">  -nographic \</span><br><span class="line">  -append <span class="string">&quot;root=/dev/mmcblk0 rw console=ttyAMA0&quot;</span> \</span><br><span class="line">  -sd ~/downloads/rootfs.ext4</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-
-  </div>
-
-  <div class="article-footer">
-    <div class="article-meta pull-left">
-
-    
-
-    
-    
-
-    <span class="post-tags">
-      <i class="icon-tags"></i>
-        <a href="/tags/linux/">linux</a><a href="/tags/kernel/">kernel</a>
     </span>
     
 
