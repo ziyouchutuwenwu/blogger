@@ -71,6 +71,62 @@
 
   
     
+    <h3 class="article-title"><a href="/2025/11/16/rtt-stm32-u8g/"><span>rt-thread 下，配置 stm32 的 u8g</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/11/16/rtt-stm32-u8g/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-11-16T01:26:39.000Z">
+          2025-11-16
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><h3 id="menuconfig"><a href="#menuconfig" class="headerlink" title="menuconfig"></a>menuconfig</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">RT-Thread online packages -&gt;</span><br><span class="line">  peripheral libraries and drivers ---&gt;</span><br><span class="line">    U8G2: a monochrome graphic library ---&gt;</span><br><span class="line">      Version (c-latest)</span><br></pre></td></tr></table></figure>
+
+<p>字体选用 <code>u8g2_font_wqy12_t_gb2312</code> 可以完整显示中文</p>
+<h3 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">u8g2_SetFont(&amp;u8g2, u8g2_font_wqy12_t_gb2312);</span><br><span class="line">u8g2_DrawUTF8(&amp;u8g2, <span class="number">1</span>, <span class="number">18</span>, <span class="string">&quot;我拿起那40米的大砍刀&quot;</span>);</span><br><span class="line">u8g2_DrawUTF8(&amp;u8g2, <span class="number">5</span>, <span class="number">40</span>, <span class="string">&quot;削你那15米的铅笔&quot;</span>);</span><br><span class="line">u8g2_SendBuffer(&amp;u8g2);</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/stm32/">stm32</a><a href="/tags/rt-thread/">rt-thread</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
     <h3 class="article-title"><a href="/2025/11/15/rtt-stm32-sdcard/"><span>rt-thread 下，配置 stm32 的 sd 卡</span></a></h3>
     
   
@@ -609,80 +665,6 @@
 <h2 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h2><p>demo 代码里面的 <code>dfs_mount</code> 和 <code>dfs_mkfs</code> 的参数，DEVICE_NAME, lfs 和 elm 是不一样的</p>
 <h2 id="建议"><a href="#建议" class="headerlink" title="建议"></a>建议</h2><p>4096 扇区，挂载成 FAT，要格式化成功，至少要 800KB 以上。且还要修改格式化参数。</p>
 <p>所以建议 4MB 以下的 FLASH 不要用 FAT，用 littlefs</p>
-
-      
-    </div>
-
-  </div>
-
-  <div class="article-footer">
-    <div class="article-meta pull-left">
-
-    
-
-    
-    
-
-    <span class="post-tags">
-      <i class="icon-tags"></i>
-        <a href="/tags/stm32/">stm32</a><a href="/tags/rt-thread/">rt-thread</a>
-    </span>
-    
-
-    </div>
-
-    
-  </div>
-</article>
-
-
-
-  <article>
-
-  
-    
-    <h3 class="article-title"><a href="/2025/11/07/rtt-stm32-at-socket/"><span>rtt-stm32-at-socket</span></a></h3>
-    
-  
-
-  <div class="article-top-meta">
-    <span class="posted-on">
-      <a href="/2025/11/07/rtt-stm32-at-socket/" rel="bookmark">
-        <time class="entry-date published" datetime="2025-11-07T02:09:24.000Z">
-          2025-11-07
-        </time>
-      </a>
-    </span>
-  </div>
-
-
-  
-
-  <div class="article-content">
-    <div class="entry">
-      
-        <p>参考<a target="_blank" rel="noopener" href="https://www.rt-thread.org/document/site/application-note/components/at/an0014-at-client/#at-socket">链接</a></p>
-<h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><p>先启用 uart2</p>
-<h3 id="软件包"><a href="#软件包" class="headerlink" title="软件包"></a>软件包</h3><p>开启 at device 的支持</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">RT-Thread online packages &gt;</span><br><span class="line">  IoT - internet of things &gt;</span><br><span class="line">    AT DEVICE: RT-Thread AT component porting or samples <span class="keyword">for</span> different device</span><br><span class="line">       [*]  Espressif ESP8266  ---&gt;</span><br></pre></td></tr></table></figure>
-
-<p>配置参数</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">缓冲区大小可以设置大一点</span><br><span class="line">配置使用 laster 版本软件包；</span><br></pre></td></tr></table></figure>
-
-<h3 id="驱动部分"><a href="#驱动部分" class="headerlink" title="驱动部分"></a>驱动部分</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">RT-Thread Components</span><br><span class="line">  Network</span><br><span class="line">    Socket abstraction layer</span><br><span class="line">      protocol stack implement</span><br><span class="line">        [*]Support AT Commands stack</span><br><span class="line">        [*]Enable BSD socket operated by the file system API</span><br><span class="line">    Enable AT commands</span><br><span class="line">      -*-   Enable AT commands client</span><br><span class="line">      -*-     Enable BSD Socket API support by AT commnads</span><br><span class="line">      <span class="comment"># 这里是选择显示at命令日志</span></span><br><span class="line">      [ ]     Enable <span class="built_in">print</span> RAW format AT <span class="built_in">command</span> communication data</span><br><span class="line">     (128)   The maximum lenght of AT Commonds buffer</span><br></pre></td></tr></table></figure>
-
-<h3 id="调试"><a href="#调试" class="headerlink" title="调试"></a>调试</h3><p>使用 cutecom 连接，回车模式选择 CR&#x2F;LF</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">AT+CWMODE=1</span><br><span class="line">AT+CWJAP=<span class="string">&quot;ssid&quot;</span>,<span class="string">&quot;password&quot;</span></span><br><span class="line">AT+CIFSR</span><br><span class="line"></span><br><span class="line">AT+RST</span><br></pre></td></tr></table></figure>
-
-<h3 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h3><ul>
-<li>模块串口和开发板的串口反接</li>
-<li>注意供电, wifi 芯片功耗很大，vcc 要接 5v，如果提示 <code>wait AT client(uart2) connect timeout(5000 tick)</code>，可能是 vcc 供电不足，可以<code>换一个 5v 的供电口解决</code></li>
-<li>模块如果使用杜邦线接线，用短的，长的可能会出现很多奇怪的问题</li>
-<li>如果提示缓冲区不够，可以使用串口调试器（cutecom）先调试 at 指令，很可能是不同的模块里面，在某些非正常时刻，发出太多的 response 导致的，可以看情况修改调用 at_create_resp 函数的地方针对性的修改缓冲区大小</li>
-</ul>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">比如 [E/at.clnt] Read response buffer failed. The Response buffer size is out of buffer size(xxx)</span><br><span class="line">可以在 at.client.c 的 at_create_resp 函数上下断点观察流程，尝试把缓冲区都改大一点</span><br></pre></td></tr></table></figure>
-
-<p>如果还有解决不了的问题，看<a target="_blank" rel="noopener" href="https://www.rt-thread.org/qa/forum.php?mod=viewthread&tid=11919&extra=page=1&filter=typeid&typeid=5">这里</a></p>
 
       
     </div>

@@ -2,6 +2,15 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://hanjiangxue.uk/2025/12/05/elixir-project-types/</loc>
+    
+    <lastmod>2025-12-05</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://hanjiangxue.uk/2025/12/04/elixir-config-split/</loc>
     
     <lastmod>2025-12-04</lastmod>
@@ -119,7 +128,7 @@
   </url>
   
   <url>
-    <loc>https://hanjiangxue.uk/2025/11/19/linux-trim-rootfs/</loc>
+    <loc>https://hanjiangxue.uk/2025/11/22/linux-trim-tftp/</loc>
     
     <lastmod>2025-11-24</lastmod>
     
@@ -128,7 +137,7 @@
   </url>
   
   <url>
-    <loc>https://hanjiangxue.uk/2025/11/22/linux-trim-tftp/</loc>
+    <loc>https://hanjiangxue.uk/2025/11/19/linux-trim-rootfs/</loc>
     
     <lastmod>2025-11-24</lastmod>
     
@@ -688,7 +697,7 @@
 
   <url>
     <loc>https://hanjiangxue.uk/</loc>
-    <lastmod>2025-12-04</lastmod>
+    <lastmod>2025-12-05</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
@@ -696,91 +705,91 @@
   
   <url>
     <loc>https://hanjiangxue.uk/tags/freebsd/</loc>
-    <lastmod>2025-12-04</lastmod>
+    <lastmod>2025-12-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://hanjiangxue.uk/tags/linux/</loc>
-    <lastmod>2025-12-04</lastmod>
+    <lastmod>2025-12-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://hanjiangxue.uk/tags/kernel/</loc>
-    <lastmod>2025-12-04</lastmod>
+    <lastmod>2025-12-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://hanjiangxue.uk/tags/docker/</loc>
-    <lastmod>2025-12-04</lastmod>
+    <lastmod>2025-12-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://hanjiangxue.uk/tags/elixir/</loc>
-    <lastmod>2025-12-04</lastmod>
+    <lastmod>2025-12-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://hanjiangxue.uk/tags/erlang/</loc>
-    <lastmod>2025-12-04</lastmod>
+    <lastmod>2025-12-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://hanjiangxue.uk/tags/python/</loc>
-    <lastmod>2025-12-04</lastmod>
+    <lastmod>2025-12-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://hanjiangxue.uk/tags/uboot/</loc>
-    <lastmod>2025-12-04</lastmod>
+    <lastmod>2025-12-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://hanjiangxue.uk/tags/angular/</loc>
-    <lastmod>2025-12-04</lastmod>
+    <lastmod>2025-12-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://hanjiangxue.uk/tags/stm32/</loc>
-    <lastmod>2025-12-04</lastmod>
+    <lastmod>2025-12-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://hanjiangxue.uk/tags/rt-thread/</loc>
-    <lastmod>2025-12-04</lastmod>
+    <lastmod>2025-12-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://hanjiangxue.uk/tags/vm/</loc>
-    <lastmod>2025-12-04</lastmod>
+    <lastmod>2025-12-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://hanjiangxue.uk/tags/zig/</loc>
-    <lastmod>2025-12-04</lastmod>
+    <lastmod>2025-12-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
