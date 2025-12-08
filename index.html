@@ -71,6 +71,248 @@
 
   
     
+    <h3 class="article-title"><a href="/2025/12/08/elixir-marco/"><span>elixir 之宏</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/12/08/elixir-marco/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-12-08T00:37:41.000Z">
+          2025-12-08
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h2 id="关键字"><a href="#关键字" class="headerlink" title="关键字"></a>关键字</h2><h3 id="require"><a href="#require" class="headerlink" title="require"></a>require</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">导入宏, 否则不能调用宏的方法</span><br></pre></td></tr></table></figure>
+
+<h3 id="use"><a href="#use" class="headerlink" title="use"></a>use</h3><p>给模块动态增加方法</p>
+<p>相当于</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">require XXX</span><br><span class="line">XXX.__using__</span><br></pre></td></tr></table></figure>
+
+<h3 id="quote"><a href="#quote" class="headerlink" title="quote"></a>quote</h3><p>生成当前表达式的语法树，必须要在 defmacro 语句的里面才能用</p>
+<h3 id="unquote"><a href="#unquote" class="headerlink" title="unquote"></a>unquote</h3><p>说明</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">把 语法树转换为实际表达式，一般和 `quote` 一起组合成为新的 ast，必须在宏里面才能用</span><br></pre></td></tr></table></figure>
+
+<p>使用场景</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">defmacro 关键字修饰的函数参数，如果要使用它作为变量，则需要 `unquote`</span><br></pre></td></tr></table></figure>
+
+<h2 id="宏调试"><a href="#宏调试" class="headerlink" title="宏调试"></a>宏调试</h2><h3 id="例子"><a href="#例子" class="headerlink" title="例子"></a>例子</h3><figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">defmodule</span> <span class="title">SimpleMacro</span></span> <span class="keyword">do</span></span><br><span class="line">  <span class="function"><span class="keyword">defmacro</span> <span class="title">plus</span></span>(ast_x, ast_y) <span class="keyword">do</span></span><br><span class="line">    <span class="keyword">quote</span> <span class="keyword">do</span></span><br><span class="line">      <span class="keyword">unquote</span>(ast_x) + <span class="keyword">unquote</span>(ast_y)</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">ast =</span><br><span class="line">  <span class="keyword">quote</span> <span class="keyword">do</span></span><br><span class="line">    <span class="title class_">SimpleMacro</span>.plus(x, <span class="number">23</span>)</span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line">ast |&gt; <span class="title class_">Macro</span>.expand(__ENV__) |&gt; <span class="title class_">Macro</span>.to_string</span><br></pre></td></tr></table></figure>
+
+<h2 id="基础用法"><a href="#基础用法" class="headerlink" title="基础用法"></a>基础用法</h2><h3 id="普通例子"><a href="#普通例子" class="headerlink" title="普通例子"></a>普通例子</h3><figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">defmodule</span> <span class="title">DemoMacro</span></span> <span class="keyword">do</span></span><br><span class="line">  <span class="function"><span class="keyword">defmacro</span> <span class="title">plus</span></span>(ast_x, ast_y) <span class="keyword">do</span></span><br><span class="line">    <span class="keyword">quote</span> <span class="keyword">do</span></span><br><span class="line">      <span class="keyword">unquote</span>(ast_x) + <span class="keyword">unquote</span>(ast_y)</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
+<p>测试</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">require</span> <span class="title class_">DemoMacro</span></span><br><span class="line"><span class="title class_">DemoMacro</span>.plus(<span class="number">11</span>,<span class="number">22</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="bind-quoted"><a href="#bind-quoted" class="headerlink" title="bind_quoted"></a>bind_quoted</h3><p>bind_quoted 绑定的值会保持不变</p>
+<p>代码如下</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">defmodule</span> <span class="title">DemoMacro</span></span> <span class="keyword">do</span></span><br><span class="line">  <span class="keyword">require</span> <span class="title class_">Logger</span></span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">defmacro</span> <span class="title">double_puts</span></span>(expr) <span class="keyword">do</span></span><br><span class="line">    <span class="keyword">quote</span> <span class="keyword">do</span></span><br><span class="line">      <span class="title class_">Logger</span>.debug(<span class="keyword">unquote</span>(expr))</span><br><span class="line">      <span class="title class_">Logger</span>.debug(<span class="keyword">unquote</span>(expr))</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">defmodule</span> <span class="title">DemoMacro</span></span> <span class="keyword">do</span></span><br><span class="line">  <span class="keyword">require</span> <span class="title class_">Logger</span></span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">defmacro</span> <span class="title">double_puts</span></span>(expr) <span class="keyword">do</span></span><br><span class="line">    <span class="keyword">quote</span> <span class="symbol">bind_quoted:</span> [<span class="symbol">aaa:</span> expr] <span class="keyword">do</span></span><br><span class="line">      <span class="title class_">Logger</span>.debug(aaa)</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
+<p>测试</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">require</span> <span class="title class_">DemoMacro</span></span><br><span class="line"><span class="title class_">DemoMacro</span>.double_puts(<span class="symbol">:os</span>.system_time)</span><br></pre></td></tr></table></figure>
+
+<h2 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h2><p><a target="_blank" rel="noopener" href="https://blog.appsignal.com/2021/10/26/how-to-use-macros-in-elixir.html">参考链接</a></p>
+<h3 id="动态添加方法和属性"><a href="#动态添加方法和属性" class="headerlink" title="动态添加方法和属性"></a>动态添加方法和属性</h3><p>use 模块除了在模块调用 <code>__using__</code> 宏外, 不做其他任何事情</p>
+<p>注意 <code>require</code> 的位置</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">defmodule</span> <span class="title">DemoMacro</span></span> <span class="keyword">do</span></span><br><span class="line">  <span class="function"><span class="keyword">defmacro</span> <span class="title">demo</span></span>(name) <span class="keyword">do</span></span><br><span class="line">    <span class="keyword">quote</span> <span class="keyword">do</span></span><br><span class="line">      <span class="keyword">unquote</span>(name) &lt;&gt; <span class="string">&quot;, &quot;</span> &lt;&gt; <span class="string">&quot;in DemoMacro&quot;</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">defmodule</span> <span class="title">DemoUsing</span></span> <span class="keyword">do</span></span><br><span class="line">  <span class="function"><span class="keyword">defmacro</span> <span class="title">__using__</span></span>(opts) <span class="keyword">do</span></span><br><span class="line">    params = <span class="title class_">Keyword</span>.get(opts, <span class="symbol">:aaa</span>, <span class="string">&quot;default params&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">quote</span> <span class="keyword">do</span></span><br><span class="line">      <span class="keyword">require</span> <span class="title class_">DemoMacro</span></span><br><span class="line">      <span class="function"><span class="keyword">def</span> <span class="title">demo</span></span>(name) <span class="keyword">do</span></span><br><span class="line">        value = <span class="string">&quot;value from &quot;</span> &lt;&gt; <span class="keyword">unquote</span>(params) &lt;&gt; <span class="string">&quot;, &quot;</span> &lt;&gt; name</span><br><span class="line">        <span class="title class_">DemoMacro</span>.demo(value)</span><br><span class="line">      <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">defmodule</span> <span class="title">Demo</span></span> <span class="keyword">do</span></span><br><span class="line">  <span class="keyword">use</span> <span class="title class_">DemoUsing</span>, <span class="symbol">aaa:</span> <span class="string">&quot;123&quot;</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
+<p>测试</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="title class_">Demo</span>.demo(<span class="string">&quot;me&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="方法重写"><a href="#方法重写" class="headerlink" title="方法重写"></a>方法重写</h3><figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">defmodule</span> <span class="title">DemoUsing</span></span> <span class="keyword">do</span></span><br><span class="line">  <span class="function"><span class="keyword">defmacro</span> <span class="title">__using__</span></span>(_opts) <span class="keyword">do</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">quote</span> <span class="keyword">do</span></span><br><span class="line">      <span class="function"><span class="keyword">def</span> <span class="title">test1</span></span>(x, y) <span class="keyword">do</span></span><br><span class="line">        x + y</span><br><span class="line">      <span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">      <span class="function"><span class="keyword">def</span> <span class="title">test2</span></span>(x, y) <span class="keyword">do</span></span><br><span class="line">        x - y</span><br><span class="line">      <span class="keyword">end</span></span><br><span class="line">      defoverridable <span class="symbol">test1:</span> <span class="number">2</span>, <span class="symbol">test2:</span> <span class="number">2</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">defmodule</span> <span class="title">Demo</span></span> <span class="keyword">do</span></span><br><span class="line">  <span class="keyword">use</span> <span class="title class_">DemoUsing</span></span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">test1</span></span>(x, y) <span class="keyword">do</span></span><br><span class="line">    <span class="comment"># 调用默认实现</span></span><br><span class="line">    super(x, y)</span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">test2</span></span>(x, y) <span class="keyword">do</span></span><br><span class="line">    x * y * y</span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
+<p>测试</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="title class_">Demo</span>.test1(<span class="number">11</span>, <span class="number">22</span>)</span><br><span class="line"><span class="title class_">Demo</span>.test2(<span class="number">11</span>, <span class="number">22</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="behaviour-重写"><a href="#behaviour-重写" class="headerlink" title="behaviour 重写"></a>behaviour 重写</h3><figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">defmodule</span> <span class="title">DemoBehaviour</span></span> <span class="keyword">do</span></span><br><span class="line">  <span class="variable">@callback</span> demo(number(), number()) :: number()</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># defoverridable 使用 Behaviour 当参数的时候，所有 callback 都可以被 override</span></span><br><span class="line"><span class="class"><span class="keyword">defmodule</span> <span class="title">DemoUsing</span></span> <span class="keyword">do</span></span><br><span class="line">  <span class="keyword">require</span> <span class="title class_">Logger</span></span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">defmacro</span> <span class="title">__using__</span></span>(_opts) <span class="keyword">do</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">quote</span> <span class="keyword">do</span></span><br><span class="line">      <span class="variable">@behaviour</span> <span class="title class_">DemoBehaviour</span></span><br><span class="line">      <span class="function"><span class="keyword">def</span> <span class="title">demo</span></span>(x, y) <span class="keyword">do</span></span><br><span class="line">        <span class="title class_">Logger</span>.debug(<span class="string">&quot;default in DemoBehaviour&quot;</span>)</span><br><span class="line">        x + y</span><br><span class="line">      <span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">      defoverridable <span class="title class_">DemoBehaviour</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">defmodule</span> <span class="title">Demo</span></span> <span class="keyword">do</span></span><br><span class="line">  <span class="keyword">require</span> <span class="title class_">Logger</span></span><br><span class="line">  <span class="keyword">use</span> <span class="title class_">DemoUsing</span></span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">demo</span></span>(x, y) <span class="keyword">do</span></span><br><span class="line">    <span class="comment"># super(x, y)</span></span><br><span class="line">    <span class="title class_">Logger</span>.debug(<span class="string">&quot;override in DemoBehaviour&quot;</span>)</span><br><span class="line">    x * y</span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
+<p>测试</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="title class_">Demo</span>.demo(<span class="number">11</span>, <span class="number">22</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="动态生成常量"><a href="#动态生成常量" class="headerlink" title="动态生成常量"></a>动态生成常量</h3><p>模块编译完成以后，会打印 [“henry”, “john”]</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">defmodule</span> <span class="title">DemoMacro</span></span> <span class="keyword">do</span></span><br><span class="line">  <span class="function"><span class="keyword">defmacro</span> <span class="title">add</span></span>(name) <span class="keyword">do</span></span><br><span class="line">    <span class="keyword">quote</span> <span class="keyword">do</span></span><br><span class="line">      <span class="variable">@names</span> <span class="keyword">unquote</span>(name)</span><br><span class="line">      <span class="symbol">:ok</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">defmodule</span> <span class="title">Demo</span></span> <span class="keyword">do</span></span><br><span class="line">  <span class="keyword">require</span> <span class="title class_">DemoMacro</span></span><br><span class="line">  <span class="keyword">import</span> <span class="title class_">DemoMacro</span></span><br><span class="line"></span><br><span class="line">  <span class="title class_">Module</span>.register_attribute(__MODULE__, <span class="symbol">:names</span>, <span class="symbol">accumulate:</span> <span class="literal">true</span>)</span><br><span class="line"></span><br><span class="line">  add <span class="string">&quot;john&quot;</span></span><br><span class="line">  add <span class="string">&quot;henry&quot;</span></span><br><span class="line"></span><br><span class="line">  <span class="title class_">IO</span>.inspect(<span class="variable">@names</span>)</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="修改属性"><a href="#修改属性" class="headerlink" title="修改属性"></a>修改属性</h3><figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">defmodule</span> <span class="title">DemoUsing</span></span> <span class="keyword">do</span></span><br><span class="line">  <span class="function"><span class="keyword">defmacro</span> <span class="title">__using__</span></span>(_) <span class="keyword">do</span></span><br><span class="line">    <span class="keyword">quote</span> <span class="keyword">do</span></span><br><span class="line">      <span class="title class_">Module</span>.register_attribute(__MODULE__, <span class="symbol">:xxx</span>, <span class="symbol">accumulate:</span> <span class="literal">true</span>)</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">defmacro</span> <span class="title">show</span></span>(name) <span class="keyword">do</span></span><br><span class="line">    <span class="keyword">quote</span> <span class="keyword">do</span></span><br><span class="line">      <span class="title class_">IO</span>.inspect(<span class="string">&quot;<span class="subst">#&#123;<span class="keyword">unquote</span>(name)&#125;</span> <span class="subst">#&#123;<span class="variable">@xxx</span>&#125;</span>&quot;</span>)</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">defmodule</span> <span class="title">Demo</span></span> <span class="keyword">do</span></span><br><span class="line">  <span class="keyword">use</span> <span class="title class_">DemoUsing</span></span><br><span class="line"></span><br><span class="line">  <span class="variable">@xxx</span> <span class="string">&quot;测试&quot;</span></span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">aaa</span></span>() <span class="keyword">do</span></span><br><span class="line">    <span class="title class_">DemoUsing</span>.show(<span class="string">&quot;123&quot;</span>)</span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="编译期-hook"><a href="#编译期-hook" class="headerlink" title="编译期 hook"></a>编译期 hook</h3><figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">defmodule</span> <span class="title">DemoUsing</span></span> <span class="keyword">do</span></span><br><span class="line">  <span class="function"><span class="keyword">defmacro</span> <span class="title">__using__</span></span>(_) <span class="keyword">do</span></span><br><span class="line">    <span class="keyword">quote</span> <span class="keyword">do</span></span><br><span class="line">      <span class="variable">@before_compile</span> <span class="keyword">unquote</span>(__MODULE__)</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">defmacro</span> <span class="title">__before_compile__</span></span>(env) <span class="keyword">do</span></span><br><span class="line">    <span class="title class_">IO</span>.inspect(env)</span><br><span class="line">    <span class="literal">nil</span></span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">defmodule</span> <span class="title">Demo</span></span> <span class="keyword">do</span></span><br><span class="line">  <span class="keyword">use</span> <span class="title class_">DemoUsing</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="模拟-test"><a href="#模拟-test" class="headerlink" title="模拟 test"></a>模拟 test</h3><figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">defmodule</span> <span class="title">Calculator</span></span> <span class="keyword">do</span></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">add</span></span>(a, b), <span class="symbol">do:</span> a + b</span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">subtract</span></span>(a, b), <span class="symbol">do:</span> a - b</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">defmodule</span> <span class="title">TestCase</span></span> <span class="keyword">do</span></span><br><span class="line">  <span class="function"><span class="keyword">defmacro</span> <span class="title">__using__</span></span>(_) <span class="keyword">do</span></span><br><span class="line">    <span class="keyword">quote</span> <span class="keyword">do</span></span><br><span class="line">      <span class="keyword">require</span> <span class="title class_">Logger</span></span><br><span class="line">      <span class="keyword">import</span> <span class="title class_">TestCase</span></span><br><span class="line">      <span class="title class_">Module</span>.register_attribute(__MODULE__, <span class="symbol">:tests</span>, <span class="symbol">accumulate:</span> <span class="literal">true</span>)</span><br><span class="line">      <span class="variable">@before_compile</span> <span class="keyword">unquote</span>(__MODULE__)</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">defmacro</span> <span class="title">__before_compile__</span></span>(_env) <span class="keyword">do</span></span><br><span class="line">    <span class="comment"># Inject a run function into the test case after all tests have been accumulated</span></span><br><span class="line">    <span class="keyword">quote</span> <span class="keyword">do</span></span><br><span class="line">      <span class="function"><span class="keyword">def</span> <span class="title">run</span></span> <span class="keyword">do</span></span><br><span class="line">        <span class="title class_">Enum</span>.each <span class="variable">@tests</span>, <span class="keyword">fn</span> test_name -&gt;</span><br><span class="line">          result = apply(__MODULE__, test_name, [])</span><br><span class="line">          state = <span class="keyword">if</span> result, <span class="symbol">do:</span> <span class="string">&quot;pass&quot;</span>, <span class="symbol">else:</span> <span class="string">&quot;fail&quot;</span></span><br><span class="line">          <span class="title class_">Logger</span>.debug(<span class="string">&quot;<span class="subst">#&#123;test_name&#125;</span> =&gt; <span class="subst">#&#123;state&#125;</span>&quot;</span>)</span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">      <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">defmacro</span> <span class="title">test</span></span>(description, <span class="symbol">do:</span> body) <span class="keyword">do</span></span><br><span class="line">    test_name = <span class="title class_">String</span>.to_atom(description)</span><br><span class="line">    <span class="keyword">quote</span> <span class="keyword">do</span></span><br><span class="line">      <span class="variable">@tests</span> <span class="keyword">unquote</span>(test_name)</span><br><span class="line">      <span class="function"><span class="keyword">def</span> <span class="title">unquote</span></span>(test_name)(), <span class="symbol">do:</span> <span class="keyword">unquote</span>(body)</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">defmodule</span> <span class="title">CalculatorTest</span></span> <span class="keyword">do</span></span><br><span class="line">  <span class="keyword">use</span> <span class="title class_">TestCase</span></span><br><span class="line">  <span class="keyword">import</span> <span class="title class_">Calculator</span></span><br><span class="line"></span><br><span class="line">  test <span class="string">&quot;add 1, 2 should return 3&quot;</span> <span class="keyword">do</span></span><br><span class="line">    add(<span class="number">1</span>, <span class="number">2</span>) == <span class="number">3</span></span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">  test <span class="string">&quot;subtract 5, 2 should not return 4&quot;</span> <span class="keyword">do</span></span><br><span class="line">    subtract(<span class="number">5</span>, <span class="number">2</span>) == <span class="number">4</span></span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="title class_">CalculatorTest</span>.run</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/elixir/">elixir</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
+    <h3 class="article-title"><a href="/2025/12/06/erlang-deps/"><span>erlang 之添加依赖</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/12/06/erlang-deps/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-12-06T02:06:30.000Z">
+          2025-12-06
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>不能加载 elixir 的库</p>
+<h2 id="用法"><a href="#用法" class="headerlink" title="用法"></a>用法</h2><h3 id="远程依赖"><a href="#远程依赖" class="headerlink" title="远程依赖"></a>远程依赖</h3><p>hex.pm</p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#123;deps,[</span><br><span class="line">  &#123;jsx, <span class="string">&quot;3.1.0&quot;</span>&#125;</span><br><span class="line">]&#125;.</span><br></pre></td></tr></table></figure>
+
+<p>分支</p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#123;deps, [</span><br><span class="line">  &#123;ets_cache, <span class="string">&quot;.*&quot;</span>, &#123;git, <span class="string">&quot;https://github.com/roowe/ets_cache&quot;</span>, &#123;branch, <span class="string">&quot;master&quot;</span>&#125;&#125;&#125;</span><br><span class="line">]&#125;.</span><br></pre></td></tr></table></figure>
+
+<p>tag</p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#123;deps, [</span><br><span class="line">  &#123;erlbus, &#123;git, <span class="string">&quot;https://github.com/cabol/erlbus&quot;</span>, &#123;tag, <span class="string">&quot;v0.3.0&quot;</span>&#125;&#125;&#125;</span><br><span class="line">]&#125;.</span><br></pre></td></tr></table></figure>
+
+<h3 id="本地依赖"><a href="#本地依赖" class="headerlink" title="本地依赖"></a>本地依赖</h3><p>目录层级</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">.</span><br><span class="line">├── demo</span><br><span class="line">│   ├── rebar.config</span><br><span class="line">│   └── src</span><br><span class="line">└── demo_lib</span><br><span class="line">    ├── rebar.config</span><br><span class="line">    └── src</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&#123;deps, [</span><br><span class="line">    &#123;demo_lib, &#123;path, <span class="string">&quot;../demo_lib&quot;</span>&#125;&#125;</span><br><span class="line">]&#125;.</span><br><span class="line"></span><br><span class="line">&#123;plugins, [</span><br><span class="line">    rebar3_path_deps</span><br><span class="line">]&#125;.</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/erlang/">erlang</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
+    <h3 class="article-title"><a href="/2025/12/06/elixir-deps/"><span>elixir 之添加依赖</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/12/06/elixir-deps/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-12-06T02:06:26.000Z">
+          2025-12-06
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>可以加载 erlang 的库</p>
+<h2 id="搜索"><a href="#搜索" class="headerlink" title="搜索"></a>搜索</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mix hex.search --package nebulex</span><br></pre></td></tr></table></figure>
+
+<h2 id="用法"><a href="#用法" class="headerlink" title="用法"></a>用法</h2><p>加载本地库</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;<span class="symbol">:xxx</span>, <span class="symbol">path:</span> <span class="string">&quot;../xxx&quot;</span>&#125;</span><br></pre></td></tr></table></figure>
+
+<p>指定分支</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;<span class="symbol">:bumblebee</span>, <span class="symbol">github:</span> <span class="string">&quot;elixir-nx/bumblebee&quot;</span>, <span class="symbol">branch:</span> <span class="string">&quot;main&quot;</span>&#125;</span><br></pre></td></tr></table></figure>
+
+<p>强制使用某个版本</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;<span class="symbol">:bumblebee</span>, <span class="symbol">github:</span> <span class="string">&quot;elixir-nx/bumblebee&quot;</span>, <span class="symbol">branch:</span> <span class="string">&quot;main&quot;</span>, <span class="symbol">override:</span> <span class="literal">true</span>&#125;</span><br></pre></td></tr></table></figure>
+
+<p>指定环境下加载</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;<span class="symbol">:exla</span>, <span class="string">&quot;~&gt; 0.7&quot;</span>, <span class="symbol">only:</span> [<span class="symbol">:dev</span>, <span class="symbol">:test</span>]&#125;</span><br></pre></td></tr></table></figure>
+
+<p>运行时并不加载</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;<span class="symbol">:ex_doc</span>, <span class="string">&quot;~&gt; 0.29&quot;</span>, <span class="symbol">only:</span> <span class="symbol">:dev</span>, <span class="symbol">runtime:</span> <span class="literal">false</span>&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/elixir/">elixir</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
     <h3 class="article-title"><a href="/2025/12/05/elixir-project-types/"><span>elixir 项目类型</span></a></h3>
     
   
@@ -489,209 +731,6 @@
       
         <p><a target="_blank" rel="noopener" href="https://hexdocs.pm/phoenix/deployment.html">参考地址</a></p>
 <h2 id="例子"><a href="#例子" class="headerlink" title="例子"></a>例子</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">mix deps.get --only prod</span><br><span class="line">MIX_ENV=prod mix compile</span><br><span class="line"></span><br><span class="line">MIX_ENV=prod mix assets.deploy</span><br><span class="line"><span class="comment"># MIX_ENV=prod mix ecto.migrate</span></span><br><span class="line">MIX_ENV=prod mix release</span><br><span class="line"><span class="built_in">export</span> SECRET_KEY_BASE=`mix phx.gen.secret` PHX_SERVER=<span class="literal">true</span> PHX_HOST=<span class="string">&quot;aaa.com&quot;</span> PORT=9876;</span><br><span class="line">_build/prod/rel/web_demo/bin/web_demo start</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-
-  </div>
-
-  <div class="article-footer">
-    <div class="article-meta pull-left">
-
-    
-
-    
-    
-
-    <span class="post-tags">
-      <i class="icon-tags"></i>
-        <a href="/tags/elixir/">elixir</a>
-    </span>
-    
-
-    </div>
-
-    
-  </div>
-</article>
-
-
-
-  <article>
-
-  
-    
-    <h3 class="article-title"><a href="/2025/11/30/elixir-normai-deploy/"><span>elixir 普通应用原生发布</span></a></h3>
-    
-  
-
-  <div class="article-top-meta">
-    <span class="posted-on">
-      <a href="/2025/11/30/elixir-normai-deploy/" rel="bookmark">
-        <time class="entry-date published" datetime="2025-11-30T04:40:05.000Z">
-          2025-11-30
-        </time>
-      </a>
-    </span>
-  </div>
-
-
-  
-
-  <div class="article-content">
-    <div class="entry">
-      
-        <h2 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h2><h3 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h3><p>会创建 rel 文件夹，带 vm 的配置和环境变量</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mix release.init</span><br></pre></td></tr></table></figure>
-
-<h3 id="指定-release"><a href="#指定-release" class="headerlink" title="指定 release"></a>指定 release</h3><p>如果要生成指定的 release 的名字，则修改 mix.exs</p>
-<p>一般不需要</p>
-<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">project</span></span> <span class="keyword">do</span></span><br><span class="line">  [</span><br><span class="line">    .........</span><br><span class="line">    <span class="symbol">releases:</span> releases()</span><br><span class="line">  ]</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">defp</span> <span class="title">releases</span></span> <span class="keyword">do</span></span><br><span class="line">  [</span><br><span class="line">    <span class="symbol">aaa:</span> [</span><br><span class="line">      <span class="symbol">include_executables_for:</span> [<span class="symbol">:unix</span>],</span><br><span class="line">      <span class="symbol">applications:</span> [</span><br><span class="line">        <span class="symbol">demo1:</span> <span class="symbol">:permanent</span>,</span><br><span class="line">        <span class="symbol">demo2:</span> <span class="symbol">:permanent</span></span><br><span class="line">      ]</span><br><span class="line">    ]</span><br><span class="line">  ]</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
-
-<p>运行</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">MIX_ENV=prod mix release</span><br><span class="line">MIX_ENV=prod mix release --overwrite</span><br><span class="line">MIX_ENV=prod mix release aaa</span><br></pre></td></tr></table></figure>
-
-<h3 id="指定-vm-参数"><a href="#指定-vm-参数" class="headerlink" title="指定 vm 参数"></a>指定 vm 参数</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> RELEASE_DISTRIBUTION=name</span><br><span class="line"><span class="built_in">export</span> RELEASE_NODE=aaa@127.0.0.1</span><br><span class="line"><span class="built_in">export</span> RELEASE_COOKIE=123456</span><br><span class="line">bin/abc start_iex</span><br></pre></td></tr></table></figure>
-
-<h3 id="发布"><a href="#发布" class="headerlink" title="发布"></a>发布</h3><p>最终需要的目录</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">_build/prod/rel/<span class="variable">$RELEASE_NAME</span>/</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-
-  </div>
-
-  <div class="article-footer">
-    <div class="article-meta pull-left">
-
-    
-
-    
-    
-
-    <span class="post-tags">
-      <i class="icon-tags"></i>
-        <a href="/tags/elixir/">elixir</a>
-    </span>
-    
-
-    </div>
-
-    
-  </div>
-</article>
-
-
-
-  <article>
-
-  
-    
-    <h3 class="article-title"><a href="/2025/11/28/elixir-deploy-args/"><span>elixir 发布之参数配置</span></a></h3>
-    
-  
-
-  <div class="article-top-meta">
-    <span class="posted-on">
-      <a href="/2025/11/28/elixir-deploy-args/" rel="bookmark">
-        <time class="entry-date published" datetime="2025-11-28T03:50:47.000Z">
-          2025-11-28
-        </time>
-      </a>
-    </span>
-  </div>
-
-
-  
-
-  <div class="article-content">
-    <div class="entry">
-      
-        <h2 id="位置"><a href="#位置" class="headerlink" title="位置"></a>位置</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ tree rel</span><br><span class="line">rel</span><br><span class="line">├── env.bat.eex</span><br><span class="line">├── env.sh.eex</span><br><span class="line">├── remote.vm.args.eex</span><br><span class="line">└── vm.args.eex</span><br></pre></td></tr></table></figure>
-
-<h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><h3 id="env-sh-eex"><a href="#env-sh-eex" class="headerlink" title="env.sh.eex"></a>env.sh.eex</h3><p>release 脚本启动之前，可以执行任何操作</p>
-<p>运行期加载环境变量</p>
-<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">export <span class="title class_">AAA</span>=&lt;%= <span class="title class_">System</span>.get_env(<span class="string">&quot;ABC&quot;</span>) %&gt;</span><br><span class="line">export <span class="title class_">BBB</span>=<span class="number">12345</span></span><br></pre></td></tr></table></figure>
-
-<p>测试</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">mix release</span><br><span class="line"><span class="built_in">export</span> ABC=<span class="string">&quot;asdasd&quot;</span></span><br><span class="line">_build/dev/rel/demo/bin/demo start_iex</span><br><span class="line">System.get_env(<span class="string">&quot;AAA&quot;</span>)</span><br><span class="line">System.get_env(<span class="string">&quot;ABC&quot;</span>)</span><br><span class="line">System.get_env(<span class="string">&quot;BBB&quot;</span>)</span><br></pre></td></tr></table></figure>
-
-<h3 id="sys-config"><a href="#sys-config" class="headerlink" title="sys.config"></a>sys.config</h3><p>改到 config 目录里面去了</p>
-<h3 id="vm-args-eex"><a href="#vm-args-eex" class="headerlink" title="vm.args.eex"></a>vm.args.eex</h3><p>配置虚拟机参数，只支持编译期加载环境变量</p>
-<h4 id="编译期"><a href="#编译期" class="headerlink" title="编译期"></a>编译期</h4><p>默认只能编译期加载</p>
-<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">-kernel inet_dist_listen_min &lt;%= <span class="title class_">System</span>.get_env(<span class="string">&quot;DIST_PORT&quot;</span>) %&gt;</span><br><span class="line">-kernel inet_dist_listen_max &lt;%= <span class="title class_">System</span>.get_env(<span class="string">&quot;DIST_PORT&quot;</span>) %&gt;</span><br></pre></td></tr></table></figure>
-
-<p>测试</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">DIST_PORT=5555 mix release</span><br></pre></td></tr></table></figure>
-
-<h4 id="运行期"><a href="#运行期" class="headerlink" title="运行期"></a>运行期</h4><p>运行期加载环境变量为 hack 的方式</p>
-<p>env.sh.eex</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">VERSION_DIR=<span class="string">&quot;<span class="subst">$(ls <span class="string">&quot;<span class="variable">$RELEASE_ROOT</span>/releases/&quot;</span> | head -n1)</span>&quot;</span></span><br><span class="line"><span class="built_in">export</span> DIST_PORT=<span class="string">&quot;<span class="variable">$&#123;DIST_PORT:-7878&#125;</span>&quot;</span></span><br><span class="line">sed -i <span class="string">&quot;s/\$&#123;DIST_PORT&#125;/<span class="variable">$&#123;DIST_PORT&#125;</span>/g&quot;</span> \</span><br><span class="line">  <span class="string">&quot;<span class="variable">$RELEASE_ROOT</span>/releases/<span class="variable">$VERSION_DIR</span>/vm.args&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p>vm.args.eex</p>
-<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">-kernel inet_dist_listen_min <span class="variable">$&#123;</span><span class="title class_">DIST_PORT</span>&#125;</span><br><span class="line">-kernel inet_dist_listen_max <span class="variable">$&#123;</span><span class="title class_">DIST_PORT</span>&#125;</span><br></pre></td></tr></table></figure>
-
-<p>测试</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">MIX_ENV=prod mix release</span><br><span class="line">DIST_PORT=5555 _build/prod/rel/demo/bin/demo start_iex</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-
-  </div>
-
-  <div class="article-footer">
-    <div class="article-meta pull-left">
-
-    
-
-    
-    
-
-    <span class="post-tags">
-      <i class="icon-tags"></i>
-        <a href="/tags/elixir/">elixir</a>
-    </span>
-    
-
-    </div>
-
-    
-  </div>
-</article>
-
-
-
-  <article>
-
-  
-    
-    <h3 class="article-title"><a href="/2025/11/27/elixir-protocol/"><span>elixir 之 protocol</span></a></h3>
-    
-  
-
-  <div class="article-top-meta">
-    <span class="posted-on">
-      <a href="/2025/11/27/elixir-protocol/" rel="bookmark">
-        <time class="entry-date published" datetime="2025-11-27T03:06:50.000Z">
-          2025-11-27
-        </time>
-      </a>
-    </span>
-  </div>
-
-
-  
-
-  <div class="article-content">
-    <div class="entry">
-      
-        <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>为不同的数据类型定义通用的行为</p>
-<h2 id="场景"><a href="#场景" class="headerlink" title="场景"></a>场景</h2><p>给一些类型增加功能，而不修改原有模块</p>
-<h2 id="用法"><a href="#用法" class="headerlink" title="用法"></a>用法</h2><figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">defmodule</span> <span class="title">DemoStruct1</span></span> <span class="keyword">do</span></span><br><span class="line">  <span class="keyword">defstruct</span> [<span class="symbol">:aaa</span>, <span class="symbol">:bbb</span>]</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">new</span></span>(aaa, bbb) <span class="keyword">do</span></span><br><span class="line">    %<span class="title class_">DemoStruct1</span>&#123;<span class="symbol">aaa:</span> aaa, <span class="symbol">bbb:</span> bbb&#125;</span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">defmodule</span> <span class="title">DemoStruct2</span></span> <span class="keyword">do</span></span><br><span class="line">  <span class="keyword">defstruct</span> [<span class="symbol">:ccc</span>, <span class="symbol">:ddd</span>]</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">new</span></span>(ccc, ddd) <span class="keyword">do</span></span><br><span class="line">    %<span class="title class_">DemoStruct2</span>&#123;<span class="symbol">ccc:</span> ccc, <span class="symbol">ddd:</span> ddd&#125;</span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
-
-<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">defprotocol</span> <span class="title">DemoProtocol</span></span> <span class="keyword">do</span></span><br><span class="line">  <span class="variable">@fallback_to_any</span> <span class="literal">true</span></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">xxx</span></span>(struct_obj, source, dest)</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">defimpl</span> <span class="title">DemoProtocol</span></span>, <span class="symbol">for:</span> <span class="title class_">DemoStruct1</span> <span class="keyword">do</span></span><br><span class="line">  <span class="keyword">require</span> <span class="title class_">Logger</span></span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">xxx</span></span>(%<span class="title class_">DemoStruct1</span>&#123;<span class="symbol">aaa:</span> aaa, <span class="symbol">bbb:</span> bbb&#125;, source, dest) <span class="keyword">do</span></span><br><span class="line">    info = <span class="string">&quot;第一个 <span class="subst">#&#123;inspect(aaa)&#125;</span> <span class="subst">#&#123;inspect(bbb)&#125;</span> <span class="subst">#&#123;inspect(source)&#125;</span> <span class="subst">#&#123;inspect(dest)&#125;</span>&quot;</span></span><br><span class="line">    <span class="title class_">Logger</span>.debug(info)</span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">defimpl</span> <span class="title">DemoProtocol</span></span>, <span class="symbol">for:</span> <span class="title class_">DemoStruct2</span> <span class="keyword">do</span></span><br><span class="line">  <span class="keyword">require</span> <span class="title class_">Logger</span></span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">xxx</span></span>(%<span class="title class_">DemoStruct2</span>&#123;<span class="symbol">ccc:</span> ccc, <span class="symbol">ddd:</span> ddd&#125;, source, dest) <span class="keyword">do</span></span><br><span class="line">    info = <span class="string">&quot;另外一个 <span class="subst">#&#123;inspect(ccc)&#125;</span> <span class="subst">#&#123;inspect(ddd)&#125;</span> <span class="subst">#&#123;inspect(source)&#125;</span> <span class="subst">#&#123;inspect(dest)&#125;</span>&quot;</span></span><br><span class="line">    <span class="title class_">Logger</span>.debug(info)</span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">defimpl</span> <span class="title">DemoProtocol</span></span>, <span class="symbol">for:</span> <span class="title class_">Any</span> <span class="keyword">do</span></span><br><span class="line">  <span class="keyword">require</span> <span class="title class_">Logger</span></span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">xxx</span></span>(object, source, dest) <span class="keyword">do</span></span><br><span class="line">    info = <span class="string">&quot;any 类型 <span class="subst">#&#123;inspect(object)&#125;</span> <span class="subst">#&#123;inspect(source)&#125;</span> <span class="subst">#&#123;inspect(dest)&#125;</span>&quot;</span></span><br><span class="line">    <span class="title class_">Logger</span>.debug(info)</span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
-
-<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">defmodule</span> <span class="title">Demo</span></span> <span class="keyword">do</span></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">demo</span></span> <span class="keyword">do</span></span><br><span class="line">    obj1 = <span class="title class_">DemoStruct1</span>.new(<span class="number">111</span>, <span class="number">222</span>)</span><br><span class="line">    <span class="title class_">DemoProtocol</span>.xxx(obj1, <span class="string">&quot;aaaaaa&quot;</span>, <span class="string">&quot;bbbbbbbb&quot;</span>)</span><br><span class="line"></span><br><span class="line">    obj2 = <span class="title class_">DemoStruct2</span>.new(<span class="number">333</span>, <span class="number">444</span>)</span><br><span class="line">    <span class="title class_">DemoProtocol</span>.xxx(obj2, <span class="string">&quot;yyyyyyyyy&quot;</span>, <span class="string">&quot;zzzzzzzzzzzz&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="title class_">DemoProtocol</span>.xxx(<span class="number">111</span>, <span class="string">&quot;11111&quot;</span>, <span class="string">&quot;22222&quot;</span>)</span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
 
       
     </div>

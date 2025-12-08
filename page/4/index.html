@@ -71,6 +71,191 @@
 
   
     
+    <h3 class="article-title"><a href="/2025/11/10/rtt-stm32-vuart/"><span>rt-thread 下，配置 stm32 的 虚拟串口</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/11/10/rtt-stm32-vuart/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-11-09T23:55:00.000Z">
+          2025-11-10
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <p>参考<a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/s8R4zg5-5HjxA4ldt0_n8g">这里</a></p>
+<h2 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h2><h3 id="cubeMX"><a href="#cubeMX" class="headerlink" title="cubeMX"></a>cubeMX</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">打开 cubeMX，开启 USB_OTG, 使用 device 模式，启用 usb otg 的全局中断，配置时钟，生成代码，复制到项目</span><br><span class="line"></span><br><span class="line">注意，cubeMX 里面配置的时候，rcc 需要启用 hse，外部晶震，usb 的时钟需要设置为 48MHZ，我是 F411CEU6 的板</span><br><span class="line"></span><br><span class="line">复制 main.c 里面的时钟配置到 board.c</span><br></pre></td></tr></table></figure>
+
+<h3 id="Kconfig"><a href="#Kconfig" class="headerlink" title="Kconfig"></a>Kconfig</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">config BSP_USING_USBD_FS</span><br><span class="line">    bool <span class="string">&quot;Enable OTGFS as USB device&quot;</span></span><br><span class="line">    <span class="keyword">select</span> RT_USING_USB_DEVICE</span><br><span class="line">    <span class="keyword">select</span> _RT_USB_DEVICE_CDC</span><br><span class="line">    default n</span><br></pre></td></tr></table></figure>
+
+<h3 id="menuconfig"><a href="#menuconfig" class="headerlink" title="menuconfig"></a>menuconfig</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Hardware Drivers Config &gt;</span><br><span class="line">  On-chip Peripheral Drivers</span><br><span class="line">    [*] Enable OTGFS as USB device</span><br><span class="line"></span><br><span class="line">RT-Thread Components &gt;</span><br><span class="line">  Device Drivers &gt;</span><br><span class="line">    Using USB &gt;</span><br><span class="line">      [*] Enable composite device &gt;</span><br><span class="line">        [*] Enable to use device as CDC device</span><br></pre></td></tr></table></figure>
+
+<h3 id="测试代码"><a href="#测试代码" class="headerlink" title="测试代码"></a>测试代码</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;rtthread.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;rtdevice.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">vcom_test</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">rt_device_t</span> dev = RT_NULL;</span><br><span class="line">    <span class="type">char</span> buf[] = <span class="string">&quot;hello vcom!\r\n&quot;</span>;</span><br><span class="line"></span><br><span class="line">    dev = rt_device_find(<span class="string">&quot;vcom&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (dev)</span><br><span class="line">        rt_device_open(dev, RT_DEVICE_FLAG_RDWR);</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        <span class="keyword">return</span> -RT_ERROR;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> (<span class="number">1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        rt_device_write(dev, <span class="number">0</span>, buf, rt_strlen(buf));</span><br><span class="line">        rt_thread_mdelay(<span class="number">500</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    rt_device_close(dev);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">MSH_CMD_EXPORT(vcom_test, vcom_test)</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/stm32/">stm32</a><a href="/tags/rt-thread/">rt-thread</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
+    <h3 class="article-title"><a href="/2025/11/09/rtt-stm32-lfs/"><span>rt-thread 下，配置 stm32 的 lfs</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/11/09/rtt-stm32-lfs/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-11-09T04:33:24.000Z">
+          2025-11-09
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <p>外挂 flash 上使用 lfs</p>
+<p>参考的 <a target="_blank" rel="noopener" href="https://www.rt-thread.org/document/site/application-note/components/dfs/an0027-littlefs/">这里</a></p>
+<h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><h3 id="准备"><a href="#准备" class="headerlink" title="准备"></a>准备</h3><p>先按照外挂 flash 的配置配置好</p>
+<h3 id="menuconfig"><a href="#menuconfig" class="headerlink" title="menuconfig"></a>menuconfig</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">RT-Thread Components ---&gt; Device virtual file system</span><br><span class="line">  [*] Using device virtual file system</span><br><span class="line"></span><br><span class="line">RT-Thread online packages &gt; system packages &gt; Littlefs: A high-integrity embedded file system</span><br><span class="line">  [*] Littlefs: A high-integrity embedded file system</span><br><span class="line">    (256) disk <span class="built_in">read</span> size</span><br><span class="line">    (256) disk write size</span><br><span class="line">    (4096) disk block size</span><br><span class="line">    (256) lfs r/w cache size</span><br><span class="line">    (100) lfs enables wear leveling. 0 is <span class="built_in">disable</span>.</span><br><span class="line">    (512) lfs lookahead size</span><br></pre></td></tr></table></figure>
+
+<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><p>w25q128_lfs_demo.c</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;fal.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;dfs_fs.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;rtdbg.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">[I/FAL] ==================== FAL partition table ====================</span></span><br><span class="line"><span class="comment">[I/FAL] | name       | flash_dev |   offset   |    length  |</span></span><br><span class="line"><span class="comment">[I/FAL] -------------------------------------------------------------</span></span><br><span class="line"><span class="comment">[I/FAL] | filesystem | W25Q128   | 0x00000000 | 0x01000000 |</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> FS_PARTITION_NAME <span class="string">&quot;filesystem&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> FS_DEVICE_NAME    FS_PARTITION_NAME</span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">w25q128_lfs_demo</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    fal_init();</span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">rt_device</span>* <span class="title">mtd_dev</span> =</span> RT_NULL;</span><br><span class="line">    mtd_dev = fal_mtd_nor_device_create(FS_PARTITION_NAME);</span><br><span class="line">    <span class="keyword">if</span> ( !mtd_dev )&#123;</span><br><span class="line">        LOG_E(<span class="string">&quot;Can&#x27;t create a mtd device on &#x27;%s&#x27; partition.&quot;</span>, FS_PARTITION_NAME);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="comment">// 以防万一，先unmount</span></span><br><span class="line">        dfs_unmount(<span class="string">&quot;/&quot;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (dfs_mount(FS_DEVICE_NAME, <span class="string">&quot;/&quot;</span>, <span class="string">&quot;lfs&quot;</span>, <span class="number">0</span>, <span class="number">0</span>) == <span class="number">0</span>)&#123;</span><br><span class="line">            LOG_I(<span class="string">&quot;Filesystem initialized!&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span>&#123;</span><br><span class="line">            <span class="comment">// mkfs -t lfs filesystem</span></span><br><span class="line">            dfs_mkfs(<span class="string">&quot;lfs&quot;</span>, FS_DEVICE_NAME);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (dfs_mount(FS_DEVICE_NAME, <span class="string">&quot;/&quot;</span>, <span class="string">&quot;lfs&quot;</span>, <span class="number">0</span>, <span class="number">0</span>) == <span class="number">0</span>)&#123;</span><br><span class="line">                LOG_I(<span class="string">&quot;Filesystem initialized!&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">else</span>&#123;</span><br><span class="line">                LOG_E(<span class="string">&quot;Failed to initialize filesystem!&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> RT_EOK;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">MSH_CMD_EXPORT(w25q128_lfs_demo, w25q128_lfs_demo);</span><br></pre></td></tr></table></figure>
+
+<h2 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h2><p>demo 代码里面的<code>dfs_mount</code>和<code>dfs_mkfs</code>的参数，DEVICE_NAME, lfs 和 elm 是不一样的</p>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/stm32/">stm32</a><a href="/tags/rt-thread/">rt-thread</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
+    <h3 class="article-title"><a href="/2025/11/08/rtt-stm32-elmfs/"><span>rt-thread 下，配置 stm32 的 elmfs</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/11/08/rtt-stm32-elmfs/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-11-08T00:52:39.000Z">
+          2025-11-08
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <p>elm 文件系统</p>
+<h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>外挂 flash 上的 elm 文件系统</p>
+<p>参考的 <a target="_blank" rel="noopener" href="https://www.rt-thread.org/document/site/application-note/components/dfs/an0012-dfs/">这里</a></p>
+<h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><h3 id="准备"><a href="#准备" class="headerlink" title="准备"></a>准备</h3><p>先按照外挂 flash 的配置配置好</p>
+<h3 id="menuconfig"><a href="#menuconfig" class="headerlink" title="menuconfig"></a>menuconfig</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">RT-Thread Components &gt; Device virtual file system  ---&gt;</span><br><span class="line">  -*- Using device virtual file system</span><br><span class="line">  [*] Using working directory</span><br><span class="line">  (2) The maximal number of mounted file system</span><br><span class="line">  (2) The maximal number of file system <span class="built_in">type</span></span><br><span class="line">  (16) The maximal number of opened files</span><br><span class="line">  [*] Enable elm-chan fatfs</span><br><span class="line">    elm-chan<span class="string">&#x27;s FatFs, Generic FAT Filesystem Module  ---&gt;</span></span><br><span class="line"><span class="string">      Support long file name (3: LFN with dynamic LFN working buffer on the heap)  ---&gt;</span></span><br><span class="line"><span class="string">        (X) 3: LFN with dynamic LFN working buffer on the heap</span></span><br><span class="line"><span class="string">      (4096) Maximum sector size to be handled.</span></span><br><span class="line"><span class="string">      [*] Enable sector erase feature</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">RT-Thread Components &gt; POSIX layer and C standard library</span></span><br><span class="line"><span class="string">  [*] Enable libc APIs from toolchain</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><p>w25q128_elmfs_demo.c</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;fal.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;dfs_fs.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;rtdbg.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">[I/FAL] ==================== FAL partition table ====================</span></span><br><span class="line"><span class="comment">[I/FAL] | name       | flash_dev |   offset   |    length  |</span></span><br><span class="line"><span class="comment">[I/FAL] -------------------------------------------------------------</span></span><br><span class="line"><span class="comment">[I/FAL] | filesystem | W25Q128   | 0x00000000 | 0x01000000 |</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> FS_PARTITION_NAME <span class="string">&quot;filesystem&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> FS_DEVICE_NAME    <span class="string">&quot;W25Q128&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">w25q128_elmfs_demo</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    fal_init();</span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">rt_device</span>* <span class="title">mtd_dev</span> =</span> RT_NULL;</span><br><span class="line">    mtd_dev = fal_mtd_nor_device_create(FS_PARTITION_NAME);</span><br><span class="line">    <span class="keyword">if</span> ( !mtd_dev )&#123;</span><br><span class="line">        LOG_E(<span class="string">&quot;Can&#x27;t create a mtd device on &#x27;%s&#x27; partition.&quot;</span>, FS_PARTITION_NAME);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="comment">// 以防万一，先unmount</span></span><br><span class="line">        dfs_unmount(<span class="string">&quot;/&quot;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (dfs_mount(FS_DEVICE_NAME, <span class="string">&quot;/&quot;</span>, <span class="string">&quot;elm&quot;</span>, <span class="number">0</span>, <span class="number">0</span>) == <span class="number">0</span>)&#123;</span><br><span class="line">            LOG_I(<span class="string">&quot;Filesystem initialized!&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span>&#123;</span><br><span class="line">            <span class="comment">// mkfs -t elm W25Q128</span></span><br><span class="line">            dfs_mkfs(<span class="string">&quot;elm&quot;</span>, FS_DEVICE_NAME);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (dfs_mount(FS_DEVICE_NAME, <span class="string">&quot;/&quot;</span>, <span class="string">&quot;elm&quot;</span>, <span class="number">0</span>, <span class="number">0</span>) == <span class="number">0</span>)&#123;</span><br><span class="line">                LOG_I(<span class="string">&quot;Filesystem initialized!&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">else</span>&#123;</span><br><span class="line">                LOG_E(<span class="string">&quot;Failed to initialize filesystem!&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> RT_EOK;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">MSH_CMD_EXPORT(w25q128_elmfs_demo, w25q128_elmfs_demo);</span><br></pre></td></tr></table></figure>
+
+<h2 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h2><p>demo 代码里面的 <code>dfs_mount</code> 和 <code>dfs_mkfs</code> 的参数，DEVICE_NAME, lfs 和 elm 是不一样的</p>
+<h2 id="建议"><a href="#建议" class="headerlink" title="建议"></a>建议</h2><p>4096 扇区，挂载成 FAT，要格式化成功，至少要 800KB 以上。且还要修改格式化参数。</p>
+<p>所以建议 4MB 以下的 FLASH 不要用 FAT，用 littlefs</p>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/stm32/">stm32</a><a href="/tags/rt-thread/">rt-thread</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
     <h3 class="article-title"><a href="/2025/11/07/rtt-stm32-at-socket/"><span>rtt-stm32-at-socket</span></a></h3>
     
   
@@ -568,180 +753,6 @@
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">config BSP_USING_WDT</span><br><span class="line">    bool <span class="string">&quot;Enable Watchdog Timer&quot;</span></span><br><span class="line">    <span class="keyword">select</span> RT_USING_WDT</span><br><span class="line">    default n</span><br></pre></td></tr></table></figure>
 
 <h2 id="menuconfig"><a href="#menuconfig" class="headerlink" title="menuconfig"></a>menuconfig</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">scons --menuconfig 启用 watchdog</span><br><span class="line">stm32XXxx_hal_conf.h 需要启用 HAL_IWDG_MODULE_ENABLED</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-
-  </div>
-
-  <div class="article-footer">
-    <div class="article-meta pull-left">
-
-    
-
-    
-    
-
-    <span class="post-tags">
-      <i class="icon-tags"></i>
-        <a href="/tags/stm32/">stm32</a><a href="/tags/rt-thread/">rt-thread</a>
-    </span>
-    
-
-    </div>
-
-    
-  </div>
-</article>
-
-
-
-  <article>
-
-  
-    
-    <h3 class="article-title"><a href="/2025/11/01/rtt-stm32-dev-uart/"><span>rt-thread 下，配置 stm32 的 uart</span></a></h3>
-    
-  
-
-  <div class="article-top-meta">
-    <span class="posted-on">
-      <a href="/2025/11/01/rtt-stm32-dev-uart/" rel="bookmark">
-        <time class="entry-date published" datetime="2025-11-01T02:24:19.000Z">
-          2025-11-01
-        </time>
-      </a>
-    </span>
-  </div>
-
-
-  
-
-  <div class="article-content">
-    <div class="entry">
-      
-        <h2 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h2><p>cubeMX 导出配置，引脚位置在 xxxx_hal_msp.c 中</p>
-<h2 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h2><p>参考下面的改 board&#x2F;Kconfig</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">menuconfig BSP_USING_UART</span><br><span class="line">    bool <span class="string">&quot;Enable UART&quot;</span></span><br><span class="line">    default y</span><br><span class="line">    <span class="keyword">select</span> RT_USING_SERIAL</span><br><span class="line">    <span class="keyword">if</span> BSP_USING_UART</span><br><span class="line">        config BSP_USING_UART1</span><br><span class="line">            bool <span class="string">&quot;Enable UART1&quot;</span></span><br><span class="line">            default y</span><br><span class="line">        config BSP_UART1_RX_USING_DMA</span><br><span class="line">            bool <span class="string">&quot;Enable UART1 RX DMA&quot;</span></span><br><span class="line">            depends on BSP_USING_UART1 &amp;&amp; RT_SERIAL_USING_DMA</span><br><span class="line">            default n</span><br><span class="line">    endif</span><br></pre></td></tr></table></figure>
-
-<h2 id="menuconfig"><a href="#menuconfig" class="headerlink" title="menuconfig"></a>menuconfig</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">scons --menuconfig 启用 uart，默认启用</span><br><span class="line">stm32XXxx_hal_conf.h 需要启用 HAL_UART_MODULE_ENABLED</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-
-  </div>
-
-  <div class="article-footer">
-    <div class="article-meta pull-left">
-
-    
-
-    
-    
-
-    <span class="post-tags">
-      <i class="icon-tags"></i>
-        <a href="/tags/stm32/">stm32</a><a href="/tags/rt-thread/">rt-thread</a>
-    </span>
-    
-
-    </div>
-
-    
-  </div>
-</article>
-
-
-
-  <article>
-
-  
-    
-    <h3 class="article-title"><a href="/2025/10/31/rtt-stm32-dev-timer/"><span>rt-thread 下，配置 stm32 的 timer</span></a></h3>
-    
-  
-
-  <div class="article-top-meta">
-    <span class="posted-on">
-      <a href="/2025/10/31/rtt-stm32-dev-timer/" rel="bookmark">
-        <time class="entry-date published" datetime="2025-10-31T00:41:03.000Z">
-          2025-10-31
-        </time>
-      </a>
-    </span>
-  </div>
-
-
-  
-
-  <div class="article-content">
-    <div class="entry">
-      
-        <h2 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h2><p>修改 board&#x2F;Kconfig，添加 TIM 部分，以下为参考</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">menuconfig BSP_USING_TIM</span><br><span class="line">    bool <span class="string">&quot;enable timer&quot;</span></span><br><span class="line">    default n</span><br><span class="line">    <span class="keyword">select</span> RT_USING_HWTIMER</span><br><span class="line">    <span class="keyword">if</span> BSP_USING_TIM</span><br><span class="line">        config BSP_USING_TIM11</span><br><span class="line">            bool <span class="string">&quot;Enable TIM11&quot;</span></span><br><span class="line">            default n</span><br><span class="line">    endif</span><br></pre></td></tr></table></figure>
-
-<p>如果启用的定时器不自带，需要手工修改，修改<code>libraries/HAL_Drivers/config/f4/tim_config.h</code>，irq 部分参考 f1 的模板修改</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">ifdef</span> BSP_USING_TIM2</span></span><br><span class="line"><span class="meta">#<span class="keyword">ifndef</span> TIM2_CONFIG</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> TIM2_CONFIG                                        \</span></span><br><span class="line"><span class="meta">    &#123;                                                       \</span></span><br><span class="line"><span class="meta">       .tim_handle.Instance     = TIM2,                    \</span></span><br><span class="line"><span class="meta">       .tim_irqn                = TIM2_IRQn,       \</span></span><br><span class="line"><span class="meta">       .name                    = <span class="string">&quot;timer2&quot;</span>,                \</span></span><br><span class="line"><span class="meta">    &#125;</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br></pre></td></tr></table></figure>
-
-<h2 id="menuconfig"><a href="#menuconfig" class="headerlink" title="menuconfig"></a>menuconfig</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">scons --menuconfig 启用 timer 配置</span><br><span class="line">stm32XXxx_hal_conf.h 需要启用 HAL_TIM_MODULE_ENABLED</span><br><span class="line">注意，硬件定时器的 timer 的超时时间结构体内，`秒和微秒不支持小数点`，开发板的时钟一定要设置正确，否则会出现延迟错误</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-
-  </div>
-
-  <div class="article-footer">
-    <div class="article-meta pull-left">
-
-    
-
-    
-    
-
-    <span class="post-tags">
-      <i class="icon-tags"></i>
-        <a href="/tags/stm32/">stm32</a><a href="/tags/rt-thread/">rt-thread</a>
-    </span>
-    
-
-    </div>
-
-    
-  </div>
-</article>
-
-
-
-  <article>
-
-  
-    
-    <h3 class="article-title"><a href="/2025/10/31/rtt-stm32-dev-spi/"><span>rt-thread 下，配置 stm32 的 spi</span></a></h3>
-    
-  
-
-  <div class="article-top-meta">
-    <span class="posted-on">
-      <a href="/2025/10/31/rtt-stm32-dev-spi/" rel="bookmark">
-        <time class="entry-date published" datetime="2025-10-31T00:41:00.000Z">
-          2025-10-31
-        </time>
-      </a>
-    </span>
-  </div>
-
-
-  
-
-  <div class="article-content">
-    <div class="entry">
-      
-        <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mode 选择`Full-Duplex Master`全双工主模式，NSS Signal 选`Disable`即可</span><br><span class="line">接线的时候，MOSI 和 MISO 不需要反接</span><br></pre></td></tr></table></figure>
-
-<h2 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h2><p>修改 board&#x2F;Kconfig，添加 SPI 部分，以下为参考</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">menuconfig BSP_USING_SPI</span><br><span class="line">    bool <span class="string">&quot;Enable SPI BUS&quot;</span></span><br><span class="line">    default n</span><br><span class="line">    <span class="keyword">select</span> RT_USING_SPI</span><br><span class="line">    <span class="keyword">if</span> BSP_USING_SPI</span><br><span class="line">        config BSP_USING_SPI1</span><br><span class="line">            bool <span class="string">&quot;Enable SPI1 BUS&quot;</span></span><br><span class="line">            default n</span><br><span class="line"></span><br><span class="line">        config BSP_SPI1_TX_USING_DMA</span><br><span class="line">            bool <span class="string">&quot;Enable SPI1 TX DMA&quot;</span></span><br><span class="line">            depends on BSP_USING_SPI1</span><br><span class="line">            default n</span><br><span class="line"></span><br><span class="line">        config BSP_SPI1_RX_USING_DMA</span><br><span class="line">            bool <span class="string">&quot;Enable SPI1 RX DMA&quot;</span></span><br><span class="line">            depends on BSP_USING_SPI1</span><br><span class="line">            <span class="keyword">select</span> BSP_SPI1_TX_USING_DMA</span><br><span class="line">            default n</span><br><span class="line">    endif</span><br></pre></td></tr></table></figure>
-
-<h2 id="menuconfig"><a href="#menuconfig" class="headerlink" title="menuconfig"></a>menuconfig</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">scons --menuconfig 启用 spi</span><br><span class="line">stm32XXxx_hal_conf.h 需要启用 HAL_SPI_MODULE_ENABLED</span><br></pre></td></tr></table></figure>
 
       
     </div>

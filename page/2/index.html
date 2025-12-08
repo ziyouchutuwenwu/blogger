@@ -71,6 +71,209 @@
 
   
     
+    <h3 class="article-title"><a href="/2025/11/30/elixir-normai-deploy/"><span>elixir 普通应用原生发布</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/11/30/elixir-normai-deploy/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-11-30T04:40:05.000Z">
+          2025-11-30
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h2 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h2><h3 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h3><p>会创建 rel 文件夹，带 vm 的配置和环境变量</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mix release.init</span><br></pre></td></tr></table></figure>
+
+<h3 id="指定-release"><a href="#指定-release" class="headerlink" title="指定 release"></a>指定 release</h3><p>如果要生成指定的 release 的名字，则修改 mix.exs</p>
+<p>一般不需要</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">project</span></span> <span class="keyword">do</span></span><br><span class="line">  [</span><br><span class="line">    .........</span><br><span class="line">    <span class="symbol">releases:</span> releases()</span><br><span class="line">  ]</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">defp</span> <span class="title">releases</span></span> <span class="keyword">do</span></span><br><span class="line">  [</span><br><span class="line">    <span class="symbol">aaa:</span> [</span><br><span class="line">      <span class="symbol">include_executables_for:</span> [<span class="symbol">:unix</span>],</span><br><span class="line">      <span class="symbol">applications:</span> [</span><br><span class="line">        <span class="symbol">demo1:</span> <span class="symbol">:permanent</span>,</span><br><span class="line">        <span class="symbol">demo2:</span> <span class="symbol">:permanent</span></span><br><span class="line">      ]</span><br><span class="line">    ]</span><br><span class="line">  ]</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
+<p>运行</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">MIX_ENV=prod mix release</span><br><span class="line">MIX_ENV=prod mix release --overwrite</span><br><span class="line">MIX_ENV=prod mix release aaa</span><br></pre></td></tr></table></figure>
+
+<h3 id="指定-vm-参数"><a href="#指定-vm-参数" class="headerlink" title="指定 vm 参数"></a>指定 vm 参数</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> RELEASE_DISTRIBUTION=name</span><br><span class="line"><span class="built_in">export</span> RELEASE_NODE=aaa@127.0.0.1</span><br><span class="line"><span class="built_in">export</span> RELEASE_COOKIE=123456</span><br><span class="line">bin/abc start_iex</span><br></pre></td></tr></table></figure>
+
+<h3 id="发布"><a href="#发布" class="headerlink" title="发布"></a>发布</h3><p>最终需要的目录</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">_build/prod/rel/<span class="variable">$RELEASE_NAME</span>/</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/elixir/">elixir</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
+    <h3 class="article-title"><a href="/2025/11/28/elixir-deploy-args/"><span>elixir 发布之参数配置</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/11/28/elixir-deploy-args/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-11-28T03:50:47.000Z">
+          2025-11-28
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h2 id="位置"><a href="#位置" class="headerlink" title="位置"></a>位置</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ tree rel</span><br><span class="line">rel</span><br><span class="line">├── env.bat.eex</span><br><span class="line">├── env.sh.eex</span><br><span class="line">├── remote.vm.args.eex</span><br><span class="line">└── vm.args.eex</span><br></pre></td></tr></table></figure>
+
+<h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><h3 id="env-sh-eex"><a href="#env-sh-eex" class="headerlink" title="env.sh.eex"></a>env.sh.eex</h3><p>release 脚本启动之前，可以执行任何操作</p>
+<p>运行期加载环境变量</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">export <span class="title class_">AAA</span>=&lt;%= <span class="title class_">System</span>.get_env(<span class="string">&quot;ABC&quot;</span>) %&gt;</span><br><span class="line">export <span class="title class_">BBB</span>=<span class="number">12345</span></span><br></pre></td></tr></table></figure>
+
+<p>测试</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">mix release</span><br><span class="line"><span class="built_in">export</span> ABC=<span class="string">&quot;asdasd&quot;</span></span><br><span class="line">_build/dev/rel/demo/bin/demo start_iex</span><br><span class="line">System.get_env(<span class="string">&quot;AAA&quot;</span>)</span><br><span class="line">System.get_env(<span class="string">&quot;ABC&quot;</span>)</span><br><span class="line">System.get_env(<span class="string">&quot;BBB&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="sys-config"><a href="#sys-config" class="headerlink" title="sys.config"></a>sys.config</h3><p>改到 config 目录里面去了</p>
+<h3 id="vm-args-eex"><a href="#vm-args-eex" class="headerlink" title="vm.args.eex"></a>vm.args.eex</h3><p>配置虚拟机参数，只支持编译期加载环境变量</p>
+<h4 id="编译期"><a href="#编译期" class="headerlink" title="编译期"></a>编译期</h4><p>默认只能编译期加载</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">-kernel inet_dist_listen_min &lt;%= <span class="title class_">System</span>.get_env(<span class="string">&quot;DIST_PORT&quot;</span>) %&gt;</span><br><span class="line">-kernel inet_dist_listen_max &lt;%= <span class="title class_">System</span>.get_env(<span class="string">&quot;DIST_PORT&quot;</span>) %&gt;</span><br></pre></td></tr></table></figure>
+
+<p>测试</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">DIST_PORT=5555 mix release</span><br></pre></td></tr></table></figure>
+
+<h4 id="运行期"><a href="#运行期" class="headerlink" title="运行期"></a>运行期</h4><p>运行期加载环境变量为 hack 的方式</p>
+<p>env.sh.eex</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">VERSION_DIR=<span class="string">&quot;<span class="subst">$(ls <span class="string">&quot;<span class="variable">$RELEASE_ROOT</span>/releases/&quot;</span> | head -n1)</span>&quot;</span></span><br><span class="line"><span class="built_in">export</span> DIST_PORT=<span class="string">&quot;<span class="variable">$&#123;DIST_PORT:-7878&#125;</span>&quot;</span></span><br><span class="line">sed -i <span class="string">&quot;s/\$&#123;DIST_PORT&#125;/<span class="variable">$&#123;DIST_PORT&#125;</span>/g&quot;</span> \</span><br><span class="line">  <span class="string">&quot;<span class="variable">$RELEASE_ROOT</span>/releases/<span class="variable">$VERSION_DIR</span>/vm.args&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>vm.args.eex</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">-kernel inet_dist_listen_min <span class="variable">$&#123;</span><span class="title class_">DIST_PORT</span>&#125;</span><br><span class="line">-kernel inet_dist_listen_max <span class="variable">$&#123;</span><span class="title class_">DIST_PORT</span>&#125;</span><br></pre></td></tr></table></figure>
+
+<p>测试</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">MIX_ENV=prod mix release</span><br><span class="line">DIST_PORT=5555 _build/prod/rel/demo/bin/demo start_iex</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/elixir/">elixir</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
+    <h3 class="article-title"><a href="/2025/11/27/elixir-protocol/"><span>elixir 之 protocol</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/11/27/elixir-protocol/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-11-27T03:06:50.000Z">
+          2025-11-27
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>为不同的数据类型定义通用的行为</p>
+<h2 id="场景"><a href="#场景" class="headerlink" title="场景"></a>场景</h2><p>给一些类型增加功能，而不修改原有模块</p>
+<h2 id="用法"><a href="#用法" class="headerlink" title="用法"></a>用法</h2><figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">defmodule</span> <span class="title">DemoStruct1</span></span> <span class="keyword">do</span></span><br><span class="line">  <span class="keyword">defstruct</span> [<span class="symbol">:aaa</span>, <span class="symbol">:bbb</span>]</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">new</span></span>(aaa, bbb) <span class="keyword">do</span></span><br><span class="line">    %<span class="title class_">DemoStruct1</span>&#123;<span class="symbol">aaa:</span> aaa, <span class="symbol">bbb:</span> bbb&#125;</span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">defmodule</span> <span class="title">DemoStruct2</span></span> <span class="keyword">do</span></span><br><span class="line">  <span class="keyword">defstruct</span> [<span class="symbol">:ccc</span>, <span class="symbol">:ddd</span>]</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">new</span></span>(ccc, ddd) <span class="keyword">do</span></span><br><span class="line">    %<span class="title class_">DemoStruct2</span>&#123;<span class="symbol">ccc:</span> ccc, <span class="symbol">ddd:</span> ddd&#125;</span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">defprotocol</span> <span class="title">DemoProtocol</span></span> <span class="keyword">do</span></span><br><span class="line">  <span class="variable">@fallback_to_any</span> <span class="literal">true</span></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">xxx</span></span>(struct_obj, source, dest)</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">defimpl</span> <span class="title">DemoProtocol</span></span>, <span class="symbol">for:</span> <span class="title class_">DemoStruct1</span> <span class="keyword">do</span></span><br><span class="line">  <span class="keyword">require</span> <span class="title class_">Logger</span></span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">xxx</span></span>(%<span class="title class_">DemoStruct1</span>&#123;<span class="symbol">aaa:</span> aaa, <span class="symbol">bbb:</span> bbb&#125;, source, dest) <span class="keyword">do</span></span><br><span class="line">    info = <span class="string">&quot;第一个 <span class="subst">#&#123;inspect(aaa)&#125;</span> <span class="subst">#&#123;inspect(bbb)&#125;</span> <span class="subst">#&#123;inspect(source)&#125;</span> <span class="subst">#&#123;inspect(dest)&#125;</span>&quot;</span></span><br><span class="line">    <span class="title class_">Logger</span>.debug(info)</span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">defimpl</span> <span class="title">DemoProtocol</span></span>, <span class="symbol">for:</span> <span class="title class_">DemoStruct2</span> <span class="keyword">do</span></span><br><span class="line">  <span class="keyword">require</span> <span class="title class_">Logger</span></span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">xxx</span></span>(%<span class="title class_">DemoStruct2</span>&#123;<span class="symbol">ccc:</span> ccc, <span class="symbol">ddd:</span> ddd&#125;, source, dest) <span class="keyword">do</span></span><br><span class="line">    info = <span class="string">&quot;另外一个 <span class="subst">#&#123;inspect(ccc)&#125;</span> <span class="subst">#&#123;inspect(ddd)&#125;</span> <span class="subst">#&#123;inspect(source)&#125;</span> <span class="subst">#&#123;inspect(dest)&#125;</span>&quot;</span></span><br><span class="line">    <span class="title class_">Logger</span>.debug(info)</span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">defimpl</span> <span class="title">DemoProtocol</span></span>, <span class="symbol">for:</span> <span class="title class_">Any</span> <span class="keyword">do</span></span><br><span class="line">  <span class="keyword">require</span> <span class="title class_">Logger</span></span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">xxx</span></span>(object, source, dest) <span class="keyword">do</span></span><br><span class="line">    info = <span class="string">&quot;any 类型 <span class="subst">#&#123;inspect(object)&#125;</span> <span class="subst">#&#123;inspect(source)&#125;</span> <span class="subst">#&#123;inspect(dest)&#125;</span>&quot;</span></span><br><span class="line">    <span class="title class_">Logger</span>.debug(info)</span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">defmodule</span> <span class="title">Demo</span></span> <span class="keyword">do</span></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">demo</span></span> <span class="keyword">do</span></span><br><span class="line">    obj1 = <span class="title class_">DemoStruct1</span>.new(<span class="number">111</span>, <span class="number">222</span>)</span><br><span class="line">    <span class="title class_">DemoProtocol</span>.xxx(obj1, <span class="string">&quot;aaaaaa&quot;</span>, <span class="string">&quot;bbbbbbbb&quot;</span>)</span><br><span class="line"></span><br><span class="line">    obj2 = <span class="title class_">DemoStruct2</span>.new(<span class="number">333</span>, <span class="number">444</span>)</span><br><span class="line">    <span class="title class_">DemoProtocol</span>.xxx(obj2, <span class="string">&quot;yyyyyyyyy&quot;</span>, <span class="string">&quot;zzzzzzzzzzzz&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="title class_">DemoProtocol</span>.xxx(<span class="number">111</span>, <span class="string">&quot;11111&quot;</span>, <span class="string">&quot;22222&quot;</span>)</span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/elixir/">elixir</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
     <h3 class="article-title"><a href="/2025/11/27/elixir-behavior/"><span>elixir 之 behavior</span></a></h3>
     
   
@@ -612,231 +815,6 @@
     <span class="post-tags">
       <i class="icon-tags"></i>
         <a href="/tags/linux/">linux</a><a href="/tags/kernel/">kernel</a>
-    </span>
-    
-
-    </div>
-
-    
-  </div>
-</article>
-
-
-
-  <article>
-
-  
-    
-    <h3 class="article-title"><a href="/2025/11/19/linux-trim-rootfs/"><span>linux 内核裁剪之 rootfs</span></a></h3>
-    
-  
-
-  <div class="article-top-meta">
-    <span class="posted-on">
-      <a href="/2025/11/19/linux-trim-rootfs/" rel="bookmark">
-        <time class="entry-date published" datetime="2025-11-19T07:19:13.000Z">
-          2025-11-19
-        </time>
-      </a>
-    </span>
-  </div>
-
-
-  
-
-  <div class="article-content">
-    <div class="entry">
-      
-        <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>编译成功以后，貌似需要做很多其它的工作</p>
-<h2 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h2><h3 id="源码"><a href="#源码" class="headerlink" title="源码"></a>源码</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://busybox.net/downloads/busybox-1.36.1.tar.bz2</span><br></pre></td></tr></table></figure>
-
-<h3 id="menuconfig"><a href="#menuconfig" class="headerlink" title="menuconfig"></a>menuconfig</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">mkdir</span> output</span><br><span class="line"></span><br><span class="line">make defconfig</span><br><span class="line">make menuconfig</span><br></pre></td></tr></table></figure>
-
-<p>配置静态编译</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 不然会提示找不到 working dir</span></span><br><span class="line">Settings  ---&gt;</span><br><span class="line">  [*] Build static binary (no shared libs)</span><br></pre></td></tr></table></figure>
-
-<h3 id="编译"><a href="#编译" class="headerlink" title="编译"></a>编译</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make -j$(<span class="built_in">nproc</span>) CONFIG_PREFIX=$(<span class="built_in">pwd</span>)/../rootfs/ install</span><br></pre></td></tr></table></figure>
-
-<h3 id="自定义脚本"><a href="#自定义脚本" class="headerlink" title="自定义脚本"></a>自定义脚本</h3><p>patch_fs.sh</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> [ <span class="string">&quot;<span class="subst">$(id -u)</span>&quot;</span> -ne 0 ]; <span class="keyword">then</span></span><br><span class="line">  <span class="built_in">echo</span> <span class="string">&quot;需要 root 权限。&quot;</span> &gt;&amp;2</span><br><span class="line">  <span class="built_in">exit</span> 1</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line">TTY_NAME=<span class="string">&quot;ttyAMA0&quot;</span></span><br><span class="line">HOST_NAME=<span class="string">&quot;xxx&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 123456</span></span><br><span class="line">ROOT_PASSWORD_HASH=<span class="string">&#x27;$1$B3A6v4ws$ydvwSpAz0PYhYss1WOxOy1&#x27;</span></span><br><span class="line"></span><br><span class="line">BUSYBOX_SRC_DIR=<span class="string">&quot;<span class="subst">$(pwd)</span>/busybox-1.36.1&quot;</span></span><br><span class="line">WORK_DIR=<span class="string">&quot;<span class="subst">$(pwd)</span>/&quot;</span></span><br><span class="line">ROOTFS_DIR=<span class="string">&quot;<span class="subst">$(pwd)</span>/rootfs&quot;</span></span><br><span class="line">IMAGE_NAME=<span class="string">&quot;rootfs.ext4&quot;</span></span><br><span class="line">IMAGE_SIZE_MB=32</span><br><span class="line">TEMP_MOUNT_DIR=<span class="string">&quot;<span class="variable">$&#123;WORK_DIR&#125;</span>/fs_mnt_tmp&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">cleanup</span></span>() &#123;</span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;清理临时挂载点（如果存在）...&quot;</span></span><br><span class="line">    <span class="keyword">if</span> mountpoint -q <span class="string">&quot;<span class="variable">$&#123;TEMP_MOUNT_DIR&#125;</span>&quot;</span>; <span class="keyword">then</span></span><br><span class="line">        umount <span class="string">&quot;<span class="variable">$&#123;TEMP_MOUNT_DIR&#125;</span>&quot;</span></span><br><span class="line">    <span class="keyword">fi</span></span><br><span class="line">    <span class="built_in">rm</span> -rf <span class="string">&quot;<span class="variable">$&#123;TEMP_MOUNT_DIR&#125;</span>&quot;</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;清理完成。&quot;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;开始执行 BusyBox rootfs 准备脚本 (以 root 权限运行)...&quot;</span></span><br><span class="line"><span class="built_in">set</span> -e</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> [ ! -d <span class="string">&quot;<span class="variable">$&#123;BUSYBOX_SRC_DIR&#125;</span>&quot;</span> ]; <span class="keyword">then</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;错误：BusyBox 源码目录 <span class="variable">$&#123;BUSYBOX_SRC_DIR&#125;</span> 未找到！&quot;</span></span><br><span class="line">    <span class="built_in">exit</span> 1</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">mkdir</span> -p <span class="string">&quot;<span class="variable">$&#123;ROOTFS_DIR&#125;</span>&quot;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;Rootfs 目录: <span class="variable">$&#123;ROOTFS_DIR&#125;</span>&quot;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;输出镜像文件: <span class="variable">$&#123;WORK_DIR&#125;</span>/<span class="variable">$&#123;IMAGE_NAME&#125;</span>&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;--- 检查 BusyBox 安装 ---&quot;</span></span><br><span class="line">BUSYBOX_EXEC_PATH=<span class="string">&quot;<span class="variable">$&#123;ROOTFS_DIR&#125;</span>/bin/busybox&quot;</span></span><br><span class="line"><span class="keyword">if</span> [ ! -x <span class="string">&quot;<span class="variable">$&#123;BUSYBOX_EXEC_PATH&#125;</span>&quot;</span> ]; <span class="keyword">then</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;错误：<span class="variable">$&#123;BUSYBOX_EXEC_PATH&#125;</span> 不存在或不可执行！&quot;</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;请提前准备好 BusyBox 安装到 <span class="variable">$&#123;ROOTFS_DIR&#125;</span> 目录。&quot;</span></span><br><span class="line">    <span class="built_in">exit</span> 1</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;BusyBox 主程序 (<span class="variable">$&#123;BUSYBOX_EXEC_PATH&#125;</span>) 存在且可执行。&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;使用 &#x27;file&#x27; 命令检查 BusyBox 可执行文件类型：&quot;</span></span><br><span class="line">file <span class="string">&quot;<span class="variable">$&#123;BUSYBOX_EXEC_PATH&#125;</span>&quot;</span></span><br><span class="line"></span><br><span class="line">INIT_PATH_FOUND=<span class="string">&quot;&quot;</span></span><br><span class="line"><span class="keyword">if</span> [ -L <span class="string">&quot;<span class="variable">$&#123;ROOTFS_DIR&#125;</span>/sbin/init&quot;</span> ] &amp;&amp; [ <span class="string">&quot;<span class="subst">$(readlink -f <span class="string">&quot;<span class="variable">$&#123;ROOTFS_DIR&#125;</span>/sbin/init&quot;</span>)</span>&quot;</span> = <span class="string">&quot;<span class="variable">$&#123;BUSYBOX_EXEC_PATH&#125;</span>&quot;</span> ]; <span class="keyword">then</span></span><br><span class="line">    INIT_PATH_FOUND=<span class="string">&quot;<span class="variable">$&#123;ROOTFS_DIR&#125;</span>/sbin/init&quot;</span></span><br><span class="line"><span class="keyword">elif</span> [ -L <span class="string">&quot;<span class="variable">$&#123;ROOTFS_DIR&#125;</span>/bin/init&quot;</span> ] &amp;&amp; [ <span class="string">&quot;<span class="subst">$(readlink -f <span class="string">&quot;<span class="variable">$&#123;ROOTFS_DIR&#125;</span>/bin/init&quot;</span>)</span>&quot;</span> = <span class="string">&quot;<span class="variable">$&#123;BUSYBOX_EXEC_PATH&#125;</span>&quot;</span> ]; <span class="keyword">then</span></span><br><span class="line">    INIT_PATH_FOUND=<span class="string">&quot;<span class="variable">$&#123;ROOTFS_DIR&#125;</span>/bin/init&quot;</span></span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> [ -z <span class="string">&quot;<span class="variable">$&#123;INIT_PATH_FOUND&#125;</span>&quot;</span> ]; <span class="keyword">then</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;错误：未找到指向 busybox 的 init 符号链接！&quot;</span></span><br><span class="line">    <span class="built_in">exit</span> 1</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;init 程序 (<span class="variable">$&#123;INIT_PATH_FOUND&#125;</span>) 存在且正确链接到 busybox。&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> ! ([ -L <span class="string">&quot;<span class="variable">$&#123;ROOTFS_DIR&#125;</span>/bin/sh&quot;</span> ] &amp;&amp; [ <span class="string">&quot;<span class="subst">$(readlink -f <span class="string">&quot;<span class="variable">$&#123;ROOTFS_DIR&#125;</span>/bin/sh&quot;</span>)</span>&quot;</span> = <span class="string">&quot;<span class="variable">$&#123;BUSYBOX_EXEC_PATH&#125;</span>&quot;</span> ]); <span class="keyword">then</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;错误：<span class="variable">$&#123;ROOTFS_DIR&#125;</span>/bin/sh 未正确链接到 busybox！&quot;</span></span><br><span class="line">    <span class="built_in">exit</span> 1</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;sh 程序 (<span class="variable">$&#123;ROOTFS_DIR&#125;</span>/bin/sh) 存在且正确链接到 busybox。&quot;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;BusyBox 安装验证通过。&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">cd</span> <span class="string">&quot;<span class="variable">$&#123;ROOTFS_DIR&#125;</span>&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建必需目录</span></span><br><span class="line"><span class="built_in">mkdir</span> -p dev dev/pts dev/shm etc lib usr/bin usr/sbin usr/lib var/log var/run var/tmp home root mnt proc sys tmp</span><br><span class="line"></span><br><span class="line"><span class="comment"># 建立 usr -&gt; bin, sbin, lib 软连接（如果不存在）</span></span><br><span class="line"><span class="keyword">if</span> [ -d usr/bin ] &amp;&amp; [ ! -e bin ]; <span class="keyword">then</span> <span class="built_in">ln</span> -sf usr/bin bin; <span class="keyword">fi</span></span><br><span class="line"><span class="keyword">if</span> [ -d usr/sbin ] &amp;&amp; [ ! -e sbin ]; <span class="keyword">then</span> <span class="built_in">ln</span> -sf usr/sbin sbin; <span class="keyword">fi</span></span><br><span class="line"><span class="keyword">if</span> [ -d usr/lib ] &amp;&amp; [ ! -e lib ]; <span class="keyword">then</span> <span class="built_in">ln</span> -sf usr/lib lib; <span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;--- 创建配置文件 ---&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">cat</span> &gt; etc/profile &lt;&lt; <span class="string">EOF</span></span><br><span class="line"><span class="string">PATH=/bin:/sbin:/usr/bin:/usr/sbin</span></span><br><span class="line"><span class="string">export LD_LIBRARY_PATH=/lib:/usr/lib</span></span><br><span class="line"><span class="string">/bin/hostname $&#123;HOST_NAME&#125;</span></span><br><span class="line"><span class="string">USER=root</span></span><br><span class="line"><span class="string">LOGNAME=\$USER</span></span><br><span class="line"><span class="string">HOSTNAME=\$(/bin/hostname)</span></span><br><span class="line"><span class="string">PS1=&#x27;[\u@\h \W]\\# &#x27;</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">cat</span> &gt; etc/inittab &lt;&lt; <span class="string">EOF</span></span><br><span class="line"><span class="string">::sysinit:/etc/init.d/rcS</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">#$&#123;TTY_NAME&#125;::respawn:/sbin/getty -L $&#123;TTY_NAME&#125; 115200 vt100</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"># 免密</span></span><br><span class="line"><span class="string">$&#123;TTY_NAME&#125;::respawn:/bin/sh &lt;/dev/$&#123;TTY_NAME&#125; &gt;/dev/$&#123;TTY_NAME&#125; 2&gt;&amp;1</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">::restart:/sbin/init</span></span><br><span class="line"><span class="string">::ctrlaltdel:/sbin/reboot</span></span><br><span class="line"><span class="string">::shutdown:/bin/umount -a -r</span></span><br><span class="line"><span class="string">::shutdown:/sbin/swapoff -a</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">cat</span> &gt; etc/fstab &lt;&lt; <span class="string">EOF</span></span><br><span class="line"><span class="string">proc            /proc           proc      defaults          0       0</span></span><br><span class="line"><span class="string">sysfs           /sys            sysfs     defaults          0       0</span></span><br><span class="line"><span class="string">devtmpfs        /dev            devtmpfs  mode=0755,nosuid  0       0</span></span><br><span class="line"><span class="string">tmpfs           /tmp            tmpfs     defaults          0       0</span></span><br><span class="line"><span class="string">tmpfs           /dev/shm        tmpfs     defaults          0       0</span></span><br><span class="line"><span class="string">none            /var            ramfs     defaults          0       0</span></span><br><span class="line"><span class="string">devpts          /dev/pts        devpts    gid=5,mode=0620   0       0</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;<span class="variable">$&#123;HOST_NAME&#125;</span>&quot;</span> &gt; etc/hostname</span><br><span class="line"></span><br><span class="line"><span class="built_in">cat</span> &gt; etc/passwd &lt;&lt; <span class="string">EOF</span></span><br><span class="line"><span class="string">root:x:0:0:root:/root:/bin/sh</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"><span class="built_in">chmod</span> 644 etc/passwd</span><br><span class="line"></span><br><span class="line"><span class="built_in">cat</span> &gt; etc/group &lt;&lt; <span class="string">EOF</span></span><br><span class="line"><span class="string">root:x:0:</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"><span class="built_in">chmod</span> 644 etc/group</span><br><span class="line"></span><br><span class="line"><span class="built_in">cat</span> &gt; etc/shadow &lt;&lt; <span class="string">EOF</span></span><br><span class="line"><span class="string">root:$&#123;ROOT_PASSWORD_HASH&#125;:10933:0:99999:7:::</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"><span class="built_in">chmod</span> 600 etc/shadow</span><br><span class="line"></span><br><span class="line"><span class="built_in">mkdir</span> -p etc/init.d</span><br><span class="line"><span class="built_in">cat</span> &gt; etc/init.d/rcS &lt;&lt; <span class="string">EOF</span></span><br><span class="line"><span class="string">#!/bin/sh</span></span><br><span class="line"><span class="string">mkdir -p /tmp</span></span><br><span class="line"><span class="string">mkdir -p /dev/pts</span></span><br><span class="line"><span class="string">mkdir -p /dev/shm</span></span><br><span class="line"><span class="string">/bin/mount -a</span></span><br><span class="line"><span class="string">if [ -f /etc/hostname ]; then</span></span><br><span class="line"><span class="string">    /bin/hostname -F /etc/hostname</span></span><br><span class="line"><span class="string">fi</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"><span class="built_in">chmod</span> +x etc/init.d/rcS</span><br><span class="line"></span><br><span class="line"><span class="built_in">cd</span> <span class="string">&quot;<span class="variable">$&#123;WORK_DIR&#125;</span>&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;--- 创建并填充磁盘镜像 <span class="variable">$&#123;WORK_DIR&#125;</span>/<span class="variable">$&#123;IMAGE_NAME&#125;</span> ---&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">rm</span> -f <span class="string">&quot;<span class="variable">$&#123;WORK_DIR&#125;</span>/<span class="variable">$&#123;IMAGE_NAME&#125;</span>&quot;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;正在创建空磁盘镜像 (<span class="variable">$&#123;IMAGE_SIZE_MB&#125;</span>MB)...&quot;</span></span><br><span class="line"><span class="built_in">dd</span> <span class="keyword">if</span>=/dev/zero of=<span class="string">&quot;<span class="variable">$&#123;WORK_DIR&#125;</span>/<span class="variable">$&#123;IMAGE_NAME&#125;</span>&quot;</span> bs=1M count=<span class="variable">$&#123;IMAGE_SIZE_MB&#125;</span> status=progress</span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;正在将磁盘镜像格式化为 ext4...&quot;</span></span><br><span class="line">mkfs.ext4 -F <span class="string">&quot;<span class="variable">$&#123;WORK_DIR&#125;</span>/<span class="variable">$&#123;IMAGE_NAME&#125;</span>&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">mkdir</span> -p <span class="string">&quot;<span class="variable">$&#123;TEMP_MOUNT_DIR&#125;</span>&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;正在将loop设备挂载到 <span class="variable">$&#123;TEMP_MOUNT_DIR&#125;</span>...&quot;</span></span><br><span class="line">mount -o loop <span class="string">&quot;<span class="variable">$&#123;WORK_DIR&#125;</span>/<span class="variable">$&#123;IMAGE_NAME&#125;</span>&quot;</span> <span class="string">&quot;<span class="variable">$&#123;TEMP_MOUNT_DIR&#125;</span>&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;正在从 <span class="variable">$&#123;ROOTFS_DIR&#125;</span> 复制 rootfs 内容到镜像...&quot;</span></span><br><span class="line">rsync -a --delete <span class="string">&quot;<span class="variable">$&#123;ROOTFS_DIR&#125;</span>/&quot;</span> <span class="string">&quot;<span class="variable">$&#123;TEMP_MOUNT_DIR&#125;</span>/&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;正在卸载 loop 设备...&quot;</span></span><br><span class="line">umount <span class="string">&quot;<span class="variable">$&#123;TEMP_MOUNT_DIR&#125;</span>&quot;</span></span><br><span class="line"><span class="built_in">rmdir</span> <span class="string">&quot;<span class="variable">$&#123;TEMP_MOUNT_DIR&#125;</span>&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;--- Rootfs 镜像已创建: <span class="variable">$&#123;WORK_DIR&#125;</span>/<span class="variable">$&#123;IMAGE_NAME&#125;</span> ---&quot;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;Rootfs 内容也保留在: <span class="variable">$&#123;ROOTFS_DIR&#125;</span>&quot;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;&quot;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;构建过程完成！&quot;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;您现在可以将 <span class="variable">$&#123;WORK_DIR&#125;</span>/<span class="variable">$&#123;IMAGE_NAME&#125;</span> 用于 QEMU 或其他目标系统。&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">exit</span> 0</span><br></pre></td></tr></table></figure>
-
-<h3 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h3><p>append 后面的 root 不能缺</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">qemu-system-arm \</span><br><span class="line">  -M vexpress-a9 \</span><br><span class="line">  -m 512M \</span><br><span class="line">  -kernel ~/downloads/linux-5.10.191/output/arch/arm/boot/zImage \</span><br><span class="line">  -dtb ~/downloads/linux-5.10.191/output/arch/arm/boot/dts/vexpress-v2p-ca9.dtb \</span><br><span class="line">  -nographic \</span><br><span class="line">  -append <span class="string">&quot;root=/dev/mmcblk0 rw console=ttyAMA0&quot;</span> \</span><br><span class="line">  -sd ~/downloads/rootfs.ext4</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-
-  </div>
-
-  <div class="article-footer">
-    <div class="article-meta pull-left">
-
-    
-
-    
-    
-
-    <span class="post-tags">
-      <i class="icon-tags"></i>
-        <a href="/tags/linux/">linux</a><a href="/tags/kernel/">kernel</a>
-    </span>
-    
-
-    </div>
-
-    
-  </div>
-</article>
-
-
-
-  <article>
-
-  
-    
-    <h3 class="article-title"><a href="/2025/11/18/linux-trim-uboot/"><span>linux 内核裁剪之 uboot</span></a></h3>
-    
-  
-
-  <div class="article-top-meta">
-    <span class="posted-on">
-      <a href="/2025/11/18/linux-trim-uboot/" rel="bookmark">
-        <time class="entry-date published" datetime="2025-11-18T10:36:03.000Z">
-          2025-11-18
-        </time>
-      </a>
-    </span>
-  </div>
-
-
-  
-
-  <div class="article-content">
-    <div class="entry">
-      
-        <h2 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h2><h3 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h3><p>下载地址</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://ftp.denx.de/pub/u-boot/u-boot-2023.04.tar.bz2</span><br></pre></td></tr></table></figure>
-
-<h3 id="编译"><a href="#编译" class="headerlink" title="编译"></a>编译</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">make vexpress_ca9x4_defconfig</span><br><span class="line">make -j$(<span class="built_in">nproc</span>)</span><br></pre></td></tr></table></figure>
-
-<h3 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h3><p>qemu 加载 uboot 需要用 elf 的格式</p>
-<p>bin 格式的没有入口点，适合烧录到板子上</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">qemu-system-arm \</span><br><span class="line">  -M vexpress-a9 \</span><br><span class="line">  -m 512M \</span><br><span class="line">  -kernel ~/downloads/u-boot-2023.04/output/u-boot \</span><br><span class="line">  -nographic</span><br></pre></td></tr></table></figure>
-
-<h3 id="调试"><a href="#调试" class="headerlink" title="调试"></a>调试</h3><p>查看变量</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">printenv</span> xxx</span><br></pre></td></tr></table></figure>
-
-<p>手动执行，比如你定义了 bootcmd</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">run bootcmd</span><br></pre></td></tr></table></figure>
-
-<p>重启</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">reset</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-
-  </div>
-
-  <div class="article-footer">
-    <div class="article-meta pull-left">
-
-    
-
-    
-    
-
-    <span class="post-tags">
-      <i class="icon-tags"></i>
-        <a href="/tags/linux/">linux</a><a href="/tags/kernel/">kernel</a><a href="/tags/uboot/">uboot</a>
-    </span>
-    
-
-    </div>
-
-    
-  </div>
-</article>
-
-
-
-  <article>
-
-  
-    
-    <h3 class="article-title"><a href="/2025/11/17/rt-smart/"><span>rt-smart</span></a></h3>
-    
-  
-
-  <div class="article-top-meta">
-    <span class="posted-on">
-      <a href="/2025/11/17/rt-smart/" rel="bookmark">
-        <time class="entry-date published" datetime="2025-11-17T08:11:48.000Z">
-          2025-11-17
-        </time>
-      </a>
-    </span>
-  </div>
-
-
-  
-
-  <div class="article-content">
-    <div class="entry">
-      
-        <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>整理流程很像 linux, 先 load 内核，再加载 rootfs</p>
-<h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><p>以 qemu-virt64-aarch64 为例</p>
-<h3 id="用户态"><a href="#用户态" class="headerlink" title="用户态"></a>用户态</h3><p>工具链需要通过编译用户态程序才能导出，有点奇怪</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> --depth 1 https://github.com/RT-Thread/userapps.git</span><br><span class="line"><span class="built_in">cd</span> userapps; <span class="built_in">source</span> env.sh</span><br><span class="line"><span class="built_in">cd</span> apps</span><br></pre></td></tr></table></figure>
-
-<p>下载工具链</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xmake config --<span class="built_in">arch</span>=aarch64 -y</span><br></pre></td></tr></table></figure>
-
-<p>导出 toolchain 需要先编译</p>
-<p>每次修改完应用程序，都需要 xmake 一下</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xmake</span><br></pre></td></tr></table></figure>
-
-<p>toolchain 在 <code>apps/build/packages</code> 下</p>
-<p>sdk 在<code>apps/build/sdk</code> 下</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xmake smart-rootfs --<span class="built_in">export</span>=all</span><br></pre></td></tr></table></figure>
-
-<p>生成 rootfs，执行以后，在 <code>apps/build/</code> 下</p>
-<p>如果需要把 zig 编译的程序放进去，可以放在这个里面, 实际测试，运行会崩溃</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xmake smart-rootfs</span><br></pre></td></tr></table></figure>
-
-<p>生成磁盘镜像</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xmake smart-image -f ext4</span><br></pre></td></tr></table></figure>
-
-<h3 id="内核"><a href="#内核" class="headerlink" title="内核"></a>内核</h3><p>toolchain 在 <code>userapps/apps/build/packages</code> 里面，复制出来</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> RTT_CC=<span class="string">&quot;gcc&quot;</span></span><br><span class="line"><span class="built_in">export</span> RTT_EXEC_PATH=<span class="string">&quot;./toolchain/bin/&quot;</span></span><br><span class="line"><span class="built_in">export</span> RTT_CC_PREFIX=<span class="string">&quot;aarch64-linux-musleabi-&quot;</span></span><br><span class="line"><span class="built_in">export</span> PATH=<span class="string">&quot;<span class="variable">$RTT_EXEC_PATH</span>:<span class="variable">$PATH</span>&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p>编译内核</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> --depth 1 https://github.com/RT-Thread/rt-thread</span><br><span class="line"><span class="built_in">cd</span> rt-thread/bsp/qemu-virt64-aarch64/</span><br><span class="line">scons --menuconfig</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">RT-Thread Kernel ---&gt;</span><br><span class="line">  [*] Enable RT-Thread Smart (microkernel on kernel/userland)</span><br><span class="line"></span><br><span class="line">RT-Thread online packages  ---&gt;</span><br><span class="line">  system packages  ---&gt;</span><br><span class="line">    [*] lwext4: an excellent choice of ext2/3/4 filesystem <span class="keyword">for</span> microcontrol</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">source</span> ~/.env/env.sh</span><br><span class="line">pkgs --update</span><br><span class="line"></span><br><span class="line">scons -c; scons</span><br><span class="line"><span class="comment"># scons --dist</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="运行"><a href="#运行" class="headerlink" title="运行"></a>运行</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cp</span> ext4.img ../../../rt-thread/bsp/qemu-virt64-aarch64/</span><br></pre></td></tr></table></figure>
-
-<p>修改 qemu.sh 里面的 sd.bin 为 ext4.img</p>
-<p>参考<a target="_blank" rel="noopener" href="https://github.com/RT-Thread/userapps">这里</a>最后生成 prebuilt 的部分里面的 run.sh</p>
-
-      
-    </div>
-
-  </div>
-
-  <div class="article-footer">
-    <div class="article-meta pull-left">
-
-    
-
-    
-    
-
-    <span class="post-tags">
-      <i class="icon-tags"></i>
-        <a href="/tags/stm32/">stm32</a><a href="/tags/rt-thread/">rt-thread</a>
     </span>
     
 

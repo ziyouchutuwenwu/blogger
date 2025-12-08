@@ -1,0 +1,177 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8" />
+  
+  <title>elixir 之添加依赖 | 独钓寒江雪</title>
+
+  
+  <meta name="author" content="John Doe" />
+   
+  <meta
+    name="description"
+    content="说明可以加载 erlang 的库
+搜索1mix hex.search --package nebulex
+
+用法加载本地库
+1&amp;#123;:xxx, path: &amp;quot;../xxx&amp;quot;&amp;#125;
+
+指定分支
+1&amp;#123;:bumblebee, github: &amp;quot;elixi" />
+    
+  <meta name="keywords" content="elixir"> 
+
+  <meta
+    id="viewport"
+    name="viewport"
+    content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+
+  
+  <meta property="og:title" content="elixir 之添加依赖" />
+  
+
+  <meta property="og:site_name" content="独钓寒江雪" />
+
+  
+  <meta property="og:image" content="/favicon.ico" />
+  
+
+  <link href="/favicon.ico" rel="icon" />
+  <link
+    rel="alternate"
+    href="/atom.xml"
+    title="独钓寒江雪"
+    type="application/atom+xml" />
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css" />
+
+  <script
+    async
+    src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9313450459437229"
+    crossorigin="anonymous"></script>
+<meta name="generator" content="Hexo 8.0.0"></head>
+
+
+<body>
+<div class="blog">
+  <div class="content">
+
+    <header>
+  <div class="site-branding">
+    <h1 class="site-title">
+      <a href="/">独钓寒江雪</a>
+    </h1>
+    <p class="site-description"></p>
+  </div>
+  <nav class="site-navigation">
+    <ul>
+      
+        <li><a href="/">首页</a></li>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/tags">标签</a></li>
+      
+        <li><a href="/about">关于</a></li>
+      
+    </ul>
+  </nav>
+</header>
+
+    <main class="site-main posts-loop">
+    <article>
+
+  
+    
+    <h3 class="article-title"><span>elixir 之添加依赖</span></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/12/06/elixir-deps/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-12-06T02:06:26.000Z">
+          2025-12-06
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>可以加载 erlang 的库</p>
+<h2 id="搜索"><a href="#搜索" class="headerlink" title="搜索"></a>搜索</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mix hex.search --package nebulex</span><br></pre></td></tr></table></figure>
+
+<h2 id="用法"><a href="#用法" class="headerlink" title="用法"></a>用法</h2><p>加载本地库</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;<span class="symbol">:xxx</span>, <span class="symbol">path:</span> <span class="string">&quot;../xxx&quot;</span>&#125;</span><br></pre></td></tr></table></figure>
+
+<p>指定分支</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;<span class="symbol">:bumblebee</span>, <span class="symbol">github:</span> <span class="string">&quot;elixir-nx/bumblebee&quot;</span>, <span class="symbol">branch:</span> <span class="string">&quot;main&quot;</span>&#125;</span><br></pre></td></tr></table></figure>
+
+<p>强制使用某个版本</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;<span class="symbol">:bumblebee</span>, <span class="symbol">github:</span> <span class="string">&quot;elixir-nx/bumblebee&quot;</span>, <span class="symbol">branch:</span> <span class="string">&quot;main&quot;</span>, <span class="symbol">override:</span> <span class="literal">true</span>&#125;</span><br></pre></td></tr></table></figure>
+
+<p>指定环境下加载</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;<span class="symbol">:exla</span>, <span class="string">&quot;~&gt; 0.7&quot;</span>, <span class="symbol">only:</span> [<span class="symbol">:dev</span>, <span class="symbol">:test</span>]&#125;</span><br></pre></td></tr></table></figure>
+
+<p>运行时并不加载</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;<span class="symbol">:ex_doc</span>, <span class="string">&quot;~&gt; 0.29&quot;</span>, <span class="symbol">only:</span> <span class="symbol">:dev</span>, <span class="symbol">runtime:</span> <span class="literal">false</span>&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/elixir/">elixir</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+  
+
+
+
+
+
+
+
+
+
+    </main>
+
+    <footer class="site-footer">
+  <p class="site-info">
+    Proudly powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and
+    Theme by <a href="https://github.com/CodeDaraW/Hacker" target="_blank">Hacker</a>
+    </br>
+    
+    &copy; 2025 John Doe
+    
+  </p>
+</footer>
+    
+    
+  </div>
+</div>
+</body>
+</html>

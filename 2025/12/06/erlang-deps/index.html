@@ -1,0 +1,172 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8" />
+  
+  <title>erlang 之添加依赖 | 独钓寒江雪</title>
+
+  
+  <meta name="author" content="John Doe" />
+   
+  <meta
+    name="description"
+    content="说明不能加载 elixir 的库
+用法远程依赖hex.pm
+123&amp;#123;deps,[  &amp;#123;jsx, &amp;quot;3.1.0&amp;quot;&amp;#125;]&amp;#125;.
+
+分支
+123&amp;#123;deps, [  &amp;#123;ets_cache, &amp;quot;.*&amp;quot;, &amp;#123" />
+    
+  <meta name="keywords" content="erlang"> 
+
+  <meta
+    id="viewport"
+    name="viewport"
+    content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+
+  
+  <meta property="og:title" content="erlang 之添加依赖" />
+  
+
+  <meta property="og:site_name" content="独钓寒江雪" />
+
+  
+  <meta property="og:image" content="/favicon.ico" />
+  
+
+  <link href="/favicon.ico" rel="icon" />
+  <link
+    rel="alternate"
+    href="/atom.xml"
+    title="独钓寒江雪"
+    type="application/atom+xml" />
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css" />
+
+  <script
+    async
+    src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9313450459437229"
+    crossorigin="anonymous"></script>
+<meta name="generator" content="Hexo 8.0.0"></head>
+
+
+<body>
+<div class="blog">
+  <div class="content">
+
+    <header>
+  <div class="site-branding">
+    <h1 class="site-title">
+      <a href="/">独钓寒江雪</a>
+    </h1>
+    <p class="site-description"></p>
+  </div>
+  <nav class="site-navigation">
+    <ul>
+      
+        <li><a href="/">首页</a></li>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/tags">标签</a></li>
+      
+        <li><a href="/about">关于</a></li>
+      
+    </ul>
+  </nav>
+</header>
+
+    <main class="site-main posts-loop">
+    <article>
+
+  
+    
+    <h3 class="article-title"><span>erlang 之添加依赖</span></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2025/12/06/erlang-deps/" rel="bookmark">
+        <time class="entry-date published" datetime="2025-12-06T02:06:30.000Z">
+          2025-12-06
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>不能加载 elixir 的库</p>
+<h2 id="用法"><a href="#用法" class="headerlink" title="用法"></a>用法</h2><h3 id="远程依赖"><a href="#远程依赖" class="headerlink" title="远程依赖"></a>远程依赖</h3><p>hex.pm</p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#123;deps,[</span><br><span class="line">  &#123;jsx, <span class="string">&quot;3.1.0&quot;</span>&#125;</span><br><span class="line">]&#125;.</span><br></pre></td></tr></table></figure>
+
+<p>分支</p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#123;deps, [</span><br><span class="line">  &#123;ets_cache, <span class="string">&quot;.*&quot;</span>, &#123;git, <span class="string">&quot;https://github.com/roowe/ets_cache&quot;</span>, &#123;branch, <span class="string">&quot;master&quot;</span>&#125;&#125;&#125;</span><br><span class="line">]&#125;.</span><br></pre></td></tr></table></figure>
+
+<p>tag</p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#123;deps, [</span><br><span class="line">  &#123;erlbus, &#123;git, <span class="string">&quot;https://github.com/cabol/erlbus&quot;</span>, &#123;tag, <span class="string">&quot;v0.3.0&quot;</span>&#125;&#125;&#125;</span><br><span class="line">]&#125;.</span><br></pre></td></tr></table></figure>
+
+<h3 id="本地依赖"><a href="#本地依赖" class="headerlink" title="本地依赖"></a>本地依赖</h3><p>目录层级</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">.</span><br><span class="line">├── demo</span><br><span class="line">│   ├── rebar.config</span><br><span class="line">│   └── src</span><br><span class="line">└── demo_lib</span><br><span class="line">    ├── rebar.config</span><br><span class="line">    └── src</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&#123;deps, [</span><br><span class="line">    &#123;demo_lib, &#123;path, <span class="string">&quot;../demo_lib&quot;</span>&#125;&#125;</span><br><span class="line">]&#125;.</span><br><span class="line"></span><br><span class="line">&#123;plugins, [</span><br><span class="line">    rebar3_path_deps</span><br><span class="line">]&#125;.</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/erlang/">erlang</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+  
+
+
+
+
+
+
+
+
+
+    </main>
+
+    <footer class="site-footer">
+  <p class="site-info">
+    Proudly powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and
+    Theme by <a href="https://github.com/CodeDaraW/Hacker" target="_blank">Hacker</a>
+    </br>
+    
+    &copy; 2025 John Doe
+    
+  </p>
+</footer>
+    
+    
+  </div>
+</div>
+</body>
+</html>
